@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Updated dependencies
 
+### Fixed
+
++ Fixed potential issues with foreign key constraint errors when trying to
+  add mappings that contain tag IDs that do not exist
+
 ## [3.7.1] - 2018-08-27
 
 ### Added
