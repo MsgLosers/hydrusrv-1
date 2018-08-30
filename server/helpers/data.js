@@ -19,7 +19,10 @@ module.exports = {
       namespaces = this.getNamespaces()
       tags = this.getTags()
       files = this.getFiles(namespaces)
-      mappings = this.getMappings(files.map(file => file.id))
+      mappings = this.getMappings(
+        files.map(file => file.id),
+        tags.map(tag => tag.id)
+      )
 
       this.createTempNamespacesTable()
       this.createTempTagsTable()
@@ -367,7 +370,7 @@ module.exports = {
 
     return files
   },
-  getMappings (fileIds) {
+  getMappings (fileIds, tagIds) {
     return db.hydrus.prepare(
       `SELECT
         ${hydrusTables.currentMappings}.service_hash_id AS fileId,
@@ -381,7 +384,9 @@ module.exports = {
         ON ${hydrusTables.currentFiles}.service_hash_id =
           ${hydrusTables.repositoryHashIdMapTags}.service_hash_id
       WHERE
-        ${hydrusTables.currentMappings}.service_hash_id IN (${fileIds})`
+        ${hydrusTables.currentMappings}.service_hash_id IN (${fileIds})
+      AND
+        ${hydrusTables.currentMappings}.service_tag_id IN (${tagIds})`
     ).all()
   }
 }
