@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.8.0] - 2018-08-30
+
 ### Added
 
 + Added FOSSA badge
@@ -425,7 +427,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.7.1...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.8.0...develop
+[3.8.0]: https://github.com/mserajnik/hydrusrv/compare/3.7.1...3.8.0
 [3.7.1]: https://github.com/mserajnik/hydrusrv/compare/3.7.0...3.7.1
 [3.7.0]: https://github.com/mserajnik/hydrusrv/compare/3.6.0...3.7.0
 [3.6.0]: https://github.com/mserajnik/hydrusrv/compare/3.5.1...3.6.0
