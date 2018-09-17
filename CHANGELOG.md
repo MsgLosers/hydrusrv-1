@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.9.0] - 2018-09-17
+
 ### Added
 
 + Added the ability to exclude files by prefixing the undesired tag(s) with `-`
@@ -436,7 +438,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.8.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.9.0...develop
+[3.9.0]: https://github.com/mserajnik/hydrusrv/compare/3.8.0...3.9.0
 [3.8.0]: https://github.com/mserajnik/hydrusrv/compare/3.7.1...3.8.0
 [3.7.1]: https://github.com/mserajnik/hydrusrv/compare/3.7.0...3.7.1
 [3.7.0]: https://github.com/mserajnik/hydrusrv/compare/3.6.0...3.7.0
