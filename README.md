@@ -610,7 +610,11 @@ __Route:__ `GET /api/files?page=<page>&tags[]=<tag>&sort=<method>&direction=<sor
 __Info:__
 
 The `tags[]` parameter is optional and takes an arbitrary amount of tags (a
-single tag per `tag[]=`), each one limiting the result set further.
+single tag per `tag[]=`), each one limiting the result set further. You can
+also exclude files with certain tags from the results by prefixing the tag you
+want to exclude with `-`, e.g., `-sky`. To prevent confusion with tags that,
+for some reason, start with a minus, escape them with `\`, e.g., `\-house`
+(this is not necessary for `-` that are not located at the start of the tag).
 
 The `sort` parameter is also optional and is used to sort the results by a
 different field instead of `id` (which is the default sort method).
