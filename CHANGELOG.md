@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
++ Added the ability to exclude files by prefixing the undesired tag(s) with `-`
+
 ### Changed
 
 + Updated dependencies

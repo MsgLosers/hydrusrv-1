@@ -11,6 +11,20 @@ const generateFilePath = (type, hash) => {
   return `${config.url}${config.mediaBase}/original/${hash.toString('hex')}`
 }
 
+const prepareFile = file => {
+  if (!file) {
+    return file
+  }
+
+  file.mime = hydrusConfig.availableMimeTypes[file.mime]
+  file.mediaUrl = generateFilePath('original', file.hash)
+  file.thumbnailUrl = generateFilePath('thumbnail', file.hash)
+
+  delete file.hash
+
+  return file
+}
+
 module.exports = {
   getById (id) {
     const file = db.app.prepare(
@@ -27,14 +41,7 @@ module.exports = {
         id = ?`
     ).get(id)
 
-    if (file) {
-      file.mime = hydrusConfig.availableMimeTypes[file.mime]
-      file.mediaUrl = generateFilePath('original', file.hash)
-      file.thumbnailUrl = generateFilePath('thumbnail', file.hash)
-      delete file.hash
-    }
-
-    return file
+    return prepareFile(file)
   },
   get (page, sort = 'id', direction = null, namespaces = []) {
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
@@ -61,19 +68,50 @@ module.exports = {
         ${(page - 1) * config.filesPerPage}`
     ).all()
 
-    if (files.length) {
-      for (const file of files) {
-        file.mime = hydrusConfig.availableMimeTypes[file.mime]
-        file.mediaUrl = generateFilePath('original', file.hash)
-        file.thumbnailUrl = generateFilePath('thumbnail', file.hash)
-        delete file.hash
-      }
-    }
-
-    return files
+    return files.map(file => prepareFile(file))
   },
   getByTags (page, tags, sort = 'id', direction = null, namespaces = []) {
     tags = [...new Set(tags)]
+
+    let excludeTagsSubQuery = ''
+    let params = [tags, tags.length]
+
+    const excludeTags = tags.filter(
+      tag => tag.startsWith('-')
+    ).map(
+      tag => tag.replace('-', '')
+    )
+
+    tags = tags.filter(tag => !tag.startsWith('-'))
+    tags = tags.map(tag => tag.replace('\\-', '-'))
+
+    if (excludeTags.length) {
+      if (!tags.length) {
+        return this.getByExcludeTags(
+          page, excludeTags, sort, direction, namespaces
+        )
+      }
+
+      excludeTagsSubQuery = `
+        AND NOT EXISTS (
+          SELECT
+            *
+          FROM
+            hydrusrv_mappings
+          INNER JOIN
+            hydrusrv_tags
+            ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
+          WHERE
+            hydrusrv_mappings.file_id = hydrusrv_files.id
+          AND
+            hydrusrv_tags.name IN (
+              ${',?'.repeat(excludeTags.length).replace(',', '')}
+            )
+        )
+      `
+
+      params = [tags, excludeTags, tags.length]
+    }
 
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
 
@@ -99,6 +137,7 @@ module.exports = {
         ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
       WHERE
         hydrusrv_tags.name IN (${',?'.repeat(tags.length).replace(',', '')})
+      ${excludeTagsSubQuery}
       GROUP BY
         hydrusrv_files.id
       HAVING
@@ -109,18 +148,57 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(tags, tags.length)
+    ).all(...params)
 
-    if (files.length) {
-      for (const file of files) {
-        file.mime = hydrusConfig.availableMimeTypes[file.mime]
-        file.mediaUrl = generateFilePath('original', file.hash)
-        file.thumbnailUrl = generateFilePath('thumbnail', file.hash)
-        delete file.hash
-      }
+    return files.map(file => prepareFile(file))
+  },
+  getByExcludeTags (
+    page,
+    excludeTags,
+    sort = 'id',
+    direction = null,
+    namespaces = []
+  ) {
+    const orderBy = this.generateOrderBy(sort, direction, namespaces)
+
+    if (!orderBy) {
+      return this.getByExcludeTags(page, excludeTags)
     }
 
-    return files
+    const files = db.app.prepare(
+      `SELECT
+        hydrusrv_files.id,
+        hydrusrv_files.mime,
+        hydrusrv_files.size,
+        hydrusrv_files.width,
+        hydrusrv_files.height,
+        hydrusrv_files.hash
+      FROM
+        hydrusrv_files
+      WHERE NOT EXISTS (
+        SELECT
+          *
+        FROM
+          hydrusrv_mappings
+        INNER JOIN
+          hydrusrv_tags
+          ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
+        WHERE
+          hydrusrv_mappings.file_id = hydrusrv_files.id
+        AND
+          hydrusrv_tags.name IN (
+            ${',?'.repeat(excludeTags.length).replace(',', '')}
+          )
+      )
+      ORDER BY
+        ${orderBy}
+      LIMIT
+        ${config.filesPerPage}
+      OFFSET
+        ${(page - 1) * config.filesPerPage}`
+    ).all(excludeTags)
+
+    return files.map(file => prepareFile(file))
   },
   getTotalCount () {
     return db.app.prepare(
