@@ -14,16 +14,14 @@ const availableMimeTypes = {
   27: 'video/x-msvideo'
 }
 
-const supportedMimeTypes = () => {
-  return process.env.HYDRUS_SUPPORTED_MIME_TYPES.split(',').filter(
-    mimeType => (parseInt(mimeType) in availableMimeTypes)
-  )
-}
-
 module.exports = {
   filesPath: process.env.HYDRUS_FILES_PATH,
   tagRepository: process.env.HYDRUS_TAG_REPOSITORY,
   fileRepository: process.env.HYDRUS_FILE_REPOSITORY,
   availableMimeTypes: availableMimeTypes,
-  supportedMimeTypes: supportedMimeTypes()
+  supportedMimeTypes: process.env.HYDRUS_SUPPORTED_MIME_TYPES.split(
+    ','
+  ).filter(
+    mimeType => (parseInt(mimeType) in availableMimeTypes)
+  )
 }

@@ -3,28 +3,6 @@ const config = require('../config/app')
 const hydrusConfig = require('../config/hydrus')
 const tagsModel = require('./tags')
 
-const generateFilePath = (type, hash) => {
-  if (type === 'thumbnail') {
-    return `${config.url}${config.mediaBase}/thumbnails/${hash.toString('hex')}`
-  }
-
-  return `${config.url}${config.mediaBase}/original/${hash.toString('hex')}`
-}
-
-const prepareFile = file => {
-  if (!file) {
-    return file
-  }
-
-  file.mime = hydrusConfig.availableMimeTypes[file.mime]
-  file.mediaUrl = generateFilePath('original', file.hash)
-  file.thumbnailUrl = generateFilePath('thumbnail', file.hash)
-
-  delete file.hash
-
-  return file
-}
-
 module.exports = {
   getById (id) {
     const file = db.app.prepare(
@@ -41,7 +19,7 @@ module.exports = {
         id = ?`
     ).get(id)
 
-    return prepareFile(file)
+    return this.prepareFile(file)
   },
   get (page, sort = 'id', direction = null, namespaces = []) {
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
@@ -68,7 +46,7 @@ module.exports = {
         ${(page - 1) * config.filesPerPage}`
     ).all()
 
-    return files.map(file => prepareFile(file))
+    return files.map(file => this.prepareFile(file))
   },
   getByTags (page, tags, sort = 'id', direction = null, namespaces = []) {
     tags = [...new Set(tags)]
@@ -150,7 +128,7 @@ module.exports = {
         ${(page - 1) * config.filesPerPage}`
     ).all(...params)
 
-    return files.map(file => prepareFile(file))
+    return files.map(file => this.prepareFile(file))
   },
   getByExcludeTags (
     page,
@@ -198,7 +176,7 @@ module.exports = {
         ${(page - 1) * config.filesPerPage}`
     ).all(excludeTags)
 
-    return files.map(file => prepareFile(file))
+    return files.map(file => this.prepareFile(file))
   },
   getTotalCount () {
     return db.app.prepare(
@@ -265,5 +243,26 @@ module.exports = {
     }
 
     return namespacesOrderBy
+  },
+  generateFilePath (type, hash) {
+    if (type === 'thumbnail') {
+      return `${config.url}${config.mediaBase}/thumbnails/` +
+        hash.toString('hex')
+    }
+
+    return `${config.url}${config.mediaBase}/original/${hash.toString('hex')}`
+  },
+  prepareFile (file) {
+    if (!file) {
+      return file
+    }
+
+    file.mime = hydrusConfig.availableMimeTypes[file.mime]
+    file.mediaUrl = this.generateFilePath('original', file.hash)
+    file.thumbnailUrl = this.generateFilePath('thumbnail', file.hash)
+
+    delete file.hash
+
+    return file
   }
 }
