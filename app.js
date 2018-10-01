@@ -59,7 +59,7 @@ app.use(bodyParser.json())
 
 app.shuttingDown = false
 
-app.shutDown = (server) => {
+app.shutDown = server => {
   if (app.shuttingDown) {
     return
   }
