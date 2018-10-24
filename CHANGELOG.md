@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 + Increased performance when creating temporary data tables
++ Updated dependencies and clarified them in readme
 
 ## [3.10.0] - 2018-10-01
 

@@ -18,7 +18,7 @@ module.exports = {
       ) VALUES (
         ?, ?, ?, ?
       )`
-    ).run(userId, hash, mediaHash, expires).lastInsertROWID
+    ).run(userId, hash, mediaHash, expires).lastInsertRowid
 
     return this.getById(newTokenId)
   },
