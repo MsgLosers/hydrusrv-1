@@ -83,10 +83,17 @@ those packages directly if you cannnot resolve your issues:
 + [hydrus server][hydrus-server] (installing and running the server is quite
   difficult and not recommended for people who have no prior experience with
   hydrus; see [here][hydrus-server-installation] for installation instructions)
-+ [Node.js][node-js] (tested on `9.10.0`+)
-+ [Yarn][yarn] (tested on `1.6.0`+)
++ [Node.js][node-js]
++ [Yarn][yarn]
 + [node-gyp][node-gyp] (likely required for Windows, hydrusrv seems to install
   fine without it being globally installed on macOS and Linux)
+
+I usually use the latest versions of Node.js and Yarn; if there has not been an
+update to this repository in a while and something breaks on the latest
+Node/Yarn version, please [let me know][issues].
+
+__Node.js `11.x` is not yet supported due to__
+__[node-sqlite3 not building correctly][node-sqlite-3-issues].__
 
 ### Updating
 
@@ -875,6 +882,7 @@ You are welcome to help out!
 [node-js]: https://nodejs.org/en/
 [yarn]: https://yarnpkg.com/
 [node-gyp]: https://github.com/nodejs/node-gyp
+[node-sqlite-3-issues]: https://github.com/mapbox/node-sqlite3/issues/1063
 [semantic-versioning]: https://semver.org/
 [sqlite]: https://www.sqlite.org/
 [nginx]: https://nginx.org/
