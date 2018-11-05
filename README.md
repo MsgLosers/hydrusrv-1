@@ -69,14 +69,11 @@ user@local:hydrusrv$ yarn
 ```
 
 If you encounter any errors during installation, those are likely caused by
-two packages hydrusrv uses that both utilize [node-gyp][node-gyp] to compile
-their underlying libraries.
+packages hydrusrv uses that utilize native bindings (e.g.,
+[better-sqlite3][better-sqlite3] and [phc-argon2][phc-argon2]).
 
-Please take a look at the following resources and contact the maintainers of
-those packages directly if you cannnot resolve your issues:
-
-+ [better-sqlite3][better-sqlite3]
-+ [node-argon2][node-argon2]
+Please check the error message and contact the maintainers of those packages
+directly if you cannnot resolve your issues.
 
 ### Dependencies
 
@@ -85,8 +82,6 @@ those packages directly if you cannnot resolve your issues:
   hydrus; see [here][hydrus-server-installation] for installation instructions)
 + [Node.js][node-js]
 + [Yarn][yarn]
-+ [node-gyp][node-gyp] (likely required for Windows, hydrusrv seems to install
-  fine without it being globally installed on macOS and Linux)
 
 I usually use the latest versions of Node.js and Yarn; if there has not been an
 update to this repository in a while and something breaks on the latest
@@ -875,10 +870,9 @@ You are welcome to help out!
 [vue]: https://vuejs.org/
 [hydrusrvue]: https://github.com/mserajnik/hydrusrvue
 [better-sqlite3]: https://github.com/JoshuaWise/better-sqlite3/wiki/Troubleshooting-installation
-[node-argon2]: https://github.com/ranisalt/node-argon2#before-installing
+[phc-argon2]: https://github.com/simonepri/phc-argon2
 [node-js]: https://nodejs.org/en/
 [yarn]: https://yarnpkg.com/
-[node-gyp]: https://github.com/nodejs/node-gyp
 [semantic-versioning]: https://semver.org/
 [sqlite]: https://www.sqlite.org/
 [nginx]: https://nginx.org/
