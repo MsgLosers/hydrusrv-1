@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:10
+FROM mhart/alpine-node:latest
 
 RUN apk --update add build-base python
 

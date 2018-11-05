@@ -37,7 +37,7 @@ test.before(t => {
         path.resolve(__dirname, `storage/app_${port}.db`)
       )
 
-      await migrations.up(process.env.APP_DB_PATH)
+      migrations.run(process.env.APP_DB_PATH)
 
       app = require('../app')
       users = require('../server/models/users')

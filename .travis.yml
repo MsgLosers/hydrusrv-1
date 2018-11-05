@@ -1,4 +1,8 @@
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - yarn --version
 language: node_js
 node_js:
-  - '10'
-  # 11 not yet supported, see https://github.com/mapbox/node-sqlite3/issues/1063
+  - stable
+  - lts/*
