@@ -92,9 +92,6 @@ I usually use the latest versions of Node.js and Yarn; if there has not been an
 update to this repository in a while and something breaks on the latest
 Node/Yarn version, please [let me know][issues].
 
-__Node.js `11.x` is not yet supported due to__
-__[node-sqlite3 not building correctly][node-sqlite-3-issues].__
-
 ### Updating
 
 If you have installed via cloning the repository, you can update via Git:
@@ -882,7 +879,6 @@ You are welcome to help out!
 [node-js]: https://nodejs.org/en/
 [yarn]: https://yarnpkg.com/
 [node-gyp]: https://github.com/nodejs/node-gyp
-[node-sqlite-3-issues]: https://github.com/mapbox/node-sqlite3/issues/1063
 [semantic-versioning]: https://semver.org/
 [sqlite]: https://www.sqlite.org/
 [nginx]: https://nginx.org/
