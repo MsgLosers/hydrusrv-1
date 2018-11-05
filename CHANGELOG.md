@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 + Changed migration runner to no longer require node-sqlite
++ Cleaned up code
 
 ## [3.11.0] - 2018-10-24
 
