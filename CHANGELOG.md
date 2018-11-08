@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 + Fixed tags sometimes being assigned to the wrong files
++ Fixed namespaces not being limited to alphanumeric characters and underscores
 
 ## [3.12.1] - 2018-11-05
 

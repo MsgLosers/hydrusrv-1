@@ -255,7 +255,7 @@ module.exports = {
           ${hydrusTables.tags}.tag,
           INSTR(${hydrusTables.tags}.tag, ':'),
           -INSTR(${hydrusTables.tags}.tag, ':')
-        ) GLOB '*[a-zA-Z0-9_]*'
+        ) REGEXP '^[a-zA-Z0-9_]*$'
       AND
         ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})
       ORDER BY

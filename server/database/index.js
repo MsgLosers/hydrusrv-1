@@ -20,6 +20,16 @@ module.exports = {
     this.hydrus.prepare(
       `ATTACH '${hydrusConfig.mappingsDbPath}' AS mappings_db`
     ).run()
+
+    this.hydrus.function(
+      'regexp', (pattern, string) => {
+        if (pattern && string) {
+          return string.match(new RegExp(pattern)) !== null ? 1 : 0
+        }
+
+        return null
+      }
+    )
   },
   close () {
     this.app.close()
