@@ -80,7 +80,7 @@ module.exports = {
             hydrusrv_tags
             ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
           WHERE
-            hydrusrv_mappings.file_id = hydrusrv_files.id
+            hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
           AND
             hydrusrv_tags.name IN (
               ${',?'.repeat(excludeTags.length).replace(',', '')}
@@ -109,7 +109,7 @@ module.exports = {
         hydrusrv_files
       LEFT JOIN
         hydrusrv_mappings
-        ON hydrusrv_mappings.file_id = hydrusrv_files.id
+        ON hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
       LEFT JOIN
         hydrusrv_tags
         ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
@@ -162,7 +162,7 @@ module.exports = {
           hydrusrv_tags
           ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
         WHERE
-          hydrusrv_mappings.file_id = hydrusrv_files.id
+          hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
         AND
           hydrusrv_tags.name IN (
             ${',?'.repeat(excludeTags.length).replace(',', '')}

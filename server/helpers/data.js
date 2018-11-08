@@ -19,20 +19,7 @@ module.exports = {
       namespaces = this.getNamespaces()
       tags = this.getTags()
       files = this.getFiles(namespaces)
-
-      const indexedFiles = []
-
-      for (const file of files) {
-        indexedFiles[file.id] = file
-      }
-
-      const indexedTags = []
-
-      for (const tag of tags) {
-        indexedTags[tag.id] = tag
-      }
-
-      mappings = this.getMappings(indexedFiles, indexedTags)
+      mappings = this.getMappings()
 
       this.createTempNamespacesTable()
       this.createTempTagsTable()
@@ -154,6 +141,7 @@ module.exports = {
     db.app.prepare(
       `CREATE TEMP TABLE hydrusrv_files_new (
         id INTEGER NOT NULL PRIMARY KEY UNIQUE,
+        tags_id INTEGER UNIQUE DEFAULT NULL,
         mime INTEGER NOT NULL,
         size INTEGER NOT NULL,
         width INTEGER NOT NULL,
@@ -185,6 +173,7 @@ module.exports = {
       db.app.prepare(
         `INSERT INTO hydrusrv_files_new (
           id,
+          tags_id,
           mime,
           size,
           width,
@@ -199,11 +188,13 @@ module.exports = {
           ?,
           ?,
           ?,
+          ?,
           ?
           ${',?'.repeat(namespaceColumns.length)}
         )`
       ).run(
         file.id,
+        file.tagsId,
         file.mime,
         file.size,
         file.width,
@@ -217,9 +208,9 @@ module.exports = {
   createTempMappingsTable () {
     db.app.prepare(
       `CREATE TEMP TABLE hydrusrv_mappings_new (
-        file_id INTEGER NOT NULL,
+        file_tags_id INTEGER NOT NULL,
         tag_id INTEGER NOT NULL,
-        FOREIGN KEY(file_id) REFERENCES hydrusrv_files_new(id)
+        FOREIGN KEY(file_tags_id) REFERENCES hydrusrv_files_new(tags_id)
           ON UPDATE CASCADE
           ON DELETE CASCADE,
         FOREIGN KEY(tag_id) REFERENCES hydrusrv_tags_new(id)
@@ -231,8 +222,8 @@ module.exports = {
   fillTempMappingsTable (mappings) {
     for (const mapping of mappings) {
       db.app.prepare(
-        'INSERT INTO hydrusrv_mappings_new (file_id, tag_id) VALUES (?, ?)'
-      ).run(mapping.fileId, mapping.tagId)
+        'INSERT INTO hydrusrv_mappings_new (file_tags_id, tag_id) VALUES (?, ?)'
+      ).run(mapping.fileTagsId, mapping.tagId)
     }
   },
   getNamespaces () {
@@ -294,31 +285,11 @@ module.exports = {
     ).all()
   },
   getFiles (namespaces) {
-    const filesWithTags = db.hydrus.prepare(
+    const files = db.hydrus.prepare(
       `SELECT
         ${hydrusTables.currentFiles}.service_hash_id AS id,
         ${hydrusTables.hashes}.master_hash_id AS masterHashId,
-        ${hydrusTables.hashes}.hash,
-        ${hydrusTables.filesInfo}.mime,
-        ${hydrusTables.filesInfo}.size,
-        ${hydrusTables.filesInfo}.width,
-        ${hydrusTables.filesInfo}.height
-      FROM
-        ${hydrusTables.hashes}
-      NATURAL JOIN
-        ${hydrusTables.filesInfo}
-      NATURAL JOIN
-        ${hydrusTables.repositoryHashIdMapTags}
-      NATURAL JOIN
-        ${hydrusTables.currentFiles}
-      WHERE
-        ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
-    ).all()
-
-    const filesWithoutTags = db.hydrus.prepare(
-      `SELECT
-        ${hydrusTables.currentFiles}.service_hash_id AS id,
-        ${hydrusTables.hashes}.master_hash_id AS masterHashId,
+        ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tagsId,
         ${hydrusTables.hashes}.hash,
         ${hydrusTables.filesInfo}.mime,
         ${hydrusTables.filesInfo}.size,
@@ -330,33 +301,27 @@ module.exports = {
         ${hydrusTables.filesInfo}
       NATURAL JOIN
         ${hydrusTables.repositoryHashIdMapFiles}
+      LEFT JOIN
+        ${hydrusTables.repositoryHashIdMapTags}
+        ON ${hydrusTables.repositoryHashIdMapTags}.master_hash_id =
+          ${hydrusTables.hashes}.master_hash_id
       NATURAL JOIN
         ${hydrusTables.currentFiles}
       WHERE
-        ${hydrusTables.hashes}.master_hash_id NOT IN (
-          ${filesWithTags.map(row => row.masterHashId)}
-        )
-      AND
-        ${hydrusTables.currentFiles}.service_hash_id NOT IN (
-          ${filesWithTags.map(row => row.id)}
-        )
-      AND
         ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
     ).all()
-
-    const files = filesWithTags.concat(filesWithoutTags)
 
     let indexedFiles = []
 
     for (const file of files) {
-      indexedFiles[file.id] = file
+      indexedFiles[file.tagsId] = file
     }
 
     for (const namespace of namespaces) {
       const namespacedTags = db.hydrus.prepare(
         `SELECT
           ${hydrusTables.tags}.tag,
-          ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS fileId
+          ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tagsId
         FROM
           ${hydrusTables.currentMappings}
         NATURAL JOIN
@@ -375,8 +340,8 @@ module.exports = {
       const usedFileIds = []
 
       for (const namespacedTag of namespacedTags) {
-        if (!usedFileIds[namespacedTag.fileId]) {
-          usedFileIds[namespacedTag.fileId] = namespacedTag.fileId
+        if (!usedFileIds[namespacedTag.tagsId]) {
+          usedFileIds[namespacedTag.tagsId] = namespacedTag.tagsId
 
           reducedNamespacedTags.push(namespacedTag)
         }
@@ -387,10 +352,10 @@ module.exports = {
           continue
         }
 
-        if (indexedFiles[namespacedTag.fileId]) {
+        if (indexedFiles[namespacedTag.tagsId]) {
           const cleanedNamespace = namespace.split(' ').join('_')
 
-          indexedFiles[namespacedTag.fileId][`namespace_${cleanedNamespace}`] =
+          indexedFiles[namespacedTag.tagsId][`namespace_${cleanedNamespace}`] =
             namespacedTag.tag.replace(`${cleanedNamespace}:`, '')
         }
       }
@@ -398,27 +363,27 @@ module.exports = {
 
     return indexedFiles.filter(file => file)
   },
-  getMappings (fileIds, tagIds) {
-    const mappings = db.hydrus.prepare(
+  getMappings () {
+    return db.hydrus.prepare(
       `SELECT
-        ${hydrusTables.currentMappings}.service_hash_id AS fileId,
+        ${hydrusTables.currentMappings}.service_hash_id AS fileTagsId,
         ${hydrusTables.currentMappings}.service_tag_id AS tagId
       FROM
         ${hydrusTables.currentMappings}
       NATURAL JOIN
         ${hydrusTables.repositoryHashIdMapTags}
+      NATURAL JOIN
+        ${hydrusTables.filesInfo}
+      INNER JOIN
+        ${hydrusTables.repositoryHashIdMapFiles}
+        ON ${hydrusTables.repositoryHashIdMapFiles}.master_hash_id =
+          ${hydrusTables.filesInfo}.master_hash_id
       INNER JOIN
         ${hydrusTables.currentFiles}
         ON ${hydrusTables.currentFiles}.service_hash_id =
-          ${hydrusTables.repositoryHashIdMapTags}.service_hash_id`
+          ${hydrusTables.repositoryHashIdMapFiles}.service_hash_id
+      WHERE
+        ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
     ).all()
-
-    for (let i = 0; i < mappings.length; i++) {
-      if (!(fileIds[mappings[i].fileId] && tagIds[mappings[i].tagId])) {
-        delete mappings[i]
-      }
-    }
-
-    return mappings.filter(mapping => mapping)
   }
 }
