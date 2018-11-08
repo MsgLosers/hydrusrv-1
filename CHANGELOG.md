@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.13.0] - 2018-11-08
+
+### Changed
+
++ Updated dependencies
+
+### Fixed
+
++ Fixed tags sometimes being assigned to the wrong files
++ Fixed namespaces not being limited to alphanumeric characters and underscores
+
 ## [3.12.1] - 2018-11-05
 
 ### Fixed
@@ -466,7 +477,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.12.1...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.13.0...develop
+[3.13.0]: https://github.com/mserajnik/hydrusrv/compare/3.12.1...3.13.0
 [3.12.1]: https://github.com/mserajnik/hydrusrv/compare/3.12.0...3.12.1
 [3.12.0]: https://github.com/mserajnik/hydrusrv/compare/3.11.0...3.12.0
 [3.11.0]: https://github.com/mserajnik/hydrusrv/compare/3.10.0...3.11.0

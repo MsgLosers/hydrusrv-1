@@ -52,7 +52,7 @@ module.exports = {
       LEFT JOIN
         hydrusrv_files
         ON
-          hydrusrv_files.id = hydrusrv_mappings.file_id
+          hydrusrv_files.tags_id = hydrusrv_mappings.file_tags_id
       WHERE
         hydrusrv_files.id = ?
       ORDER BY
