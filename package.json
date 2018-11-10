@@ -1,6 +1,6 @@
 {
   "name": "hydrusrv",
-  "version": "3.13.0",
+  "version": "3.14.0",
   "description": "A small application for serving media handled with hydrus server via API",
   "keywords": [
     "hydrus",
@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "ava": "1.0.0-rc.1",
-    "eslint": "^5.8.0",
+    "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
