@@ -71,17 +71,15 @@ module.exports = {
       }
 
       excludeTagsSubQuery = `
-        AND NOT EXISTS (
-          SELECT
-            *
+        AND hydrusrv_files.tags_id NOT IN (
+          SELECT DISTINCT
+            hydrusrv_mappings.file_tags_id
           FROM
             hydrusrv_mappings
           INNER JOIN
             hydrusrv_tags
             ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
           WHERE
-            hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
-          AND
             hydrusrv_tags.name IN (
               ${',?'.repeat(excludeTags.length).replace(',', '')}
             )
@@ -153,17 +151,15 @@ module.exports = {
         hydrusrv_files.hash
       FROM
         hydrusrv_files
-      WHERE NOT EXISTS (
-        SELECT
-          *
+      WHERE hydrusrv_files.tags_id NOT IN (
+        SELECT DISTINCT
+          hydrusrv_mappings.file_tags_id
         FROM
           hydrusrv_mappings
         INNER JOIN
           hydrusrv_tags
           ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
         WHERE
-          hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
-        AND
           hydrusrv_tags.name IN (
             ${',?'.repeat(excludeTags.length).replace(',', '')}
           )
