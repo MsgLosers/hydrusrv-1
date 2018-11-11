@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Pinned Node version in Dockerfile to prevent possible issues in the future
 
+### Fixed
+
++ Fixed "Get files by tags sorted ascending" test
+
 ## [3.14.0] - 2018-11-10
 
 ### Changed
