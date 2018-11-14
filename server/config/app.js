@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  version: '3.14.0',
+  version: '3.15.0',
   url: process.env.URL,
   port: process.env.PORT || 8000,
   apiBase: process.env.API_BASE || '/api',

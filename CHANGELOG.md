@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.15.0] - 2018-11-14
+
 ### Added
 
 + Added profiling for temporary data updates
@@ -503,7 +505,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.14.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.15.0...develop
+[3.15.0]: https://github.com/mserajnik/hydrusrv/compare/3.14.0...3.15.0
 [3.14.0]: https://github.com/mserajnik/hydrusrv/compare/3.13.0...3.14.0
 [3.13.0]: https://github.com/mserajnik/hydrusrv/compare/3.12.1...3.13.0
 [3.12.1]: https://github.com/mserajnik/hydrusrv/compare/3.12.0...3.12.1
