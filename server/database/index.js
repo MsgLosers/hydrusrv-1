@@ -11,45 +11,46 @@ module.exports = {
 
     this.app.function(
       'regexp', (pattern, string) => {
-        if (pattern && string)
+        if (pattern && string) {
           return string.match(new RegExp(pattern)) !== null ? 1 : 0
+        }
+
         return null
       }
     )
   },
-
-  attachHydrus () {
+  attachHydrusDatabases () {
     try {
       this.app.prepare(
-        `attach '${hydrusConfig.serverDbPath}' as hydrus_server_db`
+        `ATTACH '${hydrusConfig.serverDbPath}' AS hydrus_server_db`
       ).run()
       this.app.prepare(
-        `attach '${hydrusConfig.masterDbPath}' as hydrus_master_db`
+        `ATTACH '${hydrusConfig.masterDbPath}' AS hydrus_master_db`
       ).run()
       this.app.prepare(
-        `attach '${hydrusConfig.mappingsDbPath}' as hydrus_mappings_db`
+        `ATTACH '${hydrusConfig.mappingsDbPath}' AS hydrus_mappings_db`
       ).run()
-    } catch(e) { 
-      console.log(e.stack) 
+    } catch (err) {
+      console.error(
+        `Error when trying to attach hydrus databases: Error:\n${err.stack}`
+      )
+
+      process.exit(1)
     }
   },
-
-  detachHydrus () {
+  detachHydrusDatabases () {
     try {
-      this.app.prepare(
-        `detach hydrus_server_db`
-      ).run()
-      this.app.prepare(
-        `detach hydrus_master_db`
-      ).run()
-      this.app.prepare(
-        `detach hydrus_mappings_db`
-      ).run()
-    } catch(e) { 
-      console.log(e.stack) 
+      this.app.prepare('DETACH hydrus_server_db').run()
+      this.app.prepare('DETACH hydrus_master_db').run()
+      this.app.prepare('DETACH hydrus_mappings_db').run()
+    } catch (err) {
+      console.error(
+        `Error when trying to detach hydrus databases: Error:\n${err.stack}`
+      )
+
+      process.exit(1)
     }
   },
-
   close () {
     this.app.close()
   }

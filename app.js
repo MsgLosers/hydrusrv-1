@@ -13,9 +13,9 @@ try {
   db.connect()
 } catch (err) {
   console.error(
-    'Could not connect to the databases. Make sure that the specified paths ' +
-      'are correct and that the user running hydrusrv has the necessary ' +
-      `permissions. Error:\n${err}`
+    'Could not connect to the database. Make sure that the specified path ' +
+      'is correct and that the user running hydrusrv has the necessary ' +
+      `permissions. Error:\n${err.stack}`
   )
 
   process.exit(1)
@@ -25,7 +25,9 @@ const updateData = (keepTablesAfterError = false) => {
   try {
     data.sync(keepTablesAfterError)
   } catch (err) {
-    console.error(`Could not create temporary data tables. Error:\n${err.stack}`)
+    console.error(
+      `Could not create temporary data tables. Error:\n${err.stack}`
+    )
 
     process.exit(1)
   }
