@@ -71,22 +71,14 @@ module.exports = {
       }
 
       excludeTagsSubQuery = `
-        AND hydrusrv_files.tags_id NOT IN (
-          SELECT DISTINCT
-            hydrusrv_mappings.file_tags_id
-          FROM
-            hydrusrv_mappings
-          INNER JOIN
-            hydrusrv_tags
-            ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
-          WHERE
-            hydrusrv_tags.name IN (
-              ${',?'.repeat(excludeTags.length).replace(',', '')}
-            )
+        except select file_tags_id from hydrusrv_mappings
+        where tag_id in (
+          select id from hydrusrv_tags 
+          where name in (${',?'.repeat(excludeTags.length).replace(',', '')})
         )
       `
 
-      params = [tags, excludeTags, tags.length]
+      params = [tags, tags.length, excludeTags]
     }
 
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
@@ -94,37 +86,36 @@ module.exports = {
     if (!orderBy) {
       return this.getByTags(page, tags)
     }
-
-    const files = db.app.prepare(
-      `SELECT
+    
+    const files = db.app.prepare(`
+      select
         hydrusrv_files.id,
         hydrusrv_files.mime,
         hydrusrv_files.size,
         hydrusrv_files.width,
         hydrusrv_files.height,
         hydrusrv_files.hash
-      FROM
+      from
         hydrusrv_files
-      LEFT JOIN
-        hydrusrv_mappings
-        ON hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
-      LEFT JOIN
-        hydrusrv_tags
-        ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
-      WHERE
-        hydrusrv_tags.name IN (${',?'.repeat(tags.length).replace(',', '')})
-      ${excludeTagsSubQuery}
-      GROUP BY
-        hydrusrv_files.id
-      HAVING
-        count(DISTINCT hydrusrv_tags.id) = ?
-      ORDER BY
+      where
+        hydrusrv_files.tags_id in (
+          select file_tags_id from hydrusrv_mappings
+          where tag_id in (
+            select id from hydrusrv_tags 
+            where name in (${',?'.repeat(tags.length).replace(',', '')})
+          )
+          group by file_tags_id
+          having count(*) = ?
+
+          ${excludeTagsSubQuery}
+        )
+      order by
         ${orderBy}
-      LIMIT
+      limit
         ${config.filesPerPage}
-      OFFSET
-        ${(page - 1) * config.filesPerPage}`
-    ).all(...params)
+      offset
+        ${(page - 1) * config.filesPerPage}
+    `).all(...params);
 
     return files.map(file => this.prepareFile(file))
   },
@@ -140,35 +131,40 @@ module.exports = {
     if (!orderBy) {
       return this.getByExcludeTags(page, excludeTags)
     }
-
+    
     const files = db.app.prepare(
-      `SELECT
+      `select
         hydrusrv_files.id,
         hydrusrv_files.mime,
         hydrusrv_files.size,
         hydrusrv_files.width,
         hydrusrv_files.height,
         hydrusrv_files.hash
-      FROM
+      from
         hydrusrv_files
-      WHERE hydrusrv_files.tags_id NOT IN (
-        SELECT DISTINCT
-          hydrusrv_mappings.file_tags_id
-        FROM
-          hydrusrv_mappings
-        INNER JOIN
-          hydrusrv_tags
-          ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
-        WHERE
-          hydrusrv_tags.name IN (
-            ${',?'.repeat(excludeTags.length).replace(',', '')}
+      where 
+        tags_id in (
+          select tags_id from hydrusrv_files where
+          tags_id not in (
+            select file_tags_id from hydrusrv_mappings
+            where tag_id in (
+              select id from hydrusrv_tags 
+              where name in (${',?'.repeat(excludeTags.length).replace(',', '')})
+            )
           )
-      )
-      ORDER BY
+
+          union
+                    
+          select tags_id from hydrusrv_files where 
+          tags_id not in (
+            select file_tags_id from hydrusrv_mappings
+          )
+        )
+      order by
         ${orderBy}
-      LIMIT
+      limit
         ${config.filesPerPage}
-      OFFSET
+      offset
         ${(page - 1) * config.filesPerPage}`
     ).all(excludeTags)
 

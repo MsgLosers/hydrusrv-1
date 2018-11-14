@@ -25,7 +25,7 @@ const updateData = (keepTablesAfterError = false) => {
   try {
     data.sync(keepTablesAfterError)
   } catch (err) {
-    console.error(`Could not create temporary data tables. Error:\n${err}`)
+    console.error(`Could not create temporary data tables. Error:\n${err.stack}`)
 
     process.exit(1)
   }
