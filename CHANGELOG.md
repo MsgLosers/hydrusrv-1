@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 + Pinned Node version in Dockerfile to prevent possible issues in the future
++ Replaced `console.log()` statements with `console.info()`
 
 ### Fixed
 
