@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 + Fixed "Get files by tags sorted ascending" test
++ Fixed license formatting
 
 ## [3.14.0] - 2018-11-10
 
