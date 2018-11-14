@@ -1,17 +1,17 @@
 const hydrusConfig = require('./hydrus')
 
 module.exports = {
-  tags: 'master_db.tags',
-  hashes: 'master_db.hashes',
-  filesInfo: 'main.files_info',
+  tags: 'hydrus_master_db.tags',
+  hashes: 'hydrus_master_db.hashes',
+  filesInfo: 'hydrus_server_db.files_info',
   currentMappings:
-    `mappings_db.current_mappings_${hydrusConfig.tagRepository}`,
+    `hydrus_mappings_db.current_mappings_${hydrusConfig.tagRepository}`,
   repositoryTagIdMap:
-    `master_db.repository_tag_id_map_${hydrusConfig.tagRepository}`,
+    `hydrus_master_db.repository_tag_id_map_${hydrusConfig.tagRepository}`,
   repositoryHashIdMapTags:
-    `master_db.repository_hash_id_map_${hydrusConfig.tagRepository}`,
+    `hydrus_master_db.repository_hash_id_map_${hydrusConfig.tagRepository}`,
   repositoryHashIdMapFiles:
-    `master_db.repository_hash_id_map_${hydrusConfig.fileRepository}`,
+    `hydrus_master_db.repository_hash_id_map_${hydrusConfig.fileRepository}`,
   currentFiles:
-    `main.current_files_${hydrusConfig.fileRepository}`
+    `hydrus_server_db.current_files_${hydrusConfig.fileRepository}`
 }

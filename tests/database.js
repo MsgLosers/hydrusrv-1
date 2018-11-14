@@ -1040,7 +1040,7 @@ test('database: get files by tags and excluded tags', t => {
 
 test('database: get files by tags sorted ascending', t => {
   t.deepEqual(
-    files.getByTags(1, ['lorem', 'ipsum', 'dolor', 'sit', 'amet'], 'asc'),
+    files.getByTags(1, ['lorem', 'ipsum', 'dolor', 'sit', 'amet'], 'id', 'asc'),
     [{
       id: 1,
       mime: 'image/png',

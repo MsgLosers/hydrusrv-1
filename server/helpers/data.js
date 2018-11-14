@@ -2,6 +2,7 @@ const config = require('../config/app')
 const db = require('../database')
 const hydrusConfig = require('../config/hydrus')
 const hydrusTables = require('../config/hydrus-db-tables')
+const profiler = require('./profiler')
 
 module.exports = {
   sync (keepTablesAfterError = false) {
@@ -13,18 +14,32 @@ module.exports = {
 
     let updateSuccessful = true
 
-    let namespaces, tags, files, mappings
+    profiler.init()
+
+    profiler.log('{datetime}: updating db...\n')
+
+    db.attachHydrusDatabases()
 
     try {
-      namespaces = this.getNamespaces()
-      tags = this.getTags()
-      files = this.getFiles(namespaces)
-      mappings = this.getMappings()
+      const namespaces = this.getNamespaces()
+      profiler.log('get namespaces: {dt}\n')
 
       this.createTempNamespacesTable()
       this.createTempTagsTable()
       this.createTempFilesTable(namespaces)
       this.createTempMappingsTable()
+
+      this.fillTempNamespacesTable(namespaces)
+      profiler.log('fill temporary namespaces table: {dt}\n')
+
+      this.fillTempTagsTable()
+      profiler.log('fill temporary tags table: {dt}\n')
+
+      this.fillTempFilesTable(namespaces)
+      profiler.log('fill temporary files table: {dt}\n')
+
+      this.fillTempMappingsTable()
+      profiler.log('fill temporary mappings table: {dt}\n')
     } catch (err) {
       updateSuccessful = false
 
@@ -34,17 +49,17 @@ module.exports = {
           'process of writing data while hydrusrv tried to read. hydrusrv ' +
           'will try updating again after the period set via ' +
           `\`DATA_UPDATE_INTERVAL\` (${config.dataUpdateInterval} seconds) ` +
-          'has passed.'
+          `has passed. Error:\n${err.stack}`
       )
     }
 
-    if (updateSuccessful) {
-      this.fillTempNamespacesTable(namespaces)
-      this.fillTempTagsTable(tags)
-      this.fillTempFilesTable(files, namespaces)
-      this.fillTempMappingsTable(mappings)
+    db.detachHydrusDatabases()
 
+    profiler.log()
+
+    if (updateSuccessful) {
       this.replaceCurrentTempTables()
+      profiler.log('replace current temporary tables: {dt}\n')
     } else if (keepTablesAfterError) {
       this.dropTempTables()
 
@@ -54,6 +69,26 @@ module.exports = {
       this.createTempMappingsTable()
 
       this.replaceCurrentTempTables()
+    }
+
+    profiler.log(`total: {t}\n\n`)
+
+    if (process.env.NODE_ENV === 'development') {
+      const totals = []
+
+      db.app.prepare(
+        `SELECT COUNT(*) FROM hydrusrv_namespaces
+          UNION
+        SELECT COUNT(*) FROM hydrusrv_files
+          UNION
+        SELECT COUNT(*) FROM hydrusrv_tags
+          UNION
+        SELECT COUNT(*) FROM hydrusrv_mappings`
+      ).all().map((s, i) => {
+        totals[['namespaces', 'files', 'tags', 'mappings'][i]] = s['COUNT(*)']
+      })
+
+      console.info(totals)
     }
 
     db.updatingData = false
@@ -111,21 +146,29 @@ module.exports = {
       )`
     ).run()
   },
-  fillTempTagsTable (tags) {
-    for (const tag of tags) {
-      db.app.prepare(
-        `INSERT INTO hydrusrv_tags_new (
-          id, name, file_count, random
-        ) VALUES (
-          ?, ?, ?, ?
-        )`
-      ).run(
-        tag.id,
-        tag.name,
-        tag.fileCount,
-        (Math.floor(Math.random() * 10000) + 10000).toString().substring(1)
-      )
-    }
+  fillTempTagsTable () {
+    db.app.prepare(
+      `INSERT INTO hydrusrv_tags_new
+        SELECT
+          ${hydrusTables.currentMappings}.service_tag_id AS id,
+          ${hydrusTables.tags}.tag AS name,
+          COUNT(*) AS fileCount,
+          SUBSTR(''||random(), -4) AS random
+        FROM
+          ${hydrusTables.currentMappings}
+        NATURAL JOIN
+          ${hydrusTables.repositoryTagIdMap}
+        NATURAL JOIN
+          ${hydrusTables.tags}
+        NATURAL JOIN
+          ${hydrusTables.repositoryHashIdMapTags}
+        NATURAL JOIN
+          ${hydrusTables.filesInfo}
+        WHERE
+          ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})
+        GROUP BY
+          ${hydrusTables.tags}.tag`
+    ).run()
   },
   createTempFilesTable (namespaces) {
     const namespaceColumns = []
@@ -146,13 +189,13 @@ module.exports = {
         size INTEGER NOT NULL,
         width INTEGER NOT NULL,
         height INTEGER NOT NULL,
-        hash BLOB_BYTES UNIQUE NOT NULL,
-        random TEXT NOT NULL
+        hash blob_bytes UNIQUE NOT NULL,
+        random text NOT NULL
         ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
       )`
     ).run()
   },
-  fillTempFilesTable (files, namespaces) {
+  fillTempFilesTable (namespaces) {
     const namespaceColumns = []
 
     for (const namespace of namespaces) {
@@ -161,49 +204,98 @@ module.exports = {
       )
     }
 
-    for (const file of files) {
-      const namespaceParameters = []
-
-      for (const namespace of namespaces) {
-        namespaceParameters.push(
-          file[`namespace_${namespace.split(' ').join('_')}`]
-        )
-      }
-
-      db.app.prepare(
-        `INSERT INTO hydrusrv_files_new (
-          id,
-          tags_id,
-          mime,
-          size,
-          width,
-          height,
-          hash,
-          random
-          ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
-        ) VALUES (
-          ?,
-          ?,
-          ?,
-          ?,
-          ?,
-          ?,
-          ?,
-          ?
-          ${',?'.repeat(namespaceColumns.length)}
-        )`
-      ).run(
-        file.id,
-        file.tagsId,
-        file.mime,
-        file.size,
-        file.width,
-        file.height,
-        file.hash,
-        (Math.floor(Math.random() * 10000) + 10000).toString().substring(1),
-        ...namespaceParameters
+    db.app.prepare(
+      `INSERT INTO hydrusrv_files_new (
+        id,
+        tags_id,
+        mime,
+        size,
+        width,
+        height,
+        hash,
+        random
+        ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
       )
-    }
+        SELECT
+          ${hydrusTables.currentFiles}.service_hash_id AS id,
+          ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tags_id,
+          ${hydrusTables.filesInfo}.mime,
+          ${hydrusTables.filesInfo}.size,
+          ${hydrusTables.filesInfo}.width,
+          ${hydrusTables.filesInfo}.height,
+          ${hydrusTables.hashes}.hash,
+          SUBSTR(''||random(), -4) AS random
+          ${namespaceColumns.length ? ', null AS ' + namespaceColumns.join(', null AS') : ''}
+        FROM
+          ${hydrusTables.hashes}
+        NATURAL JOIN
+          ${hydrusTables.filesInfo}
+        NATURAL JOIN
+          ${hydrusTables.repositoryHashIdMapFiles}
+        LET JOIN
+          ${hydrusTables.repositoryHashIdMapTags}
+          ON ${hydrusTables.repositoryHashIdMapTags}.master_hash_id =
+            ${hydrusTables.hashes}.master_hash_id
+        NATURAL JOIN
+          ${hydrusTables.currentFiles}
+        WHERE
+          ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
+    ).run()
+
+    db.app.prepare(
+      `CREATE TEMP TABLE namespaces_reduced_subquery AS
+        SELECT
+          master_tag_id, tag
+        FROM
+          ${hydrusTables.tags}
+        WHERE
+          tag LIKE '%_:_%'`
+    ).run()
+
+    const selectStatement = db.app.prepare(
+      `SELECT
+        REPLACE(namespaces_reduced_subquery.tag, :namespace, '') AS tag,
+        ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tags_id
+      FROM
+        ${hydrusTables.currentMappings}
+      NATURAL JOIN
+        ${hydrusTables.repositoryTagIdMap}
+      NATURAL JOIN
+        namespaces_reduced_subquery
+      NATURAL JOIN
+        ${hydrusTables.repositoryHashIdMapTags}
+      WHERE
+        namespaces_reduced_subquery.tag LIKE :namespace || '_%'
+      GROUP BY tags_id`
+    )
+
+    const updateStatements = []
+
+    namespaces.map((namespace, i) => {
+      updateStatements[namespaces[i]] = db.app.prepare(
+        `UPDATE hydrusrv_files_new
+          SET
+            namespace_${namespace.replace(' ', '_')} = :tag
+          WHERE
+            tags_id = :tags_id`
+      )
+    })
+
+    db.app.transaction(namespaces => {
+      for (const namespace of namespaces) {
+        const tags = selectStatement.all({
+          namespace: `${namespace}:`
+        })
+
+        db.app.transaction(tags => {
+          for (const tag of tags) {
+            updateStatements[namespace].run(tag)
+          }
+        })(tags)
+      }
+    })(namespaces)
+
+    db.app.prepare('DROP TABLE namespaces_reduced_subquery').run()
   },
   createTempMappingsTable () {
     db.app.prepare(
@@ -219,109 +311,38 @@ module.exports = {
       )`
     ).run()
   },
-  fillTempMappingsTable (mappings) {
-    for (const mapping of mappings) {
-      db.app.prepare(
-        'INSERT INTO hydrusrv_mappings_new (file_tags_id, tag_id) VALUES (?, ?)'
-      ).run(mapping.fileTagsId, mapping.tagId)
-    }
+  fillTempMappingsTable () {
+    db.app.prepare(
+      `INSERT INTO temp.hydrusrv_mappings_new
+        SELECT
+          ${hydrusTables.currentMappings}.service_hash_id AS fileTagsId,
+          ${hydrusTables.currentMappings}.service_tag_id AS tagId
+        FROM
+          ${hydrusTables.currentMappings}
+        NATURAL JOIN
+          ${hydrusTables.repositoryHashIdMapTags}
+        NATURAL JOIN
+          ${hydrusTables.filesInfo}
+        INNER JOIN
+          ${hydrusTables.repositoryHashIdMapFiles}
+          ON ${hydrusTables.repositoryHashIdMapFiles}.master_hash_id =
+            ${hydrusTables.filesInfo}.master_hash_id
+        INNER JOIN
+          ${hydrusTables.currentFiles}
+          ON ${hydrusTables.currentFiles}.service_hash_id =
+            ${hydrusTables.repositoryHashIdMapFiles}.service_hash_id
+        WHERE
+          ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
+    ).run()
   },
   getNamespaces () {
-    return db.hydrus.prepare(
-      `SELECT DISTINCT
-        SUBSTR(
+    return db.app.prepare(
+      `SELECT name FROM (
+        SELECT DISTINCT SUBSTR(
           ${hydrusTables.tags}.tag,
-          INSTR(${hydrusTables.tags}.tag, ':'),
-          -INSTR(${hydrusTables.tags}.tag, ':')
+          0,
+          INSTR(${hydrusTables.tags}.tag, ':')
         ) AS name
-      FROM
-        ${hydrusTables.currentMappings}
-      NATURAL JOIN
-        ${hydrusTables.repositoryTagIdMap}
-      NATURAL JOIN
-        ${hydrusTables.tags}
-      NATURAL JOIN
-        ${hydrusTables.repositoryHashIdMapTags}
-      NATURAL JOIN
-        ${hydrusTables.filesInfo}
-      WHERE
-        ${hydrusTables.tags}.tag LIKE '%:%'
-      AND
-        ${hydrusTables.tags}.tag NOT LIKE ':%'
-      AND
-        ${hydrusTables.tags}.tag NOT LIKE '%:'
-      AND
-        SUBSTR(
-          ${hydrusTables.tags}.tag,
-          INSTR(${hydrusTables.tags}.tag, ':'),
-          -INSTR(${hydrusTables.tags}.tag, ':')
-        ) REGEXP '^[a-zA-Z0-9_]*$'
-      AND
-        ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})
-      ORDER BY
-        name`
-    ).pluck().all()
-  },
-  getTags () {
-    return db.hydrus.prepare(
-      `SELECT
-        ${hydrusTables.currentMappings}.service_tag_id AS id,
-        ${hydrusTables.tags}.tag AS name,
-        COUNT(*) as fileCount
-      FROM
-        ${hydrusTables.currentMappings}
-      NATURAL JOIN
-        ${hydrusTables.repositoryTagIdMap}
-      NATURAL JOIN
-        ${hydrusTables.tags}
-      NATURAL JOIN
-        ${hydrusTables.repositoryHashIdMapTags}
-      NATURAL JOIN
-        ${hydrusTables.filesInfo}
-      WHERE
-        ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})
-      GROUP BY
-        ${hydrusTables.tags}.tag`
-    ).all()
-  },
-  getFiles (namespaces) {
-    const files = db.hydrus.prepare(
-      `SELECT
-        ${hydrusTables.currentFiles}.service_hash_id AS id,
-        ${hydrusTables.hashes}.master_hash_id AS masterHashId,
-        ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tagsId,
-        ${hydrusTables.hashes}.hash,
-        ${hydrusTables.filesInfo}.mime,
-        ${hydrusTables.filesInfo}.size,
-        ${hydrusTables.filesInfo}.width,
-        ${hydrusTables.filesInfo}.height
-      FROM
-        ${hydrusTables.hashes}
-      NATURAL JOIN
-        ${hydrusTables.filesInfo}
-      NATURAL JOIN
-        ${hydrusTables.repositoryHashIdMapFiles}
-      LEFT JOIN
-        ${hydrusTables.repositoryHashIdMapTags}
-        ON ${hydrusTables.repositoryHashIdMapTags}.master_hash_id =
-          ${hydrusTables.hashes}.master_hash_id
-      NATURAL JOIN
-        ${hydrusTables.currentFiles}
-      WHERE
-        ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
-    ).all()
-
-    let indexedFiles = []
-
-    for (const file of files) {
-      indexedFiles[file.tagsId] = file
-    }
-
-    for (const namespace of namespaces) {
-      const namespacedTags = db.hydrus.prepare(
-        `SELECT
-          ${hydrusTables.tags}.tag,
-          ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tagsId
         FROM
           ${hydrusTables.currentMappings}
         NATURAL JOIN
@@ -330,60 +351,17 @@ module.exports = {
           ${hydrusTables.tags}
         NATURAL JOIN
           ${hydrusTables.repositoryHashIdMapTags}
+        NATURAL JOIN
+          ${hydrusTables.filesInfo}
         WHERE
-          ${hydrusTables.tags}.tag LIKE '${namespace}:%'
-        ORDER BY
-          ${hydrusTables.tags}.tag`
-      ).all()
-
-      const reducedNamespacedTags = []
-      const usedFileIds = []
-
-      for (const namespacedTag of namespacedTags) {
-        if (!usedFileIds[namespacedTag.tagsId]) {
-          usedFileIds[namespacedTag.tagsId] = namespacedTag.tagsId
-
-          reducedNamespacedTags.push(namespacedTag)
-        }
-      }
-
-      for (const namespacedTag of reducedNamespacedTags) {
-        if (!namespacedTag) {
-          continue
-        }
-
-        if (indexedFiles[namespacedTag.tagsId]) {
-          const cleanedNamespace = namespace.split(' ').join('_')
-
-          indexedFiles[namespacedTag.tagsId][`namespace_${cleanedNamespace}`] =
-            namespacedTag.tag.replace(`${cleanedNamespace}:`, '')
-        }
-      }
-    }
-
-    return indexedFiles.filter(file => file)
-  },
-  getMappings () {
-    return db.hydrus.prepare(
-      `SELECT
-        ${hydrusTables.currentMappings}.service_hash_id AS fileTagsId,
-        ${hydrusTables.currentMappings}.service_tag_id AS tagId
-      FROM
-        ${hydrusTables.currentMappings}
-      NATURAL JOIN
-        ${hydrusTables.repositoryHashIdMapTags}
-      NATURAL JOIN
-        ${hydrusTables.filesInfo}
-      INNER JOIN
-        ${hydrusTables.repositoryHashIdMapFiles}
-        ON ${hydrusTables.repositoryHashIdMapFiles}.master_hash_id =
-          ${hydrusTables.filesInfo}.master_hash_id
-      INNER JOIN
-        ${hydrusTables.currentFiles}
-        ON ${hydrusTables.currentFiles}.service_hash_id =
-          ${hydrusTables.repositoryHashIdMapFiles}.service_hash_id
+          ${hydrusTables.tags}.tag LIKE '%_:_%'
+        AND
+          ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})
+      )
       WHERE
-        ${hydrusTables.filesInfo}.mime IN (${hydrusConfig.supportedMimeTypes})`
-    ).all()
+        name REGEXP '^[a-zA-Z0-9_]+$'
+      ORDER BY
+        name`
+    ).pluck().all()
   }
 }

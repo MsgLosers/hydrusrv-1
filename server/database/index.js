@@ -9,19 +9,7 @@ module.exports = {
       fileMustExist: true
     })
 
-    this.hydrus = new Database(hydrusConfig.serverDbPath, {
-      readonly: true,
-      fileMustExist: true
-    })
-
-    this.hydrus.prepare(
-      `ATTACH '${hydrusConfig.masterDbPath}' AS master_db`
-    ).run()
-    this.hydrus.prepare(
-      `ATTACH '${hydrusConfig.mappingsDbPath}' AS mappings_db`
-    ).run()
-
-    this.hydrus.function(
+    this.app.function(
       'regexp', (pattern, string) => {
         if (pattern && string) {
           return string.match(new RegExp(pattern)) !== null ? 1 : 0
@@ -31,8 +19,39 @@ module.exports = {
       }
     )
   },
+  attachHydrusDatabases () {
+    try {
+      this.app.prepare(
+        `ATTACH '${hydrusConfig.serverDbPath}' AS hydrus_server_db`
+      ).run()
+      this.app.prepare(
+        `ATTACH '${hydrusConfig.masterDbPath}' AS hydrus_master_db`
+      ).run()
+      this.app.prepare(
+        `ATTACH '${hydrusConfig.mappingsDbPath}' AS hydrus_mappings_db`
+      ).run()
+    } catch (err) {
+      console.error(
+        `Error when trying to attach hydrus databases: Error:\n${err.stack}`
+      )
+
+      process.exit(1)
+    }
+  },
+  detachHydrusDatabases () {
+    try {
+      this.app.prepare('DETACH hydrus_server_db').run()
+      this.app.prepare('DETACH hydrus_master_db').run()
+      this.app.prepare('DETACH hydrus_mappings_db').run()
+    } catch (err) {
+      console.error(
+        `Error when trying to detach hydrus databases: Error:\n${err.stack}`
+      )
+
+      process.exit(1)
+    }
+  },
   close () {
     this.app.close()
-    this.hydrus.close()
   }
 }

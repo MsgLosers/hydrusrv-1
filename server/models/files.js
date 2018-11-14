@@ -71,22 +71,14 @@ module.exports = {
       }
 
       excludeTagsSubQuery = `
-        AND hydrusrv_files.tags_id NOT IN (
-          SELECT DISTINCT
-            hydrusrv_mappings.file_tags_id
-          FROM
-            hydrusrv_mappings
-          INNER JOIN
-            hydrusrv_tags
-            ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
-          WHERE
-            hydrusrv_tags.name IN (
-              ${',?'.repeat(excludeTags.length).replace(',', '')}
-            )
+        EXCEPT SELECT file_tags_id from hydrusrv_mappings
+        WHERE tag_id IN (
+          SELECT id FROM hydrusrv_tags
+          WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
         )
       `
 
-      params = [tags, excludeTags, tags.length]
+      params = [tags, tags.length, excludeTags]
     }
 
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
@@ -105,19 +97,17 @@ module.exports = {
         hydrusrv_files.hash
       FROM
         hydrusrv_files
-      LEFT JOIN
-        hydrusrv_mappings
-        ON hydrusrv_mappings.file_tags_id = hydrusrv_files.tags_id
-      LEFT JOIN
-        hydrusrv_tags
-        ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
       WHERE
-        hydrusrv_tags.name IN (${',?'.repeat(tags.length).replace(',', '')})
-      ${excludeTagsSubQuery}
-      GROUP BY
-        hydrusrv_files.id
-      HAVING
-        count(DISTINCT hydrusrv_tags.id) = ?
+        hydrusrv_files.tags_id IN (
+          SELECT file_tags_id FROM hydrusrv_mappings
+          WHERE tag_id IN (
+            SELECT id FROM hydrusrv_tags
+            WHERE name IN (${',?'.repeat(tags.length).replace(',', '')})
+          )
+          GROUP BY file_tags_id
+          HAVING COUNT(*) = ?
+          ${excludeTagsSubQuery}
+        )
       ORDER BY
         ${orderBy}
       LIMIT
@@ -151,19 +141,23 @@ module.exports = {
         hydrusrv_files.hash
       FROM
         hydrusrv_files
-      WHERE hydrusrv_files.tags_id NOT IN (
-        SELECT DISTINCT
-          hydrusrv_mappings.file_tags_id
-        FROM
-          hydrusrv_mappings
-        INNER JOIN
-          hydrusrv_tags
-          ON hydrusrv_tags.id = hydrusrv_mappings.tag_id
-        WHERE
-          hydrusrv_tags.name IN (
-            ${',?'.repeat(excludeTags.length).replace(',', '')}
+      WHERE
+        tags_id IN (
+          SELECT tags_id FROM hydrusrv_files WHERE
+          tags_id NOT IN (
+            SELECT file_tags_id FROM hydrusrv_mappings
+            WHERE tag_id IN (
+              SELECT id FROM hydrusrv_tags
+              WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+            )
           )
-      )
+
+          UNION
+
+          SELECT tags_id FROM hydrusrv_files WHERE tags_id NOT IN (
+            SELECT file_tags_id FROM hydrusrv_mappings
+          )
+        )
       ORDER BY
         ${orderBy}
       LIMIT
