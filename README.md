@@ -53,6 +53,7 @@ also available.
         + [Getting media thumbnails](#getting-media-thumbnails)
 + [Demo](#demo)
 + [Caveats](#caveats)
++ [Credits](#credits)
 + [Donate](#donate)
 + [Maintainer](#maintainer)
 + [Contribute](#contribute)
@@ -824,6 +825,16 @@ are the ones I am currently aware of:
   when updating in case anything breaks if you are "dependent" on hydrusrv
   working. In addition, please [let me know][issues-url] if that happens.
 
+## Credits
+
+Special thanks to the user [FredericaBernkastel][frederica-bernkastel] for
+providing valuable input and writing some amazing performance improvements
+that makes hydrusrv far more usable, especially with larger hydrus server
+databases.
+
+A big thank you also to the [developer of hydrus network][hydrus-developer] for
+putting up with my questions and encouraging me to work on this project.
+
 ## Donate
 
 If you like hydrusrv and want to buy me a coffee, feel free to donate via
@@ -886,6 +897,8 @@ You are welcome to help out!
 [hydrusrvue-demo-api]: https://hydrusrvue.mser.at/api
 [vultr-cloud-compute]: https://www.vultr.com/pricing/
 [hydrusrvue-screenshots]: https://github.com/mserajnik/hydrusrvue#screenshots
+[frederica-bernkastel]: https://github.com/FredericaBernkastel
+[hydrus-developer]: https://github.com/hydrusnetwork
 
 [paypal-url]: https://www.paypal.me/mserajnik
 [paypal-image]: https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-rect-paypal-26px.png

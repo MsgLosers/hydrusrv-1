@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 + Added profiling for temporary data updates
++ Added "Credits" section to readme
 
 ### Changed
 
