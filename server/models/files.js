@@ -228,7 +228,11 @@ module.exports = {
           WHEN namespace_${namespace} IS NULL THEN 1
           ELSE 0
         END,
-        namespace_${namespace} ${direction || 'ASC'}`
+        CASE
+          WHEN namespace_${namespace} GLOB '*[^0-9]*'
+            THEN namespace_${namespace}
+          ELSE CAST(namespace_${namespace} AS DECIMAL)
+        END ${direction || 'ASC'}`
       )
     }
 
