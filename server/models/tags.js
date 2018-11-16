@@ -73,10 +73,10 @@ module.exports = {
           WHEN name LIKE ? THEN 0
           ELSE 1
         END,
-        name ASC
+        file_count DESC
       LIMIT
         10`
-    ).all(`%${partialTag}%`, `${partialTag}%`)
+    ).all(`%${partialTag}%`, `${partialTag}`)
   },
   getNamespaces () {
     return db.app.prepare(
