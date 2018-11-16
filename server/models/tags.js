@@ -75,7 +75,7 @@ module.exports = {
         END,
         file_count DESC
       LIMIT
-        10`
+        ${config.autocompleteLimit}`
     ).all(`%${partialTag}%`, `${partialTag}`)
   },
   getNamespaces () {

@@ -11,6 +11,7 @@ module.exports = {
   dataUpdateInterval: process.env.DATA_UPDATE_INTERVAL || 3600,
   filesPerPage: process.env.FILES_PER_PAGE || 42,
   tagsPerPage: process.env.TAGS_PER_PAGE || 42,
+  autocompleteLimit: process.env.AUTOCOMPLETE_LIMIT || 10,
   loggingEnabled: (process.env.LOGGING_ENABLED === 'true'),
   logfilePath: process.env.OVERRIDE_LOGFILE_PATH ||
     path.resolve(__dirname, '../../logs/access.log'),
