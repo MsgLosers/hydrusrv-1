@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Changed namespace sorting to account for numbers (e.g., `page:1`, `page:2`
   and `page:11` would be sorted as `1-11-2` before and `1-2-11` now)
 
+### Fixed
+
++ Escaped underscores in `LIKE` queries
+
 ## [3.15.0] - 2018-11-14
 
 ### Added

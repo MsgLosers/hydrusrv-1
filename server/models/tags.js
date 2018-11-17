@@ -20,6 +20,8 @@ module.exports = {
     ).all(...orderBy.params)
   },
   getContaining (page, contains, sort = 'id', direction = null) {
+    contains = contains.split('_').join('^_')
+
     const orderBy = this.generateOrderBy(sort, direction, contains)
 
     return db.app.prepare(
@@ -29,7 +31,7 @@ module.exports = {
       FROM
         hydrusrv_tags
       WHERE
-        name LIKE ?
+        name LIKE ? ESCAPE '^'
       ORDER BY
         ${orderBy.method}
       LIMIT
@@ -60,6 +62,8 @@ module.exports = {
     ).all(fileId)
   },
   complete (partialTag) {
+    partialTag = partialTag.split('_').join('^_')
+
     return db.app.prepare(
       `SELECT
         name,
@@ -67,10 +71,10 @@ module.exports = {
       FROM
         hydrusrv_tags
       WHERE
-        name LIKE ?
+        name LIKE ? ESCAPE '^'
       ORDER BY
         CASE
-          WHEN name LIKE ? THEN 0
+          WHEN name LIKE ? ESCAPE '^' THEN 0
           ELSE 1
         END,
         file_count DESC
@@ -95,7 +99,7 @@ module.exports = {
       return {
         method: `
           CASE
-            WHEN name LIKE ? THEN 0
+            WHEN name LIKE ? ESCAPE '^' THEN 0
             ELSE 1
           END,
           name ${direction || 'ASC'}
