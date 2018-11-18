@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.16.0] - 2018-11-18
+
+### Added
+
++ Made autocompletion result amount configurable
+
+### Changed
+
++ Changed autocomplete sorting (exact match at the top, rest sorted by
+  `file_count` descending)
++ Changed namespace sorting to account for numbers (e.g., `page:1`, `page:2`
+  and `page:11` would be sorted as `1-11-2` before and `1-2-11` now)
+
+### Fixed
+
++ Escaped underscores in `LIKE` queries
+
 ## [3.15.0] - 2018-11-14
 
 ### Added
@@ -505,7 +522,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.15.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.16.0...develop
+[3.16.0]: https://github.com/mserajnik/hydrusrv/compare/3.15.0...3.16.0
 [3.15.0]: https://github.com/mserajnik/hydrusrv/compare/3.14.0...3.15.0
 [3.14.0]: https://github.com/mserajnik/hydrusrv/compare/3.13.0...3.14.0
 [3.13.0]: https://github.com/mserajnik/hydrusrv/compare/3.12.1...3.13.0

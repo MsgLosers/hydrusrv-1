@@ -194,6 +194,7 @@ following are all the available settings (along with their default values):
   complete the update.
 + `FILES_PER_PAGE=42`: the results per page when listing files.
 + `TAGS_PER_PAGE=42`: the results per page when listing tags.
++ `AUTOCOMPLETE_LIMIT=10`: the maximum amount of tag completion results.
 + `LOGGING_ENABLED=false`: setting this to `false` disables access logging when
   `NODE_ENV=production` is set.
 + `OVERRIDE_LOGFILE_PATH=`: overrides the default logfile location
