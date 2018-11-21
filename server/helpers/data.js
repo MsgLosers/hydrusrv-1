@@ -232,7 +232,7 @@ module.exports = {
           ${hydrusTables.filesInfo}
         NATURAL JOIN
           ${hydrusTables.repositoryHashIdMapFiles}
-        LET JOIN
+        LEFT JOIN
           ${hydrusTables.repositoryHashIdMapTags}
           ON ${hydrusTables.repositoryHashIdMapTags}.master_hash_id =
             ${hydrusTables.hashes}.master_hash_id
