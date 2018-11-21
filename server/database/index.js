@@ -31,9 +31,7 @@ module.exports = {
         `ATTACH '${hydrusConfig.mappingsDbPath}' AS hydrus_mappings_db`
       ).run()
     } catch (err) {
-      console.error(
-        `Error when trying to attach hydrus databases: Error:\n${err.stack}`
-      )
+      console.error('error while trying to attach hydrus databases.', err)
 
       process.exit(1)
     }
@@ -44,9 +42,7 @@ module.exports = {
       this.app.prepare('DETACH hydrus_master_db').run()
       this.app.prepare('DETACH hydrus_mappings_db').run()
     } catch (err) {
-      console.error(
-        `Error when trying to detach hydrus databases: Error:\n${err.stack}`
-      )
+      console.error('error while trying to detach hydrus databases.', err)
 
       process.exit(1)
     }

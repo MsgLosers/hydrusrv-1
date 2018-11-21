@@ -34,17 +34,18 @@ module.exports = {
     }
   },
   createToken (userId, long) {
-    let expires = Math.floor(Date.now() / 1000) + 86400
-
-    if (long) {
-      expires = Math.floor(Date.now() / 1000) + 7776000
-    }
-
-    return tokens.create(userId, expires)
+    return tokens.create(
+      userId,
+      long
+        ? Math.floor(Date.now() / 1000) + 7776000
+        : Math.floor(Date.now() / 1000) + 86400
+    )
   },
   deleteTokens (userId, hash, all) {
     if (all) {
       tokens.delete(userId)
+
+      return
     }
 
     tokens.delete(userId, hash)

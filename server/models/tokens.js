@@ -23,15 +23,9 @@ module.exports = {
     return this.getById(newTokenId)
   },
   delete (userId, hash) {
-    let where = 'user_id'
-    let param = userId
-
-    if (hash) {
-      where = 'hash'
-      param = hash
-    }
-
-    db.app.prepare(`DELETE FROM tokens WHERE ${where} = ?`).run(param)
+    db.app.prepare(
+      `DELETE FROM tokens WHERE ${hash ? 'hash' : 'user_id'} = ?`
+    ).run(hash || userId)
   },
   getById (tokenId) {
     return db.app.prepare(

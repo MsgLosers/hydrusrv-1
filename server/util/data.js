@@ -45,11 +45,12 @@ module.exports = {
 
       console.warn(
         'hydrus server has no repositories set up yet or there has been an ' +
-          'error. This can happen if, for example, hydrus server was in the ' +
+          'error. this can happen if, for example, hydrus server was in the ' +
           'process of writing data while hydrusrv tried to read. hydrusrv ' +
           'will try updating again after the period set via ' +
           `\`DATA_UPDATE_INTERVAL\` (${config.dataUpdateInterval} seconds) ` +
-          `has passed. Error:\n${err.stack}`
+          'has passed.',
+        err
       )
     }
 
@@ -189,8 +190,8 @@ module.exports = {
         size INTEGER NOT NULL,
         width INTEGER NOT NULL,
         height INTEGER NOT NULL,
-        hash blob_bytes UNIQUE NOT NULL,
-        random text NOT NULL
+        hash BLOB_BYTES UNIQUE NOT NULL,
+        random TEXT NOT NULL
         ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
       )`
     ).run()
@@ -225,7 +226,7 @@ module.exports = {
           ${hydrusTables.filesInfo}.height,
           ${hydrusTables.hashes}.hash,
           SUBSTR(''||random(), -4) AS random
-          ${namespaceColumns.length ? ', null AS ' + namespaceColumns.join(', null AS') : ''}
+          ${namespaceColumns.length ? ', null AS ' + namespaceColumns.join(', null AS ') : ''}
         FROM
           ${hydrusTables.hashes}
         NATURAL JOIN
@@ -243,7 +244,7 @@ module.exports = {
     ).run()
 
     db.app.prepare(
-      `CREATE TEMP TABLE namespaces_reduced_subquery AS
+      `CREATE TEMP TABLE temp_namespaces_reduced AS
         SELECT
           master_tag_id, tag
         FROM
@@ -254,18 +255,18 @@ module.exports = {
 
     const selectStatement = db.app.prepare(
       `SELECT
-        REPLACE(namespaces_reduced_subquery.tag, :namespace, '') AS tag,
+        REPLACE(temp_namespaces_reduced.tag, :namespace, '') AS tag,
         ${hydrusTables.repositoryHashIdMapTags}.service_hash_id AS tags_id
       FROM
         ${hydrusTables.currentMappings}
       NATURAL JOIN
         ${hydrusTables.repositoryTagIdMap}
       NATURAL JOIN
-        namespaces_reduced_subquery
+        temp_namespaces_reduced
       NATURAL JOIN
         ${hydrusTables.repositoryHashIdMapTags}
       WHERE
-        namespaces_reduced_subquery.tag LIKE :namespace || '_%'
+        temp_namespaces_reduced.tag LIKE :namespace || '_%'
       GROUP BY tags_id`
     )
 
@@ -295,7 +296,7 @@ module.exports = {
       }
     })(namespaces)
 
-    db.app.prepare('DROP TABLE namespaces_reduced_subquery').run()
+    db.app.prepare('DROP TABLE temp_namespaces_reduced').run()
   },
   createTempMappingsTable () {
     db.app.prepare(

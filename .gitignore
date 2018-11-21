@@ -2,7 +2,7 @@
 /storage/*.db
 /storage/*.db-journal
 /tests/storage/*.db
-/storage/*.db-journal
+/tests/storage/*.db-journal
 .env
 *.log
 *.db-shm

@@ -66,7 +66,7 @@ module.exports = {
 
           dbMigrations = dbMigrations.filter(x => x.id !== migration.id)
 
-          console.info(`Migrated "${migration.name}" down.`)
+          console.info(`migrated "${migration.name}" down.`)
         } catch (err) {
           this.db.prepare('ROLLBACK').run()
 
@@ -92,7 +92,7 @@ module.exports = {
           ).run(migration.id, migration.name, migration.up, migration.down)
           this.db.prepare('COMMIT').run()
 
-          console.info(`Migrated "${migration.name}" up.`)
+          console.info(`migrated "${migration.name}" up.`)
         } catch (err) {
           this.db.prepare('ROLLBACK').run()
 

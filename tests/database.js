@@ -15,9 +15,9 @@ let originalBaseUrl, thumbnailsBaseUrl, testTokenHash
 
 test.before(t => {
   return new Promise(resolve => {
-    portscanner.findAPortNotInUse(8000, 9000, '127.0.0.1', async (err, port) => {
+    portscanner.findAPortNotInUse(8000, 9000, '127.0.0.1', (err, port) => {
       if (err || !port) {
-        console.error('Could not determine open port for test instance.')
+        console.error('could not determine open port for test instance.')
 
         process.exit(1)
       }
@@ -56,23 +56,15 @@ test.before(t => {
 })
 
 test.serial('database: create user', async t => {
-  try {
-    await users.create('johndoe', '0123456789abcdef')
-  } catch (err) {
-    throw err
-  }
+  await users.create('johndoe', '0123456789abcdef')
 
   t.truthy(users.getById(1).username === 'johndoe')
 })
 
 test.serial('database: update user', async t => {
-  try {
-    await users.update(
-      1, { username: 'johndoes', password: 'abcdef0123456789' }
-    )
-  } catch (err) {
-    throw err
-  }
+  await users.update(
+    1, { username: 'johndoes', password: 'abcdef0123456789' }
+  )
 
   t.truthy(users.getById(1).username === 'johndoes')
 })
