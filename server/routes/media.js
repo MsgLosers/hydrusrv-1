@@ -1,5 +1,6 @@
 const router = require('express').Router()
 
+const config = require('../config/app')
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 const media = require('../util/media')
@@ -8,15 +9,17 @@ router.get('/original/:mediaHash',
   middleware.media.get.inputValidationConfig,
   middleware.media.get.validateInput,
   async (req, res, next) => {
-    try {
-      if (!controllers.auth.isValidMediaToken(req.query.token)) {
-        return next({
-          customStatus: 404,
-          customName: 'NotFoundError'
-        })
+    if (config.authenticationRequired) {
+      try {
+        if (!controllers.auth.isValidMediaToken(req.query.token)) {
+          return next({
+            customStatus: 404,
+            customName: 'NotFoundError'
+          })
+        }
+      } catch (err) {
+        return next(err)
       }
-    } catch (err) {
-      return next(err)
     }
 
     if (!media.fileExists('original', req.params.mediaHash)) {
@@ -39,15 +42,17 @@ router.get('/thumbnails/:mediaHash',
   middleware.media.get.inputValidationConfig,
   middleware.media.get.validateInput,
   async (req, res, next) => {
-    try {
-      if (!controllers.auth.isValidMediaToken(req.query.token)) {
-        return next({
-          customStatus: 404,
-          customName: 'NotFoundError'
-        })
+    if (config.authenticationRequired) {
+      try {
+        if (!controllers.auth.isValidMediaToken(req.query.token)) {
+          return next({
+            customStatus: 404,
+            customName: 'NotFoundError'
+          })
+        }
+      } catch (err) {
+        return next(err)
       }
-    } catch (err) {
-      return next(err)
     }
 
     if (!media.fileExists('thumbnail', req.params.mediaHash)) {

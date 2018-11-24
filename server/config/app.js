@@ -7,6 +7,9 @@ module.exports = {
   apiBase: process.env.API_BASE || '/api',
   mediaBase: process.env.MEDIA_BASE || '/media',
   registrationEnabled: (process.env.REGISTRATION_ENABLED === 'true'),
+  authenticationRequired: process.env.AUTHENTICATION_REQUIRED
+    ? (process.env.AUTHENTICATION_REQUIRED === 'true')
+    : true,
   minPasswordLength: process.env.MIN_PASSWORD_LENGTH || 16,
   dataUpdateInterval: process.env.DATA_UPDATE_INTERVAL || 3600,
   filesPerPage: process.env.FILES_PER_PAGE || 42,

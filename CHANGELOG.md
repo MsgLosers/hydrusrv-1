@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
++ Added an `AUTHENTICATION_REQUIRED` setting that can be used to make
+  authentication optional instead of needed for accessing
+  non-authentication-related routes
+
 ### Changed
 
 + Refactored and cleaned up code

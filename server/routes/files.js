@@ -1,10 +1,11 @@
 const router = require('express').Router()
 
+const config = require('../config/app')
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.get('/',
-  middleware.auth.validateToken,
+  ...(config.authenticationRequired ? [middleware.auth.validateToken] : []),
   middleware.files.get.inputValidationConfig,
   middleware.files.get.validateInput,
   (req, res, next) => {
@@ -21,7 +22,7 @@ router.get('/',
 )
 
 router.get('/:id',
-  middleware.auth.validateToken,
+  ...(config.authenticationRequired ? [middleware.auth.validateToken] : []),
   middleware.files.getSingle.inputValidationConfig,
   middleware.files.getSingle.validateInput,
   (req, res, next) => {

@@ -1,10 +1,11 @@
 const router = require('express').Router()
 
+const config = require('../config/app')
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.post('/',
-  middleware.auth.validateToken,
+  ...(config.authenticationRequired ? [middleware.auth.validateToken] : []),
   middleware.tags.autocomplete.inputValidationConfig,
   middleware.tags.autocomplete.validateInput,
   (req, res, next) => {
