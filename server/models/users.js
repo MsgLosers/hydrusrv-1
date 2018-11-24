@@ -6,15 +6,11 @@ upash.install('argon2', require('@phc/argon2'))
 
 module.exports = {
   async create (username, password) {
-    try {
-      const passwordHash = await upash.hash(password)
+    const passwordHash = await upash.hash(password)
 
-      db.app.prepare(
-        'INSERT INTO users (username, password, created) VALUES (?, ?, ?)'
-      ).run(username, passwordHash, Math.floor(Date.now() / 1000))
-    } catch (err) {
-      throw err
-    }
+    db.app.prepare(
+      'INSERT INTO users (username, password, created) VALUES (?, ?, ?)'
+    ).run(username, passwordHash, Math.floor(Date.now() / 1000))
   },
   async update (userId, data) {
     const placeholders = []
@@ -27,12 +23,7 @@ module.exports = {
 
     if (data.password) {
       placeholders.push('password = ?')
-
-      try {
-        params.push(await upash.hash(data.password))
-      } catch (err) {
-        throw err
-      }
+      params.push(await upash.hash(data.password))
     }
 
     params.push(userId)
@@ -77,14 +68,10 @@ module.exports = {
       return false
     }
 
-    try {
-      if (await upash.verify(user.password, password)) {
-        return user
-      }
-
-      return false
-    } catch (err) {
-      throw err
+    if (await upash.verify(user.password, password)) {
+      return user
     }
+
+    return false
   }
 }

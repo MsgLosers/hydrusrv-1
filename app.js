@@ -5,7 +5,7 @@ const logger = require('morgan')
 
 const config = require('./server/config/app')
 const db = require('./server/database')
-const data = require('./server/helpers/data')
+const data = require('./server/util/data')
 
 const app = express()
 
@@ -13,9 +13,10 @@ try {
   db.connect()
 } catch (err) {
   console.error(
-    'Could not connect to the database. Make sure that the specified path ' +
+    'could not connect to the database. make sure that the specified path ' +
       'is correct and that the user running hydrusrv has the necessary ' +
-      `permissions. Error:\n${err.stack}`
+      'permissions.',
+    err
   )
 
   process.exit(1)
@@ -25,9 +26,7 @@ const updateData = (keepTablesAfterError = false) => {
   try {
     data.sync(keepTablesAfterError)
   } catch (err) {
-    console.error(
-      `Could not create temporary data tables. Error:\n${err.stack}`
-    )
+    console.error('could not create temporary data tables.', err)
 
     process.exit(1)
   }
@@ -68,7 +67,7 @@ app.shutDown = server => {
 
   app.shuttingDown = true
 
-  console.info('Received kill signal, shutting down gracefully.')
+  console.info('received kill signal, shutting down gracefully.')
 
   clearInterval(updateInterval)
 
@@ -79,7 +78,7 @@ app.shutDown = server => {
   })
 
   setTimeout(() => {
-    console.error('Could not shut down in time, shutting down forcefully.')
+    console.error('could not shut down in time, shutting down forcefully.')
 
     process.exit(1)
   }, 10000)

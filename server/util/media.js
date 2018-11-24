@@ -5,27 +5,31 @@ const readChunk = require('read-chunk')
 const hydrusConfig = require('../config/hydrus')
 
 module.exports = {
-  fileExists (type, hash) {
+  async fileExists (type, hash) {
     const directory = hash.substring(0, 2)
     const extension = type === 'thumbnail' ? '.thumbnail' : ''
     const filePath =
       `${hydrusConfig.filesPath}/${directory}/${hash}${extension}`
 
-    return fs.existsSync(filePath)
+    return new Promise((resolve, reject) => {
+      fs.access(filePath, err => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve()
+      })
+    })
   },
-  getFileData (type, hash) {
+  async getFileData (type, hash) {
     const directory = hash.substring(0, 2)
     const extension = type === 'thumbnail' ? '.thumbnail' : ''
     const filePath =
       `${hydrusConfig.filesPath}/${directory}/${hash}${extension}`
 
-    try {
-      return {
-        path: filePath,
-        mimeType: fileType(readChunk.sync(filePath, 0, 4100)).mime
-      }
-    } catch (err) {
-      throw err
+    return {
+      path: filePath,
+      mimeType: fileType(await readChunk(filePath, 0, 4100)).mime
     }
   }
 }

@@ -184,6 +184,11 @@ following are all the available settings (along with their default values):
   hydrusrv.
 + `REGISTRATION_ENABLED=true`: setting this to `false` disables the creation of
   new users.
++ `AUTHENTICATION_REQUIRED=true`: setting this to `false` allows the access of
+  all non-authentication-related routes without providing a (media) token,
+  effectively making the API open for anyone to access. This does not disable
+  authentication-related routes altogether, it merely makes authentication
+  optional.
 + `MIN_PASSWORD_LENGTH=16`: sets the minimum password length when creating or
   updating users. Providing a higher value than `1024` will discard the value
   and use `1024` as the minimum length instead.
@@ -265,10 +270,11 @@ return an error with status code `404` when they do not exist while lists
 
 #### Authentication
 
-All the routes except the base route (`/api`), the ones for registering new
-users and creating tokens and the ones returning the actual media files are
-protected with a token-based authentication. In order to access these routes, a
-valid token must be provided via an `Authorization: Bearer <token>` header.
+By default, all the routes except the base route (`/api`), the ones for
+registering new users and creating tokens and the ones returning the actual
+media files are protected with a token-based authentication. In order to access
+these routes, a valid token must be provided via an
+`Authorization: Bearer <token>` header.
 
 When updating or deleting users and tokens, the provided authentication token
 is also used to identify which user/token(s) are to be modified/deleted.
@@ -277,6 +283,9 @@ Media files are protected with media tokens that are created alongside
 authentication tokens. Such a media token must be provided as query parameter
 when trying to access media files and expires alongside the authentication
 token.
+
+The requirement of (media) tokens for all non-authentication-related routes can
+be disabled by setting `AUTHENTICATION_REQUIRED` to `false`.
 
 #### Errors
 
@@ -734,6 +743,11 @@ __Possible errors:__
 
 __Route:__ `GET /media/originals/<media hash>?token=<media token>`
 
+__Info:__
+
+The `token` parameter is optional, when `AUTHENTICATION_REQUIRED` is set to
+`false`.
+
 __Output on success:__ The requested media file
 
 __Possible errors:__
@@ -749,6 +763,11 @@ __Possible errors:__
 ###### Getting media thumbnails
 
 __Route:__ `GET /media/thumbnails/<media hash>?token=<media token>`
+
+__Info:__
+
+The `token` parameter is optional, when `AUTHENTICATION_REQUIRED` is set to
+`false`.
 
 __Output on success:__ The requested media thumbnail
 
