@@ -1,4 +1,4 @@
-const config = require('../config/app')
+const config = require('../config')
 const infoRouter = require('./info')
 const usersRouter = require('./users')
 const tokensRouter = require('./tokens')

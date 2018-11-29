@@ -1,11 +1,11 @@
-const db = require('../database')
-const config = require('../config/app')
+const db = require('../db')
+const config = require('../config')
 
 module.exports = {
   get (page, sort = 'id', direction = null) {
     const orderBy = this.generateOrderBy(sort, direction)
 
-    return db.app.prepare(
+    return db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -24,7 +24,7 @@ module.exports = {
 
     const orderBy = this.generateOrderBy(sort, direction, contains)
 
-    return db.app.prepare(
+    return db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -41,7 +41,7 @@ module.exports = {
     ).all(`%${contains}%`, ...orderBy.params)
   },
   getOfFile (fileId) {
-    return db.app.prepare(
+    return db.content.prepare(
       `SELECT
         hydrusrv_tags.name,
         hydrusrv_tags.file_count AS fileCount
@@ -64,7 +64,7 @@ module.exports = {
   complete (partialTag) {
     partialTag = partialTag.split('_').join('^_')
 
-    return db.app.prepare(
+    return db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -83,12 +83,12 @@ module.exports = {
     ).all(`%${partialTag}%`, `${partialTag}`)
   },
   getNamespaces () {
-    return db.app.prepare(
+    return db.content.prepare(
       'SELECT name FROM hydrusrv_namespaces ORDER BY name'
     ).all()
   },
   getTotalCount () {
-    return db.app.prepare(
+    return db.content.prepare(
       'SELECT COUNT(name) as count FROM hydrusrv_tags'
     ).get()
   },

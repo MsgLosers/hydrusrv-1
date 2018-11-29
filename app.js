@@ -1,59 +1,47 @@
 const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
-const logger = require('morgan')
+const accessLogger = require('morgan')
 
-const config = require('./server/config/app')
-const db = require('./server/database')
-const data = require('./server/util/data')
+const config = require('./server/config')
+const db = require('./server/db')
+const logger = require('./server/util/logger')
 
 const app = express()
 
 try {
   db.connect()
 } catch (err) {
-  console.error(
-    'could not connect to the database. make sure that the specified path ' +
-      'is correct and that the user running hydrusrv has the necessary ' +
-      'permissions.',
-    err
+  logger.log(
+    'could not connect to the databases. make sure that the specified paths ' +
+      'are correct and that the user running hydrusrv has the necessary ' +
+      `permissions.\n${err}`,
+    'error'
   )
 
   process.exit(1)
 }
 
-const updateData = (keepTablesAfterError = false) => {
-  try {
-    data.sync(keepTablesAfterError)
-  } catch (err) {
-    console.error('could not create temporary data tables.', err)
-
-    process.exit(1)
-  }
-}
-
-updateData(true)
-const updateInterval = setInterval(
-  updateData, config.dataUpdateInterval * 1000
-)
-
 if (process.env.NODE_ENV === 'development') {
-  app.use(logger('dev'))
-} else if (process.env.NODE_ENV === 'production' && config.loggingEnabled) {
+  app.use(accessLogger('dev'))
+} else if (
+  process.env.NODE_ENV === 'production' && config.accessLoggingEnabled
+) {
   const accessLogStream = fs.createWriteStream(
-    config.logfilePath, { flags: 'a' }
+    config.accessLogfilePath, { flags: 'a' }
   )
 
-  accessLogStream.on('error', () => {
-    console.error(
+  accessLogStream.on('error', err => {
+    logger.log(
       'Could not write logfile. Make sure that hydrusrv has write access to ' +
-        'the specified logfile location or disable logging.'
+        `the specified logfile location or disable logging.\n${err}`,
+      'error'
     )
 
     process.exit(1)
   })
 
-  app.use(logger('combined', { stream: accessLogStream }))
+  app.use(accessLogger('combined', { stream: accessLogStream }))
 }
 
 app.use(bodyParser.json())
@@ -67,21 +55,8 @@ app.shutDown = server => {
 
   app.shuttingDown = true
 
-  console.info('received kill signal, shutting down gracefully.')
-
-  clearInterval(updateInterval)
-
   db.close()
-
-  server.close(() => {
-    process.exit(0)
-  })
-
-  setTimeout(() => {
-    console.error('could not shut down in time, shutting down forcefully.')
-
-    process.exit(1)
-  }, 10000)
+  server.close()
 }
 
 app.use((req, res, next) => {

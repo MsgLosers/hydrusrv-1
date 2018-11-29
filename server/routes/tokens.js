@@ -4,13 +4,13 @@ const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.post('/',
-  middleware.auth.createToken.inputValidationConfig,
-  middleware.auth.createToken.validateInput,
+  middleware.authentication.createToken.inputValidationConfig,
+  middleware.authentication.createToken.validateInput,
   async (req, res, next) => {
     let validUser
 
     try {
-      validUser = await controllers.auth.getValidUser(
+      validUser = await controllers.authentication.getValidUser(
         req.body.username, req.body.password, true
       )
 
@@ -27,7 +27,7 @@ router.post('/',
     const data = {}
 
     try {
-      data.token = controllers.auth.createToken(
+      data.token = controllers.authentication.createToken(
         validUser.id, req.body.long
       )
     } catch (err) {
@@ -42,12 +42,12 @@ router.post('/',
 )
 
 router.delete('/',
-  middleware.auth.validateToken,
-  middleware.auth.deleteToken.inputValidationConfig,
-  middleware.auth.deleteToken.validateInput,
+  middleware.authentication.validateToken,
+  middleware.authentication.deleteToken.inputValidationConfig,
+  middleware.authentication.deleteToken.validateInput,
   (req, res, next) => {
     try {
-      controllers.auth.deleteTokens(
+      controllers.authentication.deleteTokens(
         res.locals.userId, res.locals.token, req.body.all
       )
     } catch (err) {

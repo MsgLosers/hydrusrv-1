@@ -4,11 +4,11 @@ const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.post('/',
-  middleware.auth.createUser.inputValidationConfig,
-  middleware.auth.createUser.validateInput,
+  middleware.authentication.createUser.inputValidationConfig,
+  middleware.authentication.createUser.validateInput,
   async (req, res, next) => {
     try {
-      if (controllers.auth.getUserByName(req.body.username)) {
+      if (controllers.authentication.getUserByName(req.body.username)) {
         return next({
           customStatus: 400,
           customName: 'UsernameExistsError'
@@ -19,7 +19,7 @@ router.post('/',
     }
 
     try {
-      await controllers.auth.createUser(
+      await controllers.authentication.createUser(
         req.body.username, req.body.password
       )
     } catch (err) {
@@ -33,13 +33,13 @@ router.post('/',
 )
 
 router.put('/',
-  middleware.auth.validateToken,
-  middleware.auth.updateUser.inputValidationConfig,
-  middleware.auth.updateUser.validateInput,
+  middleware.authentication.validateToken,
+  middleware.authentication.updateUser.inputValidationConfig,
+  middleware.authentication.updateUser.validateInput,
   async (req, res, next) => {
     if (req.body.username) {
       try {
-        if (controllers.auth.getUserByName(req.body.username)) {
+        if (controllers.authentication.getUserByName(req.body.username)) {
           return next({
             customStatus: 400,
             customName: 'UsernameExistsError'
@@ -53,7 +53,7 @@ router.put('/',
     let validUser
 
     try {
-      validUser = await controllers.auth.getValidUser(
+      validUser = await controllers.authentication.getValidUser(
         res.locals.userId, req.body.currentPassword
       )
 
@@ -68,7 +68,7 @@ router.put('/',
     }
 
     try {
-      controllers.auth.updateUser(
+      controllers.authentication.updateUser(
         res.locals.userId, req.body
       )
     } catch (err) {
@@ -82,14 +82,14 @@ router.put('/',
 )
 
 router.delete('/',
-  middleware.auth.validateToken,
-  middleware.auth.deleteUser.inputValidationConfig,
-  middleware.auth.deleteUser.validateInput,
+  middleware.authentication.validateToken,
+  middleware.authentication.deleteUser.inputValidationConfig,
+  middleware.authentication.deleteUser.validateInput,
   async (req, res, next) => {
     let validUser
 
     try {
-      validUser = await controllers.auth.getValidUser(
+      validUser = await controllers.authentication.getValidUser(
         res.locals.userId, req.body.password
       )
 
@@ -104,7 +104,7 @@ router.delete('/',
     }
 
     try {
-      controllers.auth.deleteUser(
+      controllers.authentication.deleteUser(
         res.locals.userId
       )
     } catch (err) {

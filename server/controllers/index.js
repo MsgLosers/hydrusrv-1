@@ -1,9 +1,9 @@
-const auth = require('./auth')
+const authentication = require('./authentication')
 const files = require('./files')
 const tags = require('./tags')
 
 module.exports = {
-  auth,
+  authentication,
   files,
   tags
 }

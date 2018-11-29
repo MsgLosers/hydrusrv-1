@@ -1,7 +1,7 @@
 const { check, validationResult } = require('express-validator/check')
 const { sanitizeBody } = require('express-validator/filter')
-const config = require('../config/app')
-const auth = require('../controllers/auth')
+const config = require('../config')
+const auth = require('../controllers/authentication')
 
 module.exports = {
   validateToken: (req, res, next) => {

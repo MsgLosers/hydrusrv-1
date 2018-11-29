@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 
-const db = require('../database')
+const db = require('../db')
 
 module.exports = {
   create (userId, expires) {
@@ -12,7 +12,7 @@ module.exports = {
       Math.ceil(128 / 2)
     ).toString('hex').slice(0, 128)
 
-    const newTokenId = db.app.prepare(
+    const newTokenId = db.authentication.prepare(
       `INSERT INTO tokens (
         user_id, hash, media_hash, expires
       ) VALUES (
@@ -23,12 +23,12 @@ module.exports = {
     return this.getById(newTokenId)
   },
   delete (userId, hash) {
-    db.app.prepare(
+    db.authentication.prepare(
       `DELETE FROM tokens WHERE ${hash ? 'hash' : 'user_id'} = ?`
     ).run(hash || userId)
   },
   getById (tokenId) {
-    return db.app.prepare(
+    return db.authentication.prepare(
       `SELECT
         id,
         user_id as userId,
@@ -42,7 +42,7 @@ module.exports = {
     ).get(tokenId)
   },
   getByHash (hash) {
-    return db.app.prepare(
+    return db.authentication.prepare(
       `SELECT
         id,
         user_id as userId,
@@ -56,7 +56,7 @@ module.exports = {
     ).get(hash)
   },
   getByMediaHash (hash) {
-    return db.app.prepare(
+    return db.authentication.prepare(
       `SELECT
         id,
         user_id as userId,

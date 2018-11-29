@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
++ Added clustering to improve performance when multiple concurrent requests
+  happen
+
+### Changed
+
++ Split up application database into authentication database and content
+  database (holding the users/tokens and hydrus server content respectively)
++ Switched to WAL mode and added checkpoint handling
++ Moved data update handling into a separate tool called
+  [hydrusrv-sync](https://github.com/mserajnik/hydrusrv-sync)
++ Changed Docker configuration to make it configurable when starting a
+  container and enabled automatic builds on Docker Hub
++ Improved application status logging
++ Updated dependencies
+
 ## [3.17.0] - 2018-11-25
 
 ### Added

@@ -1,58 +1,36 @@
 const path = require('path')
-const http = require('http')
+
 const test = require('ava')
 const fse = require('fs-extra')
-const portscanner = require('portscanner')
 
 const setup = require('./_setup')
 const migrations = require('../storage/migrations/runner')
 
 setup.setTestEnvironment()
 
-let app, users, tokens, tags, files
+let db, users, tokens, tags, files
 
 let originalBaseUrl, thumbnailsBaseUrl, testTokenHash
 
 test.before(t => {
-  return new Promise(resolve => {
-    portscanner.findAPortNotInUse(8000, 9000, '127.0.0.1', (err, port) => {
-      if (err || !port) {
-        console.error('could not determine open port for test instance.')
+  let mediaBaseUrl = 'http://localhost/media'
+  originalBaseUrl = `${mediaBaseUrl}/original`
+  thumbnailsBaseUrl = `${mediaBaseUrl}/thumbnails`
 
-        process.exit(1)
-      }
+  fse.copySync(
+    path.resolve(__dirname, 'storage/authentication.db.template'),
+    path.resolve(__dirname, `storage/authentication.db`)
+  )
 
-      process.env.PORT = port
-      process.env.URL = `http://localhost:${port}`
-      process.env.APP_DB_PATH = path.resolve(
-        __dirname, `storage/app_${port}.db`
-      )
+  migrations.run(process.env.AUTHENTICATION_DB_PATH)
 
-      let mediaBaseUrl = `http://localhost:${process.env.PORT}/media`
-      originalBaseUrl = `${mediaBaseUrl}/original`
-      thumbnailsBaseUrl = `${mediaBaseUrl}/thumbnails`
+  db = require('../server/db')
+  users = require('../server/models/users')
+  tokens = require('../server/models/tokens')
+  tags = require('../server/models/tags')
+  files = require('../server/models/files')
 
-      fse.copySync(
-        path.resolve(__dirname, 'storage/app.db.template'),
-        path.resolve(__dirname, `storage/app_${port}.db`)
-      )
-
-      migrations.run(process.env.APP_DB_PATH)
-
-      app = require('../app')
-      users = require('../server/models/users')
-      tokens = require('../server/models/tokens')
-      tags = require('../server/models/tags')
-      files = require('../server/models/files')
-
-      app.set('port', port)
-
-      const server = http.createServer(app)
-      server.listen(port)
-
-      resolve()
-    })
-  })
+  db.connect()
 })
 
 test.serial('database: create user', async t => {
@@ -1529,5 +1507,9 @@ test('database: get total file count', t => {
 })
 
 test.after(t => {
-  fse.removeSync(path.resolve(__dirname, `storage/app_${process.env.PORT}.db`))
+  db.close()
+
+  fse.removeSync(path.resolve(__dirname, `storage/authentication.db`))
+  fse.removeSync(path.resolve(__dirname, `storage/authentication.db-shm`))
+  fse.removeSync(path.resolve(__dirname, `storage/authentication.wal`))
 })
