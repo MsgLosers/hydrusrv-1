@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.0.0] - 2018-12-01
+
 ### Added
 
 + Added clustering to improve performance when multiple concurrent requests
@@ -558,7 +560,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/3.17.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/4.0.0...develop
+[4.0.0]: https://github.com/mserajnik/hydrusrv/compare/3.17.0...4.0.0
 [3.17.0]: https://github.com/mserajnik/hydrusrv/compare/3.16.1...3.17.0
 [3.16.1]: https://github.com/mserajnik/hydrusrv/compare/3.16.0...3.16.1
 [3.16.0]: https://github.com/mserajnik/hydrusrv/compare/3.15.0...3.16.0
