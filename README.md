@@ -1,18 +1,17 @@
-# hydrusrv [![Build status][travis-badge]][travis-url] [![Known vulnerabilities][snyk-badge]][snyk-url] [![JavaScript Standard Style][standardjs-badge]][standardjs-url] [![FOSSA status][fossa-badge]][fossa-url]
+# hydrusrv [![Build status][travis-badge]][travis] [![Docker Hub build][docker-hub-badge]][docker-hub] [![Known vulnerabilities][snyk-badge]][snyk] [![JavaScript Standard Style][standardjs-badge]][standardjs] [![FOSSA status][fossa-badge]][fossa]
 
 > A small application for serving media managed with
 > [hydrus server][hydrus-server] via API
 
 hydrusrv is a small application based on [Express][express] that can serve
-media managed with [hydrus server][hydrus-server] over a REST-like API. It
-accesses the databases and files of hydrus server directly, therefore
-circumventing its native access key authentication. Instead, hydrusrv provides
-its own (simple) user handling and token-based authentication (stored in a
-separate database).
+media managed with [hydrus server][hydrus-server] over a REST-like API. A
+separate application called [hydrusrv-sync][hydrusrv-sync] is used to access
+the databases of hydrus server and copy over the data into hydrusrv's content
+database.
 
-The application is only intended as a way to to read and serve hydrus server
-data, not as an alternative way to manage it. It therefore does not have any
-features that require more than read access.
+hydrusrv provides its own (simple) user handling and token-based
+authentication (stored in a separate database) instead of relying on hydrus
+server's access keys.
 
 A [Vue][vue]-based Web client for hydrusrv called [hydrusrvue][hydrusrvue] is
 also available.
@@ -22,11 +21,13 @@ also available.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 3.x to 4.x](#upgrading-from-3x-to-4x)
     + [Upgrading from 2.x to 3.x](#upgrading-from-2x-to-3x)
     + [Upgrading from 1.x to 2.x](#upgrading-from-1x-to-2x)
 + [Usage](#usage)
   + [Configuration](#configuration)
   + [Running the server](#running-the-server)
+    + [Running with Docker](#running-with-docker)
   + [API](#api)
     + [General](#general)
     + [Authentication](#authentication)
@@ -52,8 +53,7 @@ also available.
         + [Getting media originals](#getting-media-originals)
         + [Getting media thumbnails](#getting-media-thumbnails)
 + [Demo](#demo)
-+ [Caveats](#caveats)
-+ [Credits](#credits)
++ [Attribution](#attribution)
 + [Donate](#donate)
 + [Maintainer](#maintainer)
 + [Contribute](#contribute)
@@ -99,7 +99,8 @@ user@local:hydrusrv$ yarn migrate
 ```
 
 Always make sure to run `yarn` after updating to install any packages you might
-be missing. `yarn migrate` updates your database with the latest changes.
+be missing. `yarn migrate` updates your authentication database with the latest 
+changes.
 
 hydrusrv follows [Semantic Versioning][semantic-versioning] and any breaking
 changes that require additional attention will be released under a new major
@@ -108,6 +109,41 @@ therefore always safe to simply install via the routine mentioned before.
 
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
+
+#### Upgrading from 3.x to 4.x
+
+Upgrading from `3.x` to `4.x` can be done via `git pull && yarn`, but requires
+some additional work and considerations.
+
+Starting with `4.0.0`, hydrusrv no longer copies the hydrus server data over by
+itself, but relies on a separate application called
+[hydrusrv-sync][hydrusrv-sync] to do so.
+
+This change was mainly made to increase performance. Before, hydrusrv would
+hold all the copied data in-memory, only allowing for a single thread to access
+it. Due to the SQLite library that's being used only featuring a synchronous
+API, a single request or a sync task could block the whole API.
+
+With `4.x`, hydrusrv-sync persists the data and hydrusrv accesses it using
+multiple workers (by default, one for every logical CPU core, but that is
+configurable), multiplying the possible requests per seconds since a single
+requests will only block a single worker for a very short period.
+
+In addition, hydrusrv now uses two databases – the authentication database and
+the content database. While the authentication database is basically what the
+old app database was and is still managed completely by hydrusrv itself using
+migrations, the content database holds the hydrus server data and is managed by
+hydrusrv-sync, hydrusrv itself only reads from it.
+
+Therefore, you have to install hydrusrv-sync and either run it manually every
+time you want to sync the data from hydrus server or set up a cron job
+(recommended).
+
+Renaming the old `app.db` to `authentication.db` should work so you do not have
+to migrate the users manually.
+
+As a last step, take a look at the changed environment variables and adjust
+accordingly.
 
 #### Upgrading from 2.x to 3.x
 
@@ -152,13 +188,16 @@ unavoidable in `1.x` without killing the performance).
 
 ### Configuration
 
-After installing, the first thing you want to do is duplicating the application
-database template you can find under `storage/app.db.template`. This
-[SQLite][sqlite] database is used to store a temporary copy of the hydrus
-server data in an optimized form (for faster on-demand querying). It also holds
-users and tokens for authentication. The default (and recommended) location of
-the database is `storage/app.db`, but you are free to put it wherever you want
-and can rename it to your liking.
+After installing, the first thing you want to do is duplicating both the
+authentication database template and the content database template you can find
+under `storage/authentication.db.template` and `storage/content.db.template`.
+These [SQLite][sqlite] databases are used to store both the users and tokens
+for authentication, as well as a copy of the hydrus server data in an optimized
+form (for faster on-demand querying).
+
+The default (and recommended) location of the databases is
+`storage/authentication.db` and `storage/content.db`, but you are free to put
+them wherever you want and can rename them to your liking.
 
 Next, you also need to duplicate `.env.example` to `.env`. This file is used to
 configure hydrusrv and needs to be located in the root directory of the
@@ -168,10 +207,11 @@ After copying it, you can edit `.env` and change hydrusrv's configuration. The
 following are all the available settings (along with their default values):
 
 + `NODE_ENV=development`: defines the environment hydrusrv is running in.
-  It currently does not affect anything besides the logging but it should be
-  set to `production` in a live environment and `development` when developing.
+  It currently does not affect anything besides the access logging but it
+  should be set to `production` in a live environment and `development` when
+  developing.
 + `URL=https://example.com`: the URL under which hydrusrv is accessible. Used
-  to generate correct media paths. __No trailing slashes.__
+  to generate media URLs. __No trailing slashes.__
 + `PORT=8000`: the port hydrusrv is listening on. This can be different than
   the port used to access it from outside when proxying via [nginx][nginx]
   (recommended) or similar solutions.
@@ -179,9 +219,23 @@ following are all the available settings (along with their default values):
   __slashes.__
 + `MEDIA_BASE=/media`: the base path of all the media routes. __No trailing__
   __slashes.__
-+ `APP_DB_PATH=./storage/app.db`: the application database path (absolute or
-  relative). The database must exist and the file must be read-/writeable for
-  hydrusrv.
++ `AUTHENTICATION_DB_PATH=./storage/authentication.db`: the authentication
+  database path (absolute or relative). The database must exist and the file
+  must be read-/writeable for hydrusrv.
++ `CONTENT_DB_PATH=./storage/content.db`: the content database path (absolute
+  or relative). The database must exist and the file must be read-/writeable
+  for hydrusrv.
++ `DB_WAL_SIZE=10`: the maximum size (in MB) a [WAL][wal] file should reach
+  before a [checkpoint][checkpoint] is run.
++ `DB_CHECKPOINT_INTERVAL=3600`: sets the interval (in seconds) at which
+  hydrusrv checks if a checkpoint is necessary due to the set `DB_WAL_SIZE`
+  being exceeded.
++ `NUMBER_OF_WORKERS=`: sets the number of workers. By default, one worker per
+  logical CPU core is used. You might want to decrease or increase that number,
+  depending on your needs/hardware. In general, the more workers are running,
+  the more requests can be handled simultaneously. But note that increasing the
+  number of workers beyond the number of logical CPUs might be detrimental to
+  performance or cause even more serious issues (e.g., crashes).
 + `REGISTRATION_ENABLED=true`: setting this to `false` disables the creation of
   new users.
 + `AUTHENTICATION_REQUIRED=true`: setting this to `false` allows the access of
@@ -192,45 +246,32 @@ following are all the available settings (along with their default values):
 + `MIN_PASSWORD_LENGTH=16`: sets the minimum password length when creating or
   updating users. Providing a higher value than `1024` will discard the value
   and use `1024` as the minimum length instead.
-+ `DATA_UPDATE_INTERVAL=3600`: sets the interval (in seconds) at which hydrusrv
-  should sync its data with hydrus server (after the initial sync when starting
-  hydrusrv). Updates are locked, so it is not possible to set this value too
-  low – the minimum time between updates will always be the time it takes to
-  complete the update.
 + `FILES_PER_PAGE=42`: the results per page when listing files.
 + `TAGS_PER_PAGE=42`: the results per page when listing tags.
 + `AUTOCOMPLETE_LIMIT=10`: the maximum amount of tag completion results.
-+ `LOGGING_ENABLED=false`: setting this to `false` disables access logging when
++ `ACCESS_LOGGING_ENABLED=false`: setting this to `false` disables access
+  logging when
   `NODE_ENV=production` is set.
-+ `OVERRIDE_LOGFILE_PATH=`: overrides the default logfile location
-  (`logs/access.log`. Logging to a file is only enabled with
-  `LOGGING_ENABLED=true` and `NODE_ENV=production`. With
++ `OVERRIDE_ACCESS_LOGFILE_PATH=`: overrides the default access logfile
+  location (`logs/access.log`. Logging to a file is only enabled with
+  `ACCESS_LOGGING_ENABLED=true` and `NODE_ENV=production`. With
   `NODE_ENV=development`, hydrusrv logs to the console instead.
   __Absolute path required.__
 + `ALLOW_CROSS_DOMAIN=false`: allows cross-domain requests (useful when the
   application accessing the API is located on a different domain).
-+ `HYDRUS_SERVER_DB_PATH=`: sets the path to the hydrus server main database
-  (called `server.db`). __Absolute path required.__
-+ `HYDRUS_MASTER_DB_PATH=`: sets the path to the hydrus server master database
-  (called `server.master.db`). __Absolute path required.__
-+ `HYDRUS_MAPPINGS_DB_PATH=`: sets the path to the hydrus server mappings
-  database (called `server.mappings.db`). __Absolute path required.__
 + `HYDRUS_FILES_PATH=`: sets the path to the hydrus server files directory
   (called `server_files`).  __Absolute path required.__
-+ `HYDRUS_TAG_REPOSITORY=2`: the ID of the hydrus server tag repository
-  hydrusrv should use.
-+ `HYDRUS_FILE_REPOSITORY=3`: the ID of the hydrus server file repository
-  hydrusrv should use.
-+ `HYDRUS_SUPPORTED_MIME_TYPES=1,2,3,4,9,14,18,20,21,23,25,26,27`: the IDs of
-  the MIME types hydrusrv should support. See [here][supported-mime-types] for
-  the complete list of MIME types hydrusrv can handle.
 
-After you are done making adjustments, make sure `APP_DB_PATH` points to the
-correct location and run migrations to finish setting up the database:
+After you are done making adjustments, make sure `AUTHENTICATION_DB_PATH`
+points to the correct location and run migrations to finish setting up the
+authentication database:
 
 ```zsh
 user@local:hydrusrv$ yarn migrate
 ```
+
+The content database does not have any migrations since it is entirely managed
+by hydrusrv-sync.
 
 ### Running the server
 
@@ -246,12 +287,18 @@ For running in production mode, you will likely want to set up both a reverse
 proxy (I recommend [nginx][nginx]) and a way to autostart hydrusrv when booting
 your machine (I personally use [Supervisor][supervisor]).
 
-You can also deploy with [Docker][docker]. I have created
-[another repository][hydrusrv-docker] that shows you how to run hydrus server
-and hydrusrv together using [Docker Compose][docker-compose] in a
-production-ready example.
+### Running with Docker
 
-When running in production mode, I highly recommend using HTTP/2.
+You can also run hydrusrv with [Docker][docker] if you want to. A
+[Docker image][docker-hub] is available on Docker Hub.
+
+See [here][hydrusrv-docker] for a [Docker Compose][docker-compose] setup that
+combines hydrus server, hydrusrv and hydrusrv-sync into an easy-to-use package.
+
+If you want to create your own setup, please take a look at the
+[Dockerfile](Dockerfile) and the
+[entrypoint file](.docker/docker-entrypoint.sh) to figure out how to configure
+it.
 
 ### API
 
@@ -799,53 +846,7 @@ It contains only safe for work images tagged with `scenery` (take a look at the
 Registration is enabled, so feel free to create as many users as you would
 like. __Created users are deleted at 12am every day.__
 
-## Caveats
-
-hydrusrv was mainly developed for my personal use and might therefore lack some
-features others might want to see. Some of these could be:
-
-+ The user management is very basic. There are no roles, no rights and no way
-  to delete a user other than using an access token that belongs to that user
-  (aside from doing it directly via database of course).
-+ hydrusrv __needs__ one tag and one file repository to work. Trying to run it
-  without either will result in errors. It also cannot support additional
-  repositories.
-+ hydrusrv discards namespaces containing other characters than alphanumerics
-  and underscores to not falsely assume emote tags like `>:)` have a namespace
-  and to prevent errors (namespaces are used as column names and SQLite does
-  not allow most characters aside from alphanumerics in those; mapping such
-  special characters would have been possible, but did not seem worth the
-  effort).
-+ hydrus server supports many more MIME types than the ones I have limited
-  hydrusrv to. This is due to the fact that determining the MIME type of a file
-  is rather difficult in hydrus server and I wanted to keep it as simple as
-  possible.
-+ The available API routes are currently limited to what I personally need. I
-  might expand these in the future (e.g., user listing, token listing etc.) but
-  I am also happy to accept pull requests.
-
-In addition, you might run into issues or limitations when using hydrusrv. Here
-are the ones I am currently aware of:
-
-+ When hydrusrv updates its copy of the hydrus server data, it does so without
-  locking the database to prevent issues in hydrus server (which most likely
-  does not expect another application to randomly lock the database when it is
-  trying to write). The update can also take a while on larger databases, which
-  might lead to hydrus server changing or adding data while hydrusrv is still
-  in the update process. When this happens, hydrusrv _should_ not crash, but
-  it will stick to the data it currently has and try again after the period set
-  via `DATA_UPDATE_INTERVAL` has passed. This means that on a busy hydrus
-  server installation, hydrusrv might not often find the time to complete an
-  update. This can be somewhat alleviated by setting a shorter interval, but I
-  still would not recommend running it on a public hydrus server installation
-  where multiple users might add or change data at any moment in time.
-+ hydrus client/server is updated frequently (usually once a week) and while I
-  try to keep hydrusrv up-to-date with any database changes (that thankfully do
-  not occur very frequently), I suggest keeping an old copy of hydrus server
-  when updating in case anything breaks if you are "dependent" on hydrusrv
-  working. In addition, please [let me know][issues-url] if that happens.
-
-## Credits
+## Attribution
 
 Special thanks to the user [FredericaBernkastel][frederica-bernkastel] for
 providing valuable input and writing some amazing performance improvements
@@ -860,7 +861,7 @@ putting up with my questions and encouraging me to work on this project.
 If you like hydrusrv and want to buy me a coffee, feel free to donate via
 PayPal:
 
-[![Donate via PayPal][paypal-image]][paypal-url]
+[![Donate via PayPal][paypal-image]][paypal]
 
 Alternatively, you can also send me BTC:
 
@@ -871,33 +872,36 @@ Donations are unnecessary, but very much appreciated. :)
 
 ## Maintainer
 
-[mserajnik][maintainer-url]
+[mserajnik][maintainer]
 
 ## Contribute
 
 You are welcome to help out!
 
-[Open an issue][issues-url] or submit a pull request.
+[Open an issue][issues] or submit a pull request.
 
 ## License
 
 [MIT](LICENSE.md) © Michael Serajnik
 
-[travis-url]: https://travis-ci.org/mserajnik/hydrusrv
+[travis]: https://travis-ci.org/mserajnik/hydrusrv
 [travis-badge]: https://img.shields.io/travis/mserajnik/hydrusrv/master.svg
 
-[snyk-url]: https://snyk.io/test/github/mserajnik/hydrusrv
+[docker-hub-badge]: https://img.shields.io/docker/automated/mserajnik/hydrusrv.svg
+
+[snyk]: https://snyk.io/test/github/mserajnik/hydrusrv
 [snyk-badge]: https://snyk.io/test/github/mserajnik/hydrusrv/badge.svg
 
-[standardjs-url]: https://standardjs.com
+[standardjs]: https://standardjs.com
 [standardjs-badge]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
 
-[fossa-url]: https://app.fossa.io/projects/git%2Bgithub.com%2Fmserajnik%2Fhydrusrv
+[fossa]: https://app.fossa.io/projects/git%2Bgithub.com%2Fmserajnik%2Fhydrusrv
 [fossa-badge]: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmserajnik%2Fhydrusrv.svg?type=shield
 
 [express]: https://expressjs.com/
 [hydrus-server]: http://hydrusnetwork.github.io/hydrus
 [hydrus-server-installation]: http://hydrusnetwork.github.io/hydrus/help/server.html
+[hydrusrv-sync]: https://github.com/mserajnik/hydrusrv-sync
 [vue]: https://vuejs.org/
 [hydrusrvue]: https://github.com/mserajnik/hydrusrvue
 [better-sqlite3]: https://github.com/JoshuaWise/better-sqlite3/wiki/Troubleshooting-installation
@@ -907,10 +911,13 @@ You are welcome to help out!
 [semantic-versioning]: https://semver.org/
 [sqlite]: https://www.sqlite.org/
 [nginx]: https://nginx.org/
+[wal]: https://www.sqlite.org/wal.html
+[checkpoint]: https://www.sqlite.org/c3ref/wal_checkpoint.html
 [supported-mime-types]: https://github.com/mserajnik/hydrusrv/blob/master/server/config/hydrus.js#L2-L14
 [nodemon]: https://github.com/remy/nodemon
 [supervisor]: http://supervisord.org/
 [docker]: https://www.docker.com/
+[docker-hub]: https://hub.docker.com/r/mserajnik/hydrusrv/
 [hydrusrv-docker]: https://github.com/mserajnik/hydrusrv-docker
 [docker-compose]: https://docs.docker.com/compose/
 [hydrusrvue-demo]: https://hydrusrvue.mser.at
@@ -920,9 +927,9 @@ You are welcome to help out!
 [frederica-bernkastel]: https://github.com/FredericaBernkastel
 [hydrus-developer]: https://github.com/hydrusnetwork
 
-[paypal-url]: https://www.paypal.me/mserajnik
+[paypal]: https://www.paypal.me/mserajnik
 [paypal-image]: https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-rect-paypal-26px.png
 [btc-image]: https://mserajnik.at/external/btc.png
 
-[maintainer-url]: https://github.com/mserajnik
-[issues-url]: https://github.com/mserajnik/hydrusrv/issues/new
+[maintainer]: https://github.com/mserajnik
+[issues]: https://github.com/mserajnik/hydrusrv/issues/new

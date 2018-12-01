@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const config = require('../config/app')
+const config = require('../config')
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 const media = require('../util/media')
@@ -11,7 +11,7 @@ router.get('/original/:mediaHash',
   async (req, res, next) => {
     if (config.authenticationRequired) {
       try {
-        if (!controllers.auth.isValidMediaToken(req.query.token)) {
+        if (!controllers.authentication.isValidMediaToken(req.query.token)) {
           return next({
             customStatus: 404,
             customName: 'NotFoundError'
@@ -44,7 +44,7 @@ router.get('/thumbnails/:mediaHash',
   async (req, res, next) => {
     if (config.authenticationRequired) {
       try {
-        if (!controllers.auth.isValidMediaToken(req.query.token)) {
+        if (!controllers.authentication.isValidMediaToken(req.query.token)) {
           return next({
             customStatus: 404,
             customName: 'NotFoundError'

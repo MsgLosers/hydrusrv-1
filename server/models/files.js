@@ -1,11 +1,10 @@
-const db = require('../database')
-const config = require('../config/app')
-const hydrusConfig = require('../config/hydrus')
+const db = require('../db')
+const config = require('../config')
 const tagsModel = require('./tags')
 
 module.exports = {
   getById (id) {
-    const file = db.app.prepare(
+    const file = db.content.prepare(
       `SELECT
         id,
         mime,
@@ -28,7 +27,7 @@ module.exports = {
       return this.get(page)
     }
 
-    const files = db.app.prepare(
+    const files = db.content.prepare(
       `SELECT
         id,
         mime,
@@ -87,7 +86,7 @@ module.exports = {
       return this.getByTags(page, tags)
     }
 
-    const files = db.app.prepare(
+    const files = db.content.prepare(
       `SELECT
         hydrusrv_files.id,
         hydrusrv_files.mime,
@@ -131,7 +130,7 @@ module.exports = {
       return this.getByExcludeTags(page, excludeTags)
     }
 
-    const files = db.app.prepare(
+    const files = db.content.prepare(
       `SELECT
         hydrusrv_files.id,
         hydrusrv_files.mime,
@@ -169,7 +168,7 @@ module.exports = {
     return files.map(file => this.prepareFile(file))
   },
   getTotalCount () {
-    return db.app.prepare(
+    return db.content.prepare(
       'SELECT COUNT(id) as count FROM hydrusrv_files'
     ).get()
   },
@@ -251,7 +250,7 @@ module.exports = {
       return file
     }
 
-    file.mime = hydrusConfig.availableMimeTypes[file.mime]
+    file.mime = config.availableMimeTypes[file.mime]
     file.mediaUrl = this.generateFilePath('original', file.hash)
     file.thumbnailUrl = this.generateFilePath('thumbnail', file.hash)
 

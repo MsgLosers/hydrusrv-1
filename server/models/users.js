@@ -1,6 +1,6 @@
 const upash = require('upash')
 
-const db = require('../database')
+const db = require('../db')
 
 upash.install('argon2', require('@phc/argon2'))
 
@@ -8,7 +8,7 @@ module.exports = {
   async create (username, password) {
     const passwordHash = await upash.hash(password)
 
-    db.app.prepare(
+    db.authentication.prepare(
       'INSERT INTO users (username, password, created) VALUES (?, ?, ?)'
     ).run(username, passwordHash, Math.floor(Date.now() / 1000))
   },
@@ -28,15 +28,15 @@ module.exports = {
 
     params.push(userId)
 
-    db.app.prepare(
+    db.authentication.prepare(
       `UPDATE users SET ${placeholders.join(',')} WHERE id = ?`
     ).run(...params)
   },
   delete (userId) {
-    db.app.prepare('DELETE FROM users WHERE id = ?').run(userId)
+    db.authentication.prepare('DELETE FROM users WHERE id = ?').run(userId)
   },
   getById (userId) {
-    return db.app.prepare(
+    return db.authentication.prepare(
       `SELECT
         id,
         username,
@@ -49,7 +49,7 @@ module.exports = {
     ).get(userId)
   },
   getByName (username) {
-    return db.app.prepare(
+    return db.authentication.prepare(
       `SELECT
         id,
         username,

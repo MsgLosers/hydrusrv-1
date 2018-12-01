@@ -1,7 +1,7 @@
 const { check, validationResult } = require('express-validator/check')
 const { sanitizeParam, sanitizeQuery } = require('express-validator/filter')
 
-const config = require('../config/app')
+const config = require('../config')
 
 module.exports = {
   get: {
