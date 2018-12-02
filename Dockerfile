@@ -1,7 +1,5 @@
 FROM mhart/alpine-node:11
 
-RUN apk --update add build-base python
-
 ARG HOST_USER_ID=1000
 ARG HOST_GROUP_ID=1000
 
@@ -18,16 +16,13 @@ RUN \
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
-COPY yarn.lock ./
-
-RUN yarn
-
 COPY . .
 
-RUN chown -R hydrus:hydrus /usr/src/app
-
-RUN mkdir /data && chown -R hydrus:hydrus /data
+RUN apk --no-cache add build-base python && \
+  yarn --prod && \
+  apk del build-base python && \
+  chown -R hydrus:hydrus /usr/src/app && \
+  mkdir /data && chown -R hydrus:hydrus /data
 
 COPY .docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint

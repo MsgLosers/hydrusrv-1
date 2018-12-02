@@ -89,7 +89,6 @@ if (cluster.isMaster) {
     : 1
 
   for (let i = 0; i < numberOfWorkers; i++) {
-    console.log(`adding worker ${i}`)
     cluster.fork()
   }
 
