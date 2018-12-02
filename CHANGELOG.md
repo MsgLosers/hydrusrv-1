@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 + Removed unintended `console.log()` statement
++ Fixed letter case in readme
 
 ## [4.0.0] - 2018-12-01
 
