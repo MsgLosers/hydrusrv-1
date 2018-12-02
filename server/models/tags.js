@@ -46,15 +46,15 @@ module.exports = {
         hydrusrv_tags.name,
         hydrusrv_tags.file_count AS fileCount
       FROM
-        hydrusrv_tags
+        hydrusrv_files
       LEFT JOIN
         hydrusrv_mappings
         ON
-          hydrusrv_mappings.tag_id = hydrusrv_tags.id
+          hydrusrv_mappings.file_tags_id = hydrusrv_files.id
       LEFT JOIN
-        hydrusrv_files
+        hydrusrv_tags
         ON
-          hydrusrv_files.tags_id = hydrusrv_mappings.file_tags_id
+          hydrusrv_tags.id = hydrusrv_mappings.tag_id
       WHERE
         hydrusrv_files.id = ?
       ORDER BY
@@ -89,7 +89,7 @@ module.exports = {
   },
   getTotalCount () {
     return db.content.prepare(
-      'SELECT COUNT(name) as count FROM hydrusrv_tags'
+      'SELECT COUNT(*) as count FROM hydrusrv_tags'
     ).get()
   },
   generateOrderBy (sort, direction, contains = null) {

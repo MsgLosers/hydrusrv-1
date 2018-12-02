@@ -142,10 +142,8 @@ module.exports = {
         hydrusrv_files
       WHERE
         tags_id IN (
-          SELECT tags_id FROM hydrusrv_files WHERE
-          tags_id NOT IN (
-            SELECT file_tags_id FROM hydrusrv_mappings
-            WHERE tag_id IN (
+          SELECT tags_id FROM hydrusrv_files WHERE tags_id NOT IN (
+            SELECT file_tags_id FROM hydrusrv_mappings WHERE tag_id IN (
               SELECT id FROM hydrusrv_tags
               WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
             )
@@ -169,7 +167,7 @@ module.exports = {
   },
   getTotalCount () {
     return db.content.prepare(
-      'SELECT COUNT(id) as count FROM hydrusrv_files'
+      'SELECT COUNT(*) as count FROM hydrusrv_files'
     ).get()
   },
   generateOrderBy (sort, direction, namespaces) {
