@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
++ Removed unintended `console.log()` statement
+
 ## [4.0.0] - 2018-12-01
 
 ### Added
