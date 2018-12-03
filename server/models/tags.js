@@ -10,7 +10,7 @@ module.exports = {
         name,
         file_count AS fileCount
       FROM
-        hydrusrv_tags
+        tags
       ORDER BY
         ${orderBy.method}
       LIMIT
@@ -29,7 +29,7 @@ module.exports = {
         name,
         file_count AS fileCount
       FROM
-        hydrusrv_tags
+        tags
       WHERE
         name LIKE ? ESCAPE '^'
       ORDER BY
@@ -43,22 +43,22 @@ module.exports = {
   getOfFile (fileId) {
     return db.content.prepare(
       `SELECT
-        hydrusrv_tags.name,
-        hydrusrv_tags.file_count AS fileCount
+        tags.name,
+        tags.file_count AS fileCount
       FROM
-        hydrusrv_files
+        files
       LEFT JOIN
-        hydrusrv_mappings
+        mappings
         ON
-          hydrusrv_mappings.file_tags_id = hydrusrv_files.id
+          mappings.file_tags_id = files.id
       LEFT JOIN
-        hydrusrv_tags
+        tags
         ON
-          hydrusrv_tags.id = hydrusrv_mappings.tag_id
+          tags.id = mappings.tag_id
       WHERE
-        hydrusrv_files.id = ?
+        files.id = ?
       ORDER BY
-        hydrusrv_tags.name`
+        tags.name`
     ).all(fileId)
   },
   complete (partialTag) {
@@ -69,7 +69,7 @@ module.exports = {
         name,
         file_count AS fileCount
       FROM
-        hydrusrv_tags
+        tags
       WHERE
         name LIKE ? ESCAPE '^'
       ORDER BY
@@ -84,12 +84,12 @@ module.exports = {
   },
   getNamespaces () {
     return db.content.prepare(
-      'SELECT name FROM hydrusrv_namespaces ORDER BY name'
+      'SELECT name FROM namespaces ORDER BY name'
     ).all()
   },
   getTotalCount () {
     return db.content.prepare(
-      'SELECT COUNT(*) as count FROM hydrusrv_tags'
+      'SELECT COUNT(*) as count FROM tags'
     ).get()
   },
   generateOrderBy (sort, direction, contains = null) {
