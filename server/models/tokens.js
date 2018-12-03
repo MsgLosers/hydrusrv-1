@@ -3,14 +3,9 @@ const crypto = require('crypto')
 const db = require('../db')
 
 module.exports = {
-  create (userId, expires) {
-    const hash = crypto.randomBytes(
-      Math.ceil(128 / 2)
-    ).toString('hex').slice(0, 128)
-
-    const mediaHash = crypto.randomBytes(
-      Math.ceil(128 / 2)
-    ).toString('hex').slice(0, 128)
+  async create (userId, expires) {
+    const hash = await this.createHash(64)
+    const mediaHash = await this.createHash(64)
 
     const newTokenId = db.authentication.prepare(
       `INSERT INTO tokens (
@@ -68,5 +63,16 @@ module.exports = {
       WHERE
         media_Hash = ?`
     ).get(hash)
+  },
+  createHash (bytes) {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(bytes, (err, buffer) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(buffer.toString('hex'))
+      })
+    })
   }
 }

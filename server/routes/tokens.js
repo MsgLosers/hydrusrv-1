@@ -27,7 +27,7 @@ router.post('/',
     const data = {}
 
     try {
-      data.token = controllers.authentication.createToken(
+      data.token = await controllers.authentication.createToken(
         validUser.id, req.body.long
       )
     } catch (err) {

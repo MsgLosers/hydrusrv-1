@@ -7,13 +7,13 @@ module.exports = {
     const file = db.content.prepare(
       `SELECT
         id,
+        hash,
         mime,
         size,
         width,
-        height,
-        hash
+        height
       FROM
-        hydrusrv_files
+        files
       WHERE
         id = ?`
     ).get(id)
@@ -30,13 +30,13 @@ module.exports = {
     const files = db.content.prepare(
       `SELECT
         id,
+        hash,
         mime,
         size,
         width,
-        height,
-        hash
+        height
       FROM
-        hydrusrv_files
+        files
       ORDER BY
         ${orderBy}
       LIMIT
@@ -70,9 +70,9 @@ module.exports = {
       }
 
       excludeTagsSubQuery = `
-        EXCEPT SELECT file_tags_id from hydrusrv_mappings
+        EXCEPT SELECT file_tags_id from mappings
         WHERE tag_id IN (
-          SELECT id FROM hydrusrv_tags
+          SELECT id FROM tags
           WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
         )
       `
@@ -88,19 +88,18 @@ module.exports = {
 
     const files = db.content.prepare(
       `SELECT
-        hydrusrv_files.id,
-        hydrusrv_files.mime,
-        hydrusrv_files.size,
-        hydrusrv_files.width,
-        hydrusrv_files.height,
-        hydrusrv_files.hash
+        files.id,
+        files.hash,
+        files.mime,
+        files.size,
+        files.width,
+        files.height
       FROM
-        hydrusrv_files
+        files
       WHERE
-        hydrusrv_files.tags_id IN (
-          SELECT file_tags_id FROM hydrusrv_mappings
-          WHERE tag_id IN (
-            SELECT id FROM hydrusrv_tags
+        files.tags_id IN (
+          SELECT file_tags_id FROM mappings WHERE tag_id IN (
+            SELECT id FROM tags
             WHERE name IN (${',?'.repeat(tags.length).replace(',', '')})
           )
           GROUP BY file_tags_id
@@ -132,29 +131,27 @@ module.exports = {
 
     const files = db.content.prepare(
       `SELECT
-        hydrusrv_files.id,
-        hydrusrv_files.mime,
-        hydrusrv_files.size,
-        hydrusrv_files.width,
-        hydrusrv_files.height,
-        hydrusrv_files.hash
+        files.id,
+        files.hash,
+        files.mime,
+        files.size,
+        files.width,
+        files.height
       FROM
-        hydrusrv_files
+        files
       WHERE
         tags_id IN (
-          SELECT tags_id FROM hydrusrv_files WHERE
-          tags_id NOT IN (
-            SELECT file_tags_id FROM hydrusrv_mappings
-            WHERE tag_id IN (
-              SELECT id FROM hydrusrv_tags
+          SELECT tags_id FROM files WHERE tags_id NOT IN (
+            SELECT file_tags_id FROM mappings WHERE tag_id IN (
+              SELECT id FROM tags
               WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
             )
           )
 
           UNION
 
-          SELECT tags_id FROM hydrusrv_files WHERE tags_id NOT IN (
-            SELECT file_tags_id FROM hydrusrv_mappings
+          SELECT tags_id FROM files WHERE tags_id NOT IN (
+            SELECT file_tags_id FROM mappings
           )
         )
       ORDER BY
@@ -169,7 +166,7 @@ module.exports = {
   },
   getTotalCount () {
     return db.content.prepare(
-      'SELECT COUNT(id) as count FROM hydrusrv_files'
+      'SELECT COUNT(*) as count FROM files'
     ).get()
   },
   generateOrderBy (sort, direction, namespaces) {
@@ -184,22 +181,22 @@ module.exports = {
         return null
       }
 
-      return `${namespacesOrderBy.join(',')}, hydrusrv_files.id DESC`
+      return `${namespacesOrderBy.join(',')}, files.id DESC`
     }
 
     switch (sort) {
       case 'size':
-        return `hydrusrv_files.size ${direction || 'DESC'}`
+        return `files.size ${direction || 'DESC'}`
       case 'width':
-        return `hydrusrv_files.width ${direction || 'DESC'}`
+        return `files.width ${direction || 'DESC'}`
       case 'height':
-        return `hydrusrv_files.height ${direction || 'DESC'}`
+        return `files.height ${direction || 'DESC'}`
       case 'mime':
-        return `hydrusrv_files.mime ${direction || 'ASC'}`
+        return `files.mime ${direction || 'ASC'}`
       case 'random':
-        return 'hydrusrv_files.random ASC'
+        return 'files.random ASC'
       default:
-        return `hydrusrv_files.id ${direction || 'DESC'}`
+        return `files.id ${direction || 'DESC'}`
     }
   },
   generateNamespacesOrderBy (namespaces, direction) {
@@ -239,11 +236,10 @@ module.exports = {
   },
   generateFilePath (type, hash) {
     if (type === 'thumbnail') {
-      return `${config.url}${config.mediaBase}/thumbnails/` +
-        hash.toString('hex')
+      return `${config.url}${config.mediaBase}/thumbnails/${hash}`
     }
 
-    return `${config.url}${config.mediaBase}/original/${hash.toString('hex')}`
+    return `${config.url}${config.mediaBase}/original/${hash}`
   },
   prepareFile (file) {
     if (!file) {
