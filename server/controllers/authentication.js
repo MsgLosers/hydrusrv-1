@@ -3,18 +3,10 @@ const tokens = require('../models/tokens')
 
 module.exports = {
   async createUser (username, password) {
-    try {
-      await users.create(username, password)
-    } catch (err) {
-      throw err
-    }
+    await users.create(username, password)
   },
   async updateUser (userId, data) {
-    try {
-      await users.update(userId, data)
-    } catch (err) {
-      throw err
-    }
+    await users.update(userId, data)
   },
   deleteUser (userId) {
     users.delete(userId)
@@ -22,16 +14,12 @@ module.exports = {
   getUserByName (username) {
     return users.getByName(username)
   },
-  async getValidUser (nameOrId, password, getByName = false) {
-    try {
-      if (getByName) {
-        return await users.getValid(nameOrId, password, true)
-      }
-
-      return await users.getValid(nameOrId, password)
-    } catch (err) {
-      throw err
+  getValidUser (nameOrId, password, getByName = false) {
+    if (getByName) {
+      return users.getValid(nameOrId, password, true)
     }
+
+    return users.getValid(nameOrId, password)
   },
   createToken (userId, long) {
     return tokens.create(

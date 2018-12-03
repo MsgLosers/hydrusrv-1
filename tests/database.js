@@ -10,7 +10,7 @@ setup.setTestEnvironment()
 
 let db, users, tokens, tags, files
 
-let originalBaseUrl, thumbnailsBaseUrl, testTokenHash
+let originalBaseUrl, thumbnailsBaseUrl, testToken
 
 test.before(t => {
   let mediaBaseUrl = 'http://localhost/media'
@@ -47,18 +47,16 @@ test.serial('database: update user', async t => {
   t.truthy(users.getById(1).username === 'johndoes')
 })
 
-test.serial('database: create token', t => {
-  testTokenHash = tokens.create(
-    1, Math.floor(Date.now() / 1000) + 86400
-  ).hash
+test.serial('database: create token', async t => {
+  testToken = await tokens.create(1, Math.floor(Date.now() / 1000) + 86400)
 
-  t.truthy(testTokenHash !== false)
+  t.truthy(testToken.hash.length === 128 && testToken.mediaHash.length === 128)
 })
 
 test.serial('database: delete token', t => {
-  tokens.delete(1, testTokenHash)
+  tokens.delete(1, testToken.hash)
 
-  t.truthy(!tokens.getByHash(testTokenHash))
+  t.truthy(!tokens.getByHash(testToken.hash))
 })
 
 test.serial('database: delete user', t => {

@@ -68,7 +68,7 @@ router.put('/',
     }
 
     try {
-      controllers.authentication.updateUser(
+      await controllers.authentication.updateUser(
         res.locals.userId, req.body
       )
     } catch (err) {

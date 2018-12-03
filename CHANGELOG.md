@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 + Improved performance of various queries
++ Improved async code
 + Dropped `hydrusrv` prefix from content database tables to be consistent with
   the application database naming scheme
 
