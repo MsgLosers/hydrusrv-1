@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Refactored code
 + Dropped `hydrusrv` prefix from content database tables to be consistent with
   the application database naming scheme
++ Updated dependencies
 
 ## [4.1.0] - 2018-12-02
 
