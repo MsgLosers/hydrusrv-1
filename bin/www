@@ -97,7 +97,8 @@ if (cluster.isMaster) {
   })
 
   db.connect()
-  db.vacuumAuthenticationDbAndSetCheckpointInterval()
+  db.vacuumAuthenticationDb()
+  db.setCheckpointInterval()
 
   logger.log('hydrusrv is ready.')
 } else {

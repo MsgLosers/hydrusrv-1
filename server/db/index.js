@@ -40,9 +40,10 @@ module.exports = {
       )
     }
   },
-  vacuumAuthenticationDbAndSetCheckpointInterval () {
-    this.vacuumAuthenticationDb()
-
+  vacuumAuthenticationDb () {
+    this.authentication.prepare('VACUUM').run()
+  },
+  setCheckpointInterval () {
     this.checkpointInterval = setInterval(() => {
       this.checkpointIfNeeded(this.authentication, config.authenticationDbPath)
       this.checkpointIfNeeded(this.content, config.contentDbPath)
@@ -64,8 +65,5 @@ module.exports = {
         }
       })
     })
-  },
-  vacuumAuthenticationDb () {
-    this.authentication.prepare('VACUUM').run()
   }
 }
