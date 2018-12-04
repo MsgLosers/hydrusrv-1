@@ -50,7 +50,7 @@ module.exports = {
       LEFT JOIN
         mappings
         ON
-          mappings.file_tags_id = files.id
+          mappings.file_tags_id = files.tags_id
       LEFT JOIN
         tags
         ON

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
++ Fixed regression introduced when increasing query performance in
+  [`4.2.0`][4.2.0] that caused tags being fetched incorrectly
+
 ## [4.2.0] - 2018-12-03
 
 ### Changed
