@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.2.1] - 2018-12-04
+
+### Fixed
+
++ Fixed regression introduced when increasing query performance in
+  [`4.2.0`][4.2.0] that caused tags being fetched incorrectly
+
 ## [4.2.0] - 2018-12-03
 
 ### Changed
@@ -582,7 +589,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/4.2.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/4.2.1...develop
+[4.2.1]: https://github.com/mserajnik/hydrusrv/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/mserajnik/hydrusrv/compare/4.1.0...4.2.0
 [4.1.0]: https://github.com/mserajnik/hydrusrv/compare/4.0.0...4.1.0
 [4.0.0]: https://github.com/mserajnik/hydrusrv/compare/3.17.0...4.0.0
