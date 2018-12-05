@@ -20,7 +20,6 @@ module.exports = {
   mediaBase: process.env.MEDIA_BASE || '/media',
   authenticationDbPath: authenticationDbPath,
   contentDbPath: contentDbPath,
-  dbWalSize: process.env.DB_WAL_SIZE || 10,
   dbCheckpointInterval: process.env.DB_CHECKPOINT_INTERVAL || 3600,
   numberOfWorkers: process.env.NUMBER_OF_WORKERS || require('os').cpus().length,
   registrationEnabled: (process.env.REGISTRATION_ENABLED === 'true'),

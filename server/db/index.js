@@ -29,10 +29,9 @@ module.exports = {
     this.authentication.pragma('journal_mode = WAL')
     this.content.pragma('journal_mode = WAL')
   },
-  checkpoint () {
+  checkpoint (db) {
     try {
-      this.authentication.checkpoint()
-      this.content.checkpoint()
+      db.checkpoint()
     } catch (err) {
       logger.log(
         'could not checkpoint, will try again in ' +
@@ -46,7 +45,6 @@ module.exports = {
   setCheckpointInterval () {
     this.checkpointInterval = setInterval(() => {
       this.checkpointIfNeeded(this.authentication, config.authenticationDbPath)
-      this.checkpointIfNeeded(this.content, config.contentDbPath)
     }, config.dbCheckpointInterval * 1000)
   },
   checkpointIfNeeded (db, dbPath) {
@@ -60,9 +58,7 @@ module.exports = {
           return
         }
 
-        if (stats.size >= (config.dbWalSize * 1000000)) {
-          this.checkpoint()
-        }
+        this.checkpoint(db);
       })
     })
   }
