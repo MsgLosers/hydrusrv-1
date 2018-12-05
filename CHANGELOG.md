@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
++ Improved "exclude tags" query performance
++ Improved checkpoint handling
+
+### Fixed
+
++ Fixed issue where querying a file with no tags would responds with a
+  malformed `tags` array causing hydrusrvue to crash
+
 ## [4.2.1] - 2018-12-04
 
 ### Fixed
