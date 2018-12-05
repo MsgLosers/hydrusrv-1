@@ -219,21 +219,25 @@ following are all the available settings (along with their default values):
   __slashes.__
 + `MEDIA_BASE=/media`: the base path of all the media routes. __No trailing__
   __slashes.__
++ `ALLOW_CROSS_ORIGIN=false`: allows cross-origin requests (useful when the
+  application accessing the API is located on a different domain).
 + `AUTHENTICATION_DB_PATH=./storage/authentication.db`: the authentication
   database path (absolute or relative). The database must exist and the file
   must be read-/writeable for hydrusrv.
 + `CONTENT_DB_PATH=./storage/content.db`: the content database path (absolute
   or relative). The database must exist and the file must be read-/writeable
   for hydrusrv.
-+ `DB_CHECKPOINT_INTERVAL=3600`: sets the interval (in seconds) at which
-  hydrusrv [checkpoints][checkpoint] the authentication database (the content
-  database is handled by hydrusrv-sync).
++ `HYDRUS_FILES_PATH=`: sets the path to the hydrus server files directory
+  (called `server_files`).  __Absolute path required.__
 + `NUMBER_OF_WORKERS=`: sets the number of workers. By default, one worker per
   logical CPU core is used. You might want to decrease or increase that number,
   depending on your needs/hardware. In general, the more workers are running,
   the more requests can be handled simultaneously. But note that increasing the
   number of workers beyond the number of logical CPUs might be detrimental to
   performance or cause even more serious issues (e.g., crashes).
++ `DB_CHECKPOINT_INTERVAL=3600`: sets the interval (in seconds) at which
+  hydrusrv [checkpoints][checkpoint] the authentication database (the content
+  database is handled by hydrusrv-sync).
 + `REGISTRATION_ENABLED=true`: setting this to `false` disables the creation of
   new users.
 + `AUTHENTICATION_REQUIRED=true`: setting this to `false` allows the access of
@@ -255,10 +259,6 @@ following are all the available settings (along with their default values):
   `ACCESS_LOGGING_ENABLED=true` and `NODE_ENV=production`. With
   `NODE_ENV=development`, hydrusrv logs to the console instead.
   __Absolute path required.__
-+ `ALLOW_CROSS_DOMAIN=false`: allows cross-domain requests (useful when the
-  application accessing the API is located on a different domain).
-+ `HYDRUS_FILES_PATH=`: sets the path to the hydrus server files directory
-  (called `server_files`).  __Absolute path required.__
 
 After you are done making adjustments, make sure `AUTHENTICATION_DB_PATH`
 points to the correct location and run migrations to finish setting up the

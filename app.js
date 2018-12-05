@@ -69,7 +69,7 @@ app.use((req, res, next) => {
   })
 })
 
-if (config.allowCrossDomain) {
+if (config.allowCrossOrigin) {
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.header('Origin') || '*')
 
