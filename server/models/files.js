@@ -146,7 +146,8 @@ module.exports = {
             WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
           )
         )
-        OR tags_id IS NULL
+      OR
+        tags_id IS NULL
       ORDER BY
         ${orderBy}
       LIMIT

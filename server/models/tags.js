@@ -59,7 +59,7 @@ module.exports = {
         files.id = ?
       ORDER BY
         tags.name`
-    ).all(fileId).filter(x => x.name && x.fileCount)
+    ).all(fileId).filter(row => row.name && row.fileCount)
   },
   complete (partialTag) {
     partialTag = partialTag.split('_').join('^_')
