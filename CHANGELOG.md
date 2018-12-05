@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.4.0] - 2018-12-05
+
+### Changed
+
++ Cleaned up environment variables
++ Updated dependencies
+
+### Fixed
+
++ Removed unneeded module import
+
 ## [4.3.0] - 2018-12-05
 
 ### Changed
@@ -602,7 +613,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/4.3.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/4.4.0...develop
+[4.4.0]: https://github.com/mserajnik/hydrusrv/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/mserajnik/hydrusrv/compare/4.2.1...4.3.0
 [4.2.1]: https://github.com/mserajnik/hydrusrv/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/mserajnik/hydrusrv/compare/4.1.0...4.2.0

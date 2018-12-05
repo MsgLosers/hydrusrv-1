@@ -1,5 +1,3 @@
-const fs = require('fs')
-
 const Database = require('better-sqlite3')
 
 const config = require('../config')
