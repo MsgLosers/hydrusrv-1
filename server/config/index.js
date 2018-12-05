@@ -13,14 +13,13 @@ if (contentDbPath.startsWith('.')) {
 }
 
 module.exports = {
-  version: '4.2.1',
+  version: '4.3.0',
   url: process.env.URL,
   port: process.env.PORT || 8000,
   apiBase: process.env.API_BASE || '/api',
   mediaBase: process.env.MEDIA_BASE || '/media',
   authenticationDbPath: authenticationDbPath,
   contentDbPath: contentDbPath,
-  dbWalSize: process.env.DB_WAL_SIZE || 10,
   dbCheckpointInterval: process.env.DB_CHECKPOINT_INTERVAL || 3600,
   numberOfWorkers: process.env.NUMBER_OF_WORKERS || require('os').cpus().length,
   registrationEnabled: (process.env.REGISTRATION_ENABLED === 'true'),

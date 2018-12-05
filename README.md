@@ -225,11 +225,9 @@ following are all the available settings (along with their default values):
 + `CONTENT_DB_PATH=./storage/content.db`: the content database path (absolute
   or relative). The database must exist and the file must be read-/writeable
   for hydrusrv.
-+ `DB_WAL_SIZE=10`: the maximum size (in MB) a [WAL][wal] file should reach
-  before a [checkpoint][checkpoint] is run.
 + `DB_CHECKPOINT_INTERVAL=3600`: sets the interval (in seconds) at which
-  hydrusrv checks if a checkpoint is necessary due to the set `DB_WAL_SIZE`
-  being exceeded.
+  hydrusrv [checkpoints][checkpoint] the authentication database (the content
+  database is handled by hydrusrv-sync).
 + `NUMBER_OF_WORKERS=`: sets the number of workers. By default, one worker per
   logical CPU core is used. You might want to decrease or increase that number,
   depending on your needs/hardware. In general, the more workers are running,
@@ -911,7 +909,6 @@ You are welcome to help out!
 [semantic-versioning]: https://semver.org/
 [sqlite]: https://www.sqlite.org/
 [nginx]: https://nginx.org/
-[wal]: https://www.sqlite.org/wal.html
 [checkpoint]: https://www.sqlite.org/c3ref/wal_checkpoint.html
 [supported-mime-types]: https://github.com/mserajnik/hydrusrv/blob/master/server/config/hydrus.js#L2-L14
 [nodemon]: https://github.com/remy/nodemon

@@ -1,6 +1,6 @@
 {
   "name": "hydrusrv",
-  "version": "4.2.1",
+  "version": "4.3.0",
   "description": "A small application for serving media handled with hydrus server via API",
   "keywords": [
     "hydrus",
@@ -61,7 +61,6 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "fs-extra": "^7.0.1",
-    "nodemon": "^1.18.7",
-    "portscanner": "^2.2.0"
+    "nodemon": "^1.18.7"
   }
 }

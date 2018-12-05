@@ -140,20 +140,14 @@ module.exports = {
       FROM
         files
       WHERE
-        tags_id IN (
-          SELECT tags_id FROM files WHERE tags_id NOT IN (
-            SELECT file_tags_id FROM mappings WHERE tag_id IN (
-              SELECT id FROM tags
-              WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
-            )
-          )
-
-          UNION
-
-          SELECT tags_id FROM files WHERE tags_id NOT IN (
-            SELECT file_tags_id FROM mappings
+        tags_id NOT IN (
+          SELECT file_tags_id FROM mappings WHERE tag_id IN (
+            SELECT id FROM tags
+            WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
           )
         )
+      OR
+        tags_id IS NULL
       ORDER BY
         ${orderBy}
       LIMIT
