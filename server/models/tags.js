@@ -3,9 +3,11 @@ const config = require('../config')
 
 module.exports = {
   get (page, sort = 'id', direction = null) {
+    const data = {}
+
     const orderBy = this.generateOrderBy(sort, direction)
 
-    return db.content.prepare(
+    data.tags = db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -18,13 +20,26 @@ module.exports = {
       OFFSET
         ${(page - 1) * config.tagsPerPage}`
     ).all(...orderBy.params)
+
+    if (config.countsAreEnabled) {
+      data.tagCount = db.content.prepare(
+        `SELECT
+          COUNT(*)
+        FROM
+          tags`
+      ).pluck().get(...orderBy.params)
+    }
+
+    return data
   },
   getContaining (page, contains, sort = 'id', direction = null) {
+    const data = {}
+
     contains = contains.split('_').join('^_')
 
     const orderBy = this.generateOrderBy(sort, direction, contains)
 
-    return db.content.prepare(
+    data.tags = db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -39,6 +54,19 @@ module.exports = {
       OFFSET
         ${(page - 1) * config.tagsPerPage}`
     ).all(`%${contains}%`, ...orderBy.params)
+
+    if (config.countsAreEnabled) {
+      data.tagCount = db.content.prepare(
+        `SELECT
+          COUNT(*)
+        FROM
+          tags
+        WHERE
+          name LIKE ? ESCAPE '^'`
+      ).pluck().get(`%${contains}%`, ...orderBy.params)
+    }
+
+    return data
   },
   getOfFile (fileId) {
     return db.content.prepare(

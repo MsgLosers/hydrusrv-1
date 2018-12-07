@@ -25,7 +25,7 @@ try {
 if (process.env.NODE_ENV === 'development') {
   app.use(accessLogger('dev'))
 } else if (
-  process.env.NODE_ENV === 'production' && config.accessLoggingEnabled
+  process.env.NODE_ENV === 'production' && config.accessLoggingIsEnabled
 ) {
   const accessLogStream = fs.createWriteStream(
     config.accessLogfilePath, { flags: 'a' }
@@ -69,7 +69,7 @@ app.use((req, res, next) => {
   })
 })
 
-if (config.allowCrossOrigin) {
+if (config.crossOriginIsAllowed) {
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.header('Origin') || '*')
 

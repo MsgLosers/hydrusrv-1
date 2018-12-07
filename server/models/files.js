@@ -21,13 +21,15 @@ module.exports = {
     return this.prepareFile(file)
   },
   get (page, sort = 'id', direction = null, namespaces = []) {
+    const data = {}
+
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
 
     if (!orderBy) {
       return this.get(page)
     }
 
-    const files = db.content.prepare(
+    data.files = db.content.prepare(
       `SELECT
         id,
         hash,
@@ -43,11 +45,22 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all()
+    ).all().map(file => this.prepareFile(file))
 
-    return files.map(file => this.prepareFile(file))
+    if (config.countsAreEnabled) {
+      data.fileCount = db.content.prepare(
+        `SELECT
+          COUNT(*)
+        FROM
+          files`
+      ).pluck().get()
+    }
+
+    return data
   },
   getByTags (page, tags, sort = 'id', direction = null, namespaces = []) {
+    const data = {}
+
     tags = [...new Set(tags)]
 
     let excludeTagsSubQuery = ''
@@ -86,7 +99,7 @@ module.exports = {
       return this.getByTags(page, tags)
     }
 
-    const files = db.content.prepare(
+    data.files = db.content.prepare(
       `SELECT
         files.id,
         files.hash,
@@ -112,9 +125,28 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(...params)
+    ).all(...params).map(file => this.prepareFile(file))
 
-    return files.map(file => this.prepareFile(file))
+    if (config.countsAreEnabled) {
+      data.fileCount = db.content.prepare(
+        `SELECT
+          COUNT(*)
+        FROM
+          files
+        WHERE
+          files.tags_id IN (
+            SELECT file_tags_id FROM mappings WHERE tag_id IN (
+              SELECT id FROM tags
+              WHERE name IN (${',?'.repeat(tags.length).replace(',', '')})
+            )
+            GROUP BY file_tags_id
+            HAVING COUNT(*) = ?
+            ${excludeTagsSubQuery}
+          )`
+      ).pluck().get(...params)
+    }
+
+    return data
   },
   getByExcludeTags (
     page,
@@ -123,13 +155,15 @@ module.exports = {
     direction = null,
     namespaces = []
   ) {
+    const data = {}
+
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
 
     if (!orderBy) {
       return this.getByExcludeTags(page, excludeTags)
     }
 
-    const files = db.content.prepare(
+    data.files = db.content.prepare(
       `SELECT
         files.id,
         files.hash,
@@ -154,9 +188,27 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(excludeTags)
+    ).all(excludeTags).map(file => this.prepareFile(file))
 
-    return files.map(file => this.prepareFile(file))
+    if (config.countsAreEnabled) {
+      data.fileCount = db.content.prepare(
+        `SELECT
+          COUNT(*)
+        FROM
+          files
+        WHERE
+          tags_id NOT IN (
+            SELECT file_tags_id FROM mappings WHERE tag_id IN (
+              SELECT id FROM tags
+              WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+            )
+          )
+        OR
+          tags_id IS NULL`
+      ).pluck().get(excludeTags)
+    }
+
+    return data
   },
   getTotalCount () {
     return db.content.prepare(

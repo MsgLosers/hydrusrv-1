@@ -5,7 +5,7 @@ const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.get('/',
-  ...(config.authenticationRequired
+  ...(config.authenticationIsRequired
     ? [middleware.authentication.validateToken]
     : []
   ),
