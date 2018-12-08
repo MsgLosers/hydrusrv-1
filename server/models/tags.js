@@ -40,7 +40,7 @@ module.exports = {
             COUNT(*)
           FROM
             tags`
-        ).pluck().get(...orderBy.params)
+        ).pluck().get()
 
         this.addCachedCount(hash, tagCount)
       }
@@ -92,7 +92,7 @@ module.exports = {
             tags
           WHERE
             name LIKE ? ESCAPE '^'`
-        ).pluck().get(`%${contains}%`, ...orderBy.params)
+        ).pluck().get(`%${contains}%`)
 
         this.addCachedCount(hash, tagCount)
       }
