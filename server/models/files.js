@@ -369,7 +369,7 @@ module.exports = {
     }
 
     db.content.prepare(
-      'INSERT INTO file_counts (hash, count) VALUES (?, ?)'
+      'INSERT OR IGNORE INTO file_counts (hash, count) VALUES (?, ?)'
     ).run(hash, fileCount)
   }
 }

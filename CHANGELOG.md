@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Added ability to (optionally) output counts when listing files and tags
 + Added counts caching
++ Added basic error prevention when two requests trying to insert the same data
+  happen almost exactly at the same time
 
 ### Changed
 

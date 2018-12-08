@@ -210,7 +210,7 @@ module.exports = {
     }
 
     db.content.prepare(
-      'INSERT INTO tag_counts (hash, count) VALUES (?, ?)'
+      'INSERT OR IGNORE INTO tag_counts (hash, count) VALUES (?, ?)'
     ).run(hash, tagCount)
   }
 }
