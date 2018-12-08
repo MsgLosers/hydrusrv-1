@@ -33,6 +33,7 @@ module.exports = {
   tagsPerPage: process.env.TAGS_PER_PAGE || 42,
   autocompleteLimit: process.env.AUTOCOMPLETE_LIMIT || 10,
   countsAreEnabled: (process.env.COUNTS_ENABLED === 'true'),
+  countsCachingIsEnabled: (process.env.COUNTS_CACHING_ENABLED === 'true'),
   accessLoggingIsEnabled: (process.env.ACCESS_LOGGING_ENABLED === 'true'),
   accessLogfilePath: process.env.ACCESS_LOGFILE_PATH_OVERRIDE ||
     path.resolve(__dirname, '../../logs/access.log'),

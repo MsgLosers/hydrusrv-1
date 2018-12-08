@@ -253,6 +253,13 @@ following are all the available settings (along with their default values):
 + `AUTOCOMPLETE_LIMIT=10`: the maximum amount of tag completion results.
 + `COUNTS_ENABLED=false`: enables the output of total counts when listing files
   and tags for the cost of response times (especially with larger databases).
++ `COUNTS_CACHING_ENABLED=false`: setting this to `true` enables the caching of
+  file/tag counts (only relevant when `COUNTS_ENABLED` is `true`). This is
+  recommended for larger databases to decrease response times when queries are
+  made that only differ in page and sorting since the count will only need to
+  be calculated once (for the first query). On smaller databases, the
+  performance gain might not be noticeable (or it might even be slighty slower
+  for very fast queries). The cache is emptied when hydrusrv-sync runs.
 + `ACCESS_LOGGING_ENABLED=false`: setting this to `false` disables access
   logging when
   `NODE_ENV=production` is set.

@@ -1,3 +1,5 @@
+const objectHash = require('object-hash')
+
 const db = require('../db')
 const config = require('../config')
 const tagsModel = require('./tags')
@@ -48,12 +50,29 @@ module.exports = {
     ).all().map(file => this.prepareFile(file))
 
     if (config.countsAreEnabled) {
-      data.fileCount = db.content.prepare(
-        `SELECT
-          COUNT(*)
-        FROM
-          files`
-      ).pluck().get()
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: [],
+          excludeTags: []
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files`
+        ).pluck().get()
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
     }
 
     return data
@@ -128,22 +147,39 @@ module.exports = {
     ).all(...params).map(file => this.prepareFile(file))
 
     if (config.countsAreEnabled) {
-      data.fileCount = db.content.prepare(
-        `SELECT
-          COUNT(*)
-        FROM
-          files
-        WHERE
-          files.tags_id IN (
-            SELECT file_tags_id FROM mappings WHERE tag_id IN (
-              SELECT id FROM tags
-              WHERE name IN (${',?'.repeat(tags.length).replace(',', '')})
-            )
-            GROUP BY file_tags_id
-            HAVING COUNT(*) = ?
-            ${excludeTagsSubQuery}
-          )`
-      ).pluck().get(...params)
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: tags.sort(),
+          excludeTags: excludeTags.sort()
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files
+          WHERE
+            files.tags_id IN (
+              SELECT file_tags_id FROM mappings WHERE tag_id IN (
+                SELECT id FROM tags
+                WHERE name IN (${',?'.repeat(tags.length).replace(',', '')})
+              )
+              GROUP BY file_tags_id
+              HAVING COUNT(*) = ?
+              ${excludeTagsSubQuery}
+            )`
+        ).pluck().get(...params)
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
     }
 
     return data
@@ -191,21 +227,38 @@ module.exports = {
     ).all(excludeTags).map(file => this.prepareFile(file))
 
     if (config.countsAreEnabled) {
-      data.fileCount = db.content.prepare(
-        `SELECT
-          COUNT(*)
-        FROM
-          files
-        WHERE
-          tags_id NOT IN (
-            SELECT file_tags_id FROM mappings WHERE tag_id IN (
-              SELECT id FROM tags
-              WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: [],
+          excludeTags: excludeTags.sort()
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files
+          WHERE
+            tags_id NOT IN (
+              SELECT file_tags_id FROM mappings WHERE tag_id IN (
+                SELECT id FROM tags
+                WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+              )
             )
-          )
-        OR
-          tags_id IS NULL`
-      ).pluck().get(excludeTags)
+          OR
+            tags_id IS NULL`
+        ).pluck().get(excludeTags)
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
     }
 
     return data
@@ -299,5 +352,24 @@ module.exports = {
     delete file.hash
 
     return file
+  },
+  getCachedCount (hash) {
+    return db.content.prepare(
+      `SELECT
+        count
+      FROM
+        file_counts
+      WHERE
+        hash = ?`
+    ).pluck().get(hash)
+  },
+  addCachedCount (hash, fileCount) {
+    if (!config.countsCachingIsEnabled) {
+      return
+    }
+
+    db.content.prepare(
+      'INSERT INTO file_counts (hash, count) VALUES (?, ?)'
+    ).run(hash, fileCount)
   }
 }

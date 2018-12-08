@@ -22,6 +22,11 @@ test.before(t => {
     path.resolve(__dirname, `storage/authentication.db`)
   )
 
+  fse.copySync(
+    path.resolve(__dirname, 'storage/content.db.template'),
+    path.resolve(__dirname, `storage/content.db`)
+  )
+
   migrations.run(process.env.AUTHENTICATION_DB_PATH)
 
   db = require('../server/db')
@@ -1594,4 +1599,7 @@ test.after(t => {
   fse.removeSync(path.resolve(__dirname, `storage/authentication.db`))
   fse.removeSync(path.resolve(__dirname, `storage/authentication.db-shm`))
   fse.removeSync(path.resolve(__dirname, `storage/authentication.wal`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.db`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.db-shm`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.wal`))
 })

@@ -1,3 +1,5 @@
+const objectHash = require('object-hash')
+
 const db = require('../db')
 const config = require('../config')
 
@@ -22,12 +24,28 @@ module.exports = {
     ).all(...orderBy.params)
 
     if (config.countsAreEnabled) {
-      data.tagCount = db.content.prepare(
-        `SELECT
-          COUNT(*)
-        FROM
-          tags`
-      ).pluck().get(...orderBy.params)
+      let tagCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          contains: ''
+        })
+
+        tagCount = this.getCachedCount(hash)
+      }
+
+      if (!tagCount) {
+        tagCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            tags`
+        ).pluck().get(...orderBy.params)
+
+        this.addCachedCount(hash, tagCount)
+      }
+
+      data.tagCount = tagCount
     }
 
     return data
@@ -56,14 +74,30 @@ module.exports = {
     ).all(`%${contains}%`, ...orderBy.params)
 
     if (config.countsAreEnabled) {
-      data.tagCount = db.content.prepare(
-        `SELECT
-          COUNT(*)
-        FROM
-          tags
-        WHERE
-          name LIKE ? ESCAPE '^'`
-      ).pluck().get(`%${contains}%`, ...orderBy.params)
+      let tagCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          contains: contains
+        })
+
+        tagCount = this.getCachedCount(hash)
+      }
+
+      if (!tagCount) {
+        tagCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            tags
+          WHERE
+            name LIKE ? ESCAPE '^'`
+        ).pluck().get(`%${contains}%`, ...orderBy.params)
+
+        this.addCachedCount(hash, tagCount)
+      }
+
+      data.tagCount = tagCount
     }
 
     return data
@@ -159,5 +193,24 @@ module.exports = {
           params: []
         }
     }
+  },
+  getCachedCount (hash) {
+    return db.content.prepare(
+      `SELECT
+        count
+      FROM
+        tag_counts
+      WHERE
+        hash = ?`
+    ).pluck().get(hash)
+  },
+  addCachedCount (hash, tagCount) {
+    if (!config.countsCachingIsEnabled) {
+      return
+    }
+
+    db.content.prepare(
+      'INSERT INTO tag_counts (hash, count) VALUES (?, ?)'
+    ).run(hash, tagCount)
   }
 }
