@@ -18,7 +18,7 @@ router.get('/',
       return next(err)
     }
 
-    res.send(data.namespaces)
+    res.send(data)
   }
 )
 

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Added ability to (optionally) output counts when listing files and tags
 
+### Changed
+
++ Normalized API responses to make expanding them easier in the future
+
 ## [4.4.0] - 2018-12-05
 
 ### Changed

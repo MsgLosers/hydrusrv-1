@@ -20,7 +20,7 @@ router.post('/',
       return next(err)
     }
 
-    res.send(data.tags)
+    res.send(data)
   }
 )
 

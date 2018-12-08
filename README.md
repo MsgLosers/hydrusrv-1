@@ -562,12 +562,14 @@ __Route:__ `GET /api/namespaces`
 __Output on success:__
 
 ```json5
-[
-  {
-    "name": <name of the namespace>
-  }
-  // […]
-]
+{
+  "namespaces": [
+    {
+      "name": <name of the namespace>
+    }
+    // […]
+  ]
+}
 ```
 
 __Possible errors:__
@@ -643,13 +645,15 @@ __Input:__
 __Output on success:__
 
 ```json5
-[
-  {
-    "name": <name of the tag>,
-    "fileCount": <amount of files having the tag>
-  }
-  // […]
-]
+{
+  "tags": [
+    {
+      "name": <name of the tag>,
+      "fileCount": <amount of files having the tag>
+    }
+    // […]
+  ]
+}
 ```
 
 __Possible errors:__
@@ -759,25 +763,22 @@ also includes a files' tags.
 __Output on success:__
 
 ```json5
-[
-  {
-    "id": <file ID>,
-    "mime": <MIME type>,
-    "size": <file size in bytes>,
-    "width": <width in pixel>,
-    "height": <height in pixel>,
-    "mediaUrl": <original media URL>,
-    "thumbnailUrl": <thumbnail URL>,
-    "tags": [
-      {
-        "name": <name of the tag>,
-        "files": <amount of files having the tag>
-      }
-      // […]
-    ]
-  }
-  // […]
-]
+{
+  "id": <file ID>,
+  "mime": <MIME type>,
+  "size": <file size in bytes>,
+  "width": <width in pixel>,
+  "height": <height in pixel>,
+  "mediaUrl": <original media URL>,
+  "thumbnailUrl": <thumbnail URL>,
+  "tags": [
+    {
+      "name": <name of the tag>,
+      "files": <amount of files having the tag>
+    }
+    // […]
+  ]
+}
 ```
 
 __Possible errors:__
