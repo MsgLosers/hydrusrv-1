@@ -5,7 +5,7 @@ const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.get('/',
-  ...(config.authenticationRequired
+  ...(config.authenticationIsRequired
     ? [middleware.authentication.validateToken]
     : []
   ),
@@ -18,7 +18,7 @@ router.get('/',
       return next(err)
     }
 
-    res.send(data.namespaces)
+    res.send(data)
   }
 )
 

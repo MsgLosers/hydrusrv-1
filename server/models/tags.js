@@ -1,11 +1,15 @@
+const objectHash = require('object-hash')
+
 const db = require('../db')
 const config = require('../config')
 
 module.exports = {
   get (page, sort = 'id', direction = null) {
+    const data = {}
+
     const orderBy = this.generateOrderBy(sort, direction)
 
-    return db.content.prepare(
+    data.tags = db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -18,13 +22,42 @@ module.exports = {
       OFFSET
         ${(page - 1) * config.tagsPerPage}`
     ).all(...orderBy.params)
+
+    if (config.countsAreEnabled) {
+      let tagCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          contains: ''
+        })
+
+        tagCount = this.getCachedCount(hash)
+      }
+
+      if (!tagCount) {
+        tagCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            tags`
+        ).pluck().get()
+
+        this.addCachedCount(hash, tagCount)
+      }
+
+      data.tagCount = tagCount
+    }
+
+    return data
   },
   getContaining (page, contains, sort = 'id', direction = null) {
+    const data = {}
+
     contains = contains.split('_').join('^_')
 
     const orderBy = this.generateOrderBy(sort, direction, contains)
 
-    return db.content.prepare(
+    data.tags = db.content.prepare(
       `SELECT
         name,
         file_count AS fileCount
@@ -39,6 +72,35 @@ module.exports = {
       OFFSET
         ${(page - 1) * config.tagsPerPage}`
     ).all(`%${contains}%`, ...orderBy.params)
+
+    if (config.countsAreEnabled) {
+      let tagCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          contains: contains
+        })
+
+        tagCount = this.getCachedCount(hash)
+      }
+
+      if (!tagCount) {
+        tagCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            tags
+          WHERE
+            name LIKE ? ESCAPE '^'`
+        ).pluck().get(`%${contains}%`)
+
+        this.addCachedCount(hash, tagCount)
+      }
+
+      data.tagCount = tagCount
+    }
+
+    return data
   },
   getOfFile (fileId) {
     return db.content.prepare(
@@ -131,5 +193,24 @@ module.exports = {
           params: []
         }
     }
+  },
+  getCachedCount (hash) {
+    return db.content.prepare(
+      `SELECT
+        count
+      FROM
+        tag_counts
+      WHERE
+        hash = ?`
+    ).pluck().get(hash)
+  },
+  addCachedCount (hash, tagCount) {
+    if (!config.countsCachingIsEnabled) {
+      return
+    }
+
+    db.content.prepare(
+      'INSERT OR IGNORE INTO tag_counts (hash, count) VALUES (?, ?)'
+    ).run(hash, tagCount)
   }
 }

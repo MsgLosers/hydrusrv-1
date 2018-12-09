@@ -23,6 +23,13 @@ router.post('/',
         req.body.username, req.body.password
       )
     } catch (err) {
+      if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+        return next({
+          customStatus: 400,
+          customName: 'UsernameExistsError'
+        })
+      }
+
       return next(err)
     }
 

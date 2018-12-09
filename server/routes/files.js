@@ -5,27 +5,27 @@ const middleware = require('../middleware')
 const controllers = require('../controllers')
 
 router.get('/',
-  ...(config.authenticationRequired
+  ...(config.authenticationIsRequired
     ? [middleware.authentication.validateToken]
     : []
   ),
   middleware.files.get.inputValidationConfig,
   middleware.files.get.validateInput,
   (req, res, next) => {
-    const data = {}
+    let data = {}
 
     try {
-      data.files = controllers.files.getFiles(req.query)
+      data = controllers.files.getFiles(req.query)
     } catch (err) {
       return next(err)
     }
 
-    res.send(data.files)
+    res.send(data)
   }
 )
 
 router.get('/:id',
-  ...(config.authenticationRequired
+  ...(config.authenticationIsRequired
     ? [middleware.authentication.validateToken]
     : []
   ),

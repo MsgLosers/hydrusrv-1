@@ -18,22 +18,24 @@ module.exports = {
   port: process.env.PORT || 8000,
   apiBase: process.env.API_BASE || '/api',
   mediaBase: process.env.MEDIA_BASE || '/media',
-  allowCrossOrigin: (process.env.ALLOW_CROSS_ORIGIN === 'true'),
+  crossOriginIsAllowed: (process.env.CROSS_ORIGIN_ALLOWED === 'true'),
   authenticationDbPath: authenticationDbPath,
   contentDbPath: contentDbPath,
   hydrusFilesPath: process.env.HYDRUS_FILES_PATH,
   numberOfWorkers: process.env.NUMBER_OF_WORKERS || require('os').cpus().length,
   dbCheckpointInterval: process.env.DB_CHECKPOINT_INTERVAL || 3600,
-  registrationEnabled: (process.env.REGISTRATION_ENABLED === 'true'),
-  authenticationRequired: process.env.AUTHENTICATION_REQUIRED
+  registrationIsEnabled: (process.env.REGISTRATION_ENABLED === 'true'),
+  authenticationIsRequired: process.env.AUTHENTICATION_REQUIRED
     ? (process.env.AUTHENTICATION_REQUIRED === 'true')
     : true,
   minPasswordLength: process.env.MIN_PASSWORD_LENGTH || 16,
   filesPerPage: process.env.FILES_PER_PAGE || 42,
   tagsPerPage: process.env.TAGS_PER_PAGE || 42,
   autocompleteLimit: process.env.AUTOCOMPLETE_LIMIT || 10,
-  accessLoggingEnabled: (process.env.ACCESS_LOGGING_ENABLED === 'true'),
-  accessLogfilePath: process.env.OVERRIDE_ACCESS_LOGFILE_PATH ||
+  countsAreEnabled: (process.env.COUNTS_ENABLED === 'true'),
+  countsCachingIsEnabled: (process.env.COUNTS_CACHING_ENABLED === 'true'),
+  accessLoggingIsEnabled: (process.env.ACCESS_LOGGING_ENABLED === 'true'),
+  accessLogfilePath: process.env.ACCESS_LOGFILE_PATH_OVERRIDE ||
     path.resolve(__dirname, '../../logs/access.log'),
   availableMimeTypes: {
     1: 'image/jpeg',
