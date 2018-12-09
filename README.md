@@ -21,6 +21,7 @@ also available.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 4.x to 5.x](#upgrading-from-4x-to-5x)
     + [Upgrading from 3.x to 4.x](#upgrading-from-3x-to-4x)
     + [Upgrading from 2.x to 3.x](#upgrading-from-2x-to-3x)
     + [Upgrading from 1.x to 2.x](#upgrading-from-1x-to-2x)
@@ -110,6 +111,18 @@ therefore always safe to simply install via the routine mentioned before.
 
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
+
+#### Upgrading from 4.x to 5.x
+
+Upgrading from `4.x` to `5.x` can be done via `git pull && yarn` and requires
+only a few setting changes and considerations.
+
+The only major change is the addition of counts when listing files and tags,
+requiring some API changes as well as the addition of two new tables to the
+content database.
+
+If you are using hydrusrv-sync and hydrusrvue, you will need to update those to
+`2.x` to maintain compatibility with hydrusrv `5.x`.
 
 #### Upgrading from 3.x to 4.x
 
