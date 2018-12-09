@@ -9,7 +9,7 @@ router.get('/original/:mediaHash',
   middleware.media.get.inputValidationConfig,
   middleware.media.get.validateInput,
   async (req, res, next) => {
-    if (config.authenticationRequired) {
+    if (config.authenticationIsRequired) {
       try {
         if (!controllers.authentication.isValidMediaToken(req.query.token)) {
           return next({
@@ -42,7 +42,7 @@ router.get('/thumbnails/:mediaHash',
   middleware.media.get.inputValidationConfig,
   middleware.media.get.validateInput,
   async (req, res, next) => {
-    if (config.authenticationRequired) {
+    if (config.authenticationIsRequired) {
       try {
         if (!controllers.authentication.isValidMediaToken(req.query.token)) {
           return next({

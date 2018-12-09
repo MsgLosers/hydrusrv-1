@@ -21,6 +21,7 @@ also available.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 4.x to 5.x](#upgrading-from-4x-to-5x)
     + [Upgrading from 3.x to 4.x](#upgrading-from-3x-to-4x)
     + [Upgrading from 2.x to 3.x](#upgrading-from-2x-to-3x)
     + [Upgrading from 1.x to 2.x](#upgrading-from-1x-to-2x)
@@ -52,6 +53,7 @@ also available.
       + [Media](#files)
         + [Getting media originals](#getting-media-originals)
         + [Getting media thumbnails](#getting-media-thumbnails)
++ [Disclaimer](#disclaimer)
 + [Demo](#demo)
 + [Attribution](#attribution)
 + [Donate](#donate)
@@ -78,9 +80,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrus server][hydrus-server] (installing and running the server is quite
-  difficult and not recommended for people who have no prior experience with
-  hydrus; see [here][hydrus-server-installation] for installation instructions)
++ [hydrusrv-sync][hydrusrv-sync] (`2.x` for hydrusrv `5.x`)
 + [Node.js][node-js]
 + [Yarn][yarn]
 
@@ -109,6 +109,18 @@ therefore always safe to simply install via the routine mentioned before.
 
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
+
+#### Upgrading from 4.x to 5.x
+
+Upgrading from `4.x` to `5.x` can be done via `git pull && yarn` and requires
+only a few setting changes and considerations.
+
+The only major change is the addition of counts when listing files and tags,
+requiring some API changes as well as the addition of two new tables to the
+content database.
+
+If you are using hydrusrv-sync and hydrusrvue, you will need to update those to
+`2.x` to maintain compatibility with hydrusrv `5.x`.
 
 #### Upgrading from 3.x to 4.x
 
@@ -219,7 +231,7 @@ following are all the available settings (along with their default values):
   __slashes.__
 + `MEDIA_BASE=/media`: the base path of all the media routes. __No trailing__
   __slashes.__
-+ `ALLOW_CROSS_ORIGIN=false`: allows cross-origin requests (useful when the
++ `CROSS_ORIGIN_ALLOWED=false`: allows cross-origin requests (useful when the
   application accessing the API is located on a different domain).
 + `AUTHENTICATION_DB_PATH=./storage/authentication.db`: the authentication
   database path (absolute or relative). The database must exist and the file
@@ -251,10 +263,19 @@ following are all the available settings (along with their default values):
 + `FILES_PER_PAGE=42`: the results per page when listing files.
 + `TAGS_PER_PAGE=42`: the results per page when listing tags.
 + `AUTOCOMPLETE_LIMIT=10`: the maximum amount of tag completion results.
++ `COUNTS_ENABLED=false`: enables the output of total counts when listing files
+  and tags for the cost of response times (especially with larger databases).
++ `COUNTS_CACHING_ENABLED=false`: setting this to `true` enables the caching of
+  file/tag counts (only relevant when `COUNTS_ENABLED` is `true`). This is
+  recommended for larger databases to decrease response times when queries are
+  made that only differ in page and sorting since the count will only need to
+  be calculated once (for the first query). On smaller databases, the
+  performance gain might not be noticeable (or it might even be slighty slower
+  for very fast queries). The cache is emptied when hydrusrv-sync runs.
 + `ACCESS_LOGGING_ENABLED=false`: setting this to `false` disables access
   logging when
   `NODE_ENV=production` is set.
-+ `OVERRIDE_ACCESS_LOGFILE_PATH=`: overrides the default access logfile
++ `ACCESS_LOGFILE_PATH_OVERRIDE=`: overrides the default access logfile
   location (`logs/access.log`. Logging to a file is only enabled with
   `ACCESS_LOGGING_ENABLED=true` and `NODE_ENV=production`. With
   `NODE_ENV=development`, hydrusrv logs to the console instead.
@@ -560,12 +581,14 @@ __Route:__ `GET /api/namespaces`
 __Output on success:__
 
 ```json5
-[
-  {
-    "name": <name of the namespace>
-  }
-  // […]
-]
+{
+  "namespaces": [
+    {
+      "name": <name of the namespace>
+    }
+    // […]
+  ]
+}
 ```
 
 __Possible errors:__
@@ -602,13 +625,16 @@ The sort direction for most fields (except `random`) can be changed via
 __Output on success:__
 
 ```json5
-[
-  {
-    "name": <name of the tag>
-    "fileCount": <amount of files having the tag>
-  }
-  // […]
-]
+{
+  "tags": [
+    {
+      "name": <name of the tag>
+      "fileCount": <amount of files having the tag>
+    }
+    // […]
+  ],
+  "tagCount": <amount of tags for given query> // only if COUNTS_ENABLED is set to true
+}
 ```
 
 __Possible errors:__
@@ -638,13 +664,15 @@ __Input:__
 __Output on success:__
 
 ```json5
-[
-  {
-    "name": <name of the tag>,
-    "fileCount": <amount of files having the tag>
-  }
-  // […]
-]
+{
+  "tags": [
+    {
+      "name": <name of the tag>,
+      "fileCount": <amount of files having the tag>
+    }
+    // […]
+  ]
+}
 ```
 
 __Possible errors:__
@@ -711,18 +739,21 @@ displayed on a single page.
 __Output on success:__
 
 ```json5
-[
-  {
-    "id": <file ID>,
-    "mime": <MIME type>,
-    "size": <file size in bytes>,
-    "width": <width in pixel>,
-    "height": <height in pixel>,
-    "mediaUrl": <original media URL>,
-    "thumbnailUrl": <thumbnail URL>
-  }
-  // […]
-]
+{
+  "files": [
+    {
+      "id": <file ID>,
+      "mime": <MIME type>,
+      "size": <file size in bytes>,
+      "width": <width in pixel>,
+      "height": <height in pixel>,
+      "mediaUrl": <original media URL>,
+      "thumbnailUrl": <thumbnail URL>
+    }
+    // […]
+  ],
+  "fileCount": <amount of files for given query> // only if COUNTS_ENABLED is set to true
+}
 ```
 
 __Possible errors:__
@@ -751,25 +782,22 @@ also includes a files' tags.
 __Output on success:__
 
 ```json5
-[
-  {
-    "id": <file ID>,
-    "mime": <MIME type>,
-    "size": <file size in bytes>,
-    "width": <width in pixel>,
-    "height": <height in pixel>,
-    "mediaUrl": <original media URL>,
-    "thumbnailUrl": <thumbnail URL>,
-    "tags": [
-      {
-        "name": <name of the tag>,
-        "files": <amount of files having the tag>
-      }
-      // […]
-    ]
-  }
-  // […]
-]
+{
+  "id": <file ID>,
+  "mime": <MIME type>,
+  "size": <file size in bytes>,
+  "width": <width in pixel>,
+  "height": <height in pixel>,
+  "mediaUrl": <original media URL>,
+  "thumbnailUrl": <thumbnail URL>,
+  "tags": [
+    {
+      "name": <name of the tag>,
+      "files": <amount of files having the tag>
+    }
+    // […]
+  ]
+}
 ```
 
 __Possible errors:__
@@ -826,6 +854,22 @@ __Possible errors:__
 + `ShuttingDownError`
 + `InternalServerError`
 
+## Disclaimer
+
+In addition to the points described in the [MIT license](LICENSE.md), I,
+[mserajnik][maintainer], creator and maintainer of hydrusrv, hereby explicitly
+state that hydrusrv is currently deployed on the following official
+installations:
+
++ [https://hydrusrvue.mser.at][hydrusrvue-demo]
+
+No other installations are in any way affiliated with or controlled by me and I
+do not condone the usage of hydrusrv for publishing content that is
+copyrighted and/or considered illegal in any country or place. hydrusrv is open
+source software and it is up to the individual or group using it to make sure
+it is not used for illegal activities. I cannot be held accountable for any
+usage of hydrusrv that is outside of the aforementioned official installations.
+
 ## Demo
 
 You can find a demo installation of [hydrusrvue][hydrusrvue] at
@@ -843,6 +887,11 @@ It contains only safe for work images tagged with `scenery` (take a look at the
 
 Registration is enabled, so feel free to create as many users as you would
 like. __Created users are deleted at 12am every day.__
+
+If you are the creator of one or more of the images used in this demo
+installation and would like to have your content removed, please
+[message me](mailto:hello@mserajnik.at) or [open an issue][issues] and I will
+comply with your request at once.
 
 ## Attribution
 
@@ -898,7 +947,6 @@ You are welcome to help out!
 
 [express]: https://expressjs.com/
 [hydrus-server]: http://hydrusnetwork.github.io/hydrus
-[hydrus-server-installation]: http://hydrusnetwork.github.io/hydrus/help/server.html
 [hydrusrv-sync]: https://github.com/mserajnik/hydrusrv-sync
 [vue]: https://vuejs.org/
 [hydrusrvue]: https://github.com/mserajnik/hydrusrvue

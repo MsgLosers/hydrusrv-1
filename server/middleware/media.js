@@ -28,7 +28,7 @@ module.exports = {
         })
       }
 
-      if (config.authenticationRequired && !req.query.token) {
+      if (config.authenticationIsRequired && !req.query.token) {
         return next({
           customStatus: 400,
           customName: 'MissingMediaTokenError'

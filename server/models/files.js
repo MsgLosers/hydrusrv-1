@@ -1,3 +1,5 @@
+const objectHash = require('object-hash')
+
 const db = require('../db')
 const config = require('../config')
 const tagsModel = require('./tags')
@@ -21,13 +23,15 @@ module.exports = {
     return this.prepareFile(file)
   },
   get (page, sort = 'id', direction = null, namespaces = []) {
+    const data = {}
+
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
 
     if (!orderBy) {
       return this.get(page)
     }
 
-    const files = db.content.prepare(
+    data.files = db.content.prepare(
       `SELECT
         id,
         hash,
@@ -43,11 +47,39 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all()
+    ).all().map(file => this.prepareFile(file))
 
-    return files.map(file => this.prepareFile(file))
+    if (config.countsAreEnabled) {
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: [],
+          excludeTags: []
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files`
+        ).pluck().get()
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
+    }
+
+    return data
   },
   getByTags (page, tags, sort = 'id', direction = null, namespaces = []) {
+    const data = {}
+
     tags = [...new Set(tags)]
 
     let excludeTagsSubQuery = ''
@@ -86,7 +118,7 @@ module.exports = {
       return this.getByTags(page, tags)
     }
 
-    const files = db.content.prepare(
+    data.files = db.content.prepare(
       `SELECT
         files.id,
         files.hash,
@@ -112,9 +144,45 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(...params)
+    ).all(...params).map(file => this.prepareFile(file))
 
-    return files.map(file => this.prepareFile(file))
+    if (config.countsAreEnabled) {
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: tags.sort(),
+          excludeTags: excludeTags.sort()
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files
+          WHERE
+            files.tags_id IN (
+              SELECT file_tags_id FROM mappings WHERE tag_id IN (
+                SELECT id FROM tags
+                WHERE name IN (${',?'.repeat(tags.length).replace(',', '')})
+              )
+              GROUP BY file_tags_id
+              HAVING COUNT(*) = ?
+              ${excludeTagsSubQuery}
+            )`
+        ).pluck().get(...params)
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
+    }
+
+    return data
   },
   getByExcludeTags (
     page,
@@ -123,13 +191,15 @@ module.exports = {
     direction = null,
     namespaces = []
   ) {
+    const data = {}
+
     const orderBy = this.generateOrderBy(sort, direction, namespaces)
 
     if (!orderBy) {
       return this.getByExcludeTags(page, excludeTags)
     }
 
-    const files = db.content.prepare(
+    data.files = db.content.prepare(
       `SELECT
         files.id,
         files.hash,
@@ -154,9 +224,44 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(excludeTags)
+    ).all(excludeTags).map(file => this.prepareFile(file))
 
-    return files.map(file => this.prepareFile(file))
+    if (config.countsAreEnabled) {
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: [],
+          excludeTags: excludeTags.sort()
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files
+          WHERE
+            tags_id NOT IN (
+              SELECT file_tags_id FROM mappings WHERE tag_id IN (
+                SELECT id FROM tags
+                WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+              )
+            )
+          OR
+            tags_id IS NULL`
+        ).pluck().get(excludeTags)
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
+    }
+
+    return data
   },
   getTotalCount () {
     return db.content.prepare(
@@ -247,5 +352,24 @@ module.exports = {
     delete file.hash
 
     return file
+  },
+  getCachedCount (hash) {
+    return db.content.prepare(
+      `SELECT
+        count
+      FROM
+        file_counts
+      WHERE
+        hash = ?`
+    ).pluck().get(hash)
+  },
+  addCachedCount (hash, fileCount) {
+    if (!config.countsCachingIsEnabled) {
+      return
+    }
+
+    db.content.prepare(
+      'INSERT OR IGNORE INTO file_counts (hash, count) VALUES (?, ?)'
+    ).run(hash, fileCount)
   }
 }
