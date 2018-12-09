@@ -80,9 +80,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrus server][hydrus-server] (installing and running the server is quite
-  difficult and not recommended for people who have no prior experience with
-  hydrus; see [here][hydrus-server-installation] for installation instructions)
++ [hydrusrv-sync][hydrusrv-sync] (`2.x` for hydrusrv `5.x`)
 + [Node.js][node-js]
 + [Yarn][yarn]
 
@@ -949,7 +947,6 @@ You are welcome to help out!
 
 [express]: https://expressjs.com/
 [hydrus-server]: http://hydrusnetwork.github.io/hydrus
-[hydrus-server-installation]: http://hydrusnetwork.github.io/hydrus/help/server.html
 [hydrusrv-sync]: https://github.com/mserajnik/hydrusrv-sync
 [vue]: https://vuejs.org/
 [hydrusrvue]: https://github.com/mserajnik/hydrusrvue
