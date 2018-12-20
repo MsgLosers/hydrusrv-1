@@ -1,6 +1,8 @@
 const { check, validationResult } = require('express-validator/check')
 const { sanitizeParam, sanitizeQuery } = require('express-validator/filter')
 
+const constraintsHelper = require('../util/constraints-helper')
+
 module.exports = {
   get: {
     inputValidationConfig: [
@@ -13,6 +15,20 @@ module.exports = {
         .optional()
         .isArray().withMessage('InvalidTagsParameterError')
         .isLength({ min: 1 }).withMessage('InvalidTagsParameterError'),
+      sanitizeQuery('constraints').trim(),
+      check('constraints')
+        .optional()
+        .isArray().withMessage('InvalidConstraintsParameterError')
+        .isLength({ min: 1 }).withMessage('InvalidConstraintsParameterError')
+        .custom(constraints => {
+          for (const constraint of constraints) {
+            if (!constraintsHelper.isValidConstraint(constraint)) {
+              return false
+            }
+          }
+
+          return true
+        }).withMessage('InvalidConstraintsParameterError'),
       sanitizeQuery('sort').trim(),
       check('sort')
         .optional()

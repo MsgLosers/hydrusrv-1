@@ -369,6 +369,11 @@ be dealt with one after another.
 
 #### Routes
 
+__Note:__ The routes in this documentation _do not_ have URL-encoded characters
+for improved readability. Please be aware that, depending on the client you are
+using, you might have to URL-encode certain characters by yourself when sending
+a request.
+
 ##### Base
 
 __Route:__ `GET /api`
@@ -688,19 +693,93 @@ __Possible errors:__
 
 ###### Listing files
 
-__Route:__ `GET /api/files?page=<page>&tags[]=<tag>&sort=<method>&direction=<sort direction>&namespaces[]=<namespace>`
+__Route:__ `GET /api/files?page=<page>&tags[]=<tag>&constraints[]=<field><comparator><value>&sort=<method>&direction=<sort direction>&namespaces[]=<namespace>`
 
 __Info:__
 
 The `tags[]` parameter is optional and takes an arbitrary amount of tags (a
-single tag per `tag[]=`), each one limiting the result set further. You can
-also exclude files with certain tags from the results by prefixing the tag you
-want to exclude with `-`, e.g., `-sky`. To prevent confusion with tags that,
-for some reason, start with a minus, escape them with `\`, e.g., `\-house`
-(this is not necessary for `-` that are not located at the start of the tag).
+single tag per `tags[]`), each one (potentially) limiting the result set
+further. You can also exclude files with certain tags from the results by
+prefixing the tag you want to exclude with `-`, e.g., `-sky`. To prevent
+confusion with tags that (for some reason) start with `-`, escape them with
+`\`, e.g., `\-house` (this is not necessary for `-` that are not located at the
+start of the tag).
 
-The `sort` parameter is also optional and is used to sort the results by a
-different field instead of `id` (which is the default sort method).
+The `constraints[]` parameter is also optional and takes an arbitrary amount
+of so-called _constraints_. Constraints are used to filter files by their
+(meta) fields and can be used alone or in combination with tags. Like with
+tags, each constraint (potentially) limits the set further.
+
+If multiple constraints for the same field are provided, those constraints are
+compared in an `OR` fashion unless there are multiple `!=` constraints for the
+field, in which case those are compared with `AND` (to make it possible to
+exclude multiple values for the field while at the same time
+including/comparing against other values).
+
+The syntax is the following for a single constraint:
+
+`constraints[]=<field><comparator><value>`
+
+Where `field` has to be one of the following:
+
++ `id`: the file ID
++ `hash`: the SHA-256 hash of the file
++ `size`: the file size in number of bytes
++ `width`: the width of the file
++ `height`: the height of the file
++ `mime`: the MIME type of the file
++ `tags`: gets mapped to `tag_count` (the number of tags assigned to the file)
+  internally, it's abbreviated for simplicity's sake
+
+`comparator` can be one of:
+
++ `=`: compares if the content of the field equals the given value (supported
+  by all fields)
++ `!=`: compares if the content of the field does not equal the given value
+  (supported by all fields)
++ `~=`: compares if the content of the field approximately equals the given
+  value (not supported by `hash` and `mime`)
++ `>`: compares if the content of the field is greater than the given value
+  (not supported by `hash` and `mime`)
++ `<`: compares if the content of the field is smaller than the given value
+  (not supported by `hash` and `mime`)
++ `><`: compares if the content of the field is between the two given values
+  (the values are split by `,` and their order does not matter) (not supported
+  by `hash` and `mime`)
+
+And `value` can be:
+
++ _a positive integer or `0`_: can be used for comparing with `id`, `width`,
+  `height` and `tags` when using the `=`, `!=`, `~=`, `>` or `<` comparator
++ _two positive integers or `0` split with `,`_: can be used for comparing with
+  `id`, `width`, `height` and `tags` when using the `><` comparator
++ _a file size_: can be used for comparing with `size` when using the `=`, `!=`,
+  `~=`, `>` or `<` comparator and has to be either a positive integer (for
+  _bytes_) or a positive integer or float (with `.` as decimal point) plus a
+  suffix of either `k`, `m` or `g` (for _kibibytes_, _mebibytes_ and _gibibytes_
+  respectively)
++ _two file sizes split with `,`_: can be used for comparing with `size` when
+  using the `><` comparator (the same rules as the ones for the single file
+  size apply)
++ _a SHA-256 digest_: can be used for comparing with `hash`
++ _a MIME type in the common `<type>/<subtype>` syntax_: can be used for
+  comparing with `mime`
+
+Some examples could be:
+
++ `constraints[]=id!=42`
++ `constraints[]=id=84&constraints[]=id=126`
++ `constraints[]=hash=ed2c48b9f65f76f140b582b33e5415abe2037e43677952074b9158e6b5979ef4`
++ `constraints[]=size>5m`
++ `constraints[]=size><500k,2m`
++ `constraints[]=width>1000`
++ `constraints[]=height><500,1000`
++ `constraints[]=mime=image/png`
++ `constraints[]=tags<5`
++ `constraints[]=mime=image/png&constraints[]=size<5m&constraints[]=height>1000&constraints[]=tags>15`
+
+Finally, the `sort` parameter is also optional and is used to sort the results
+by a different field instead of `id` (which is the default sort method).
 
 The available `sort` parameters are:
 
@@ -710,7 +789,7 @@ The available `sort` parameters are:
 + `height`: sorts descending by field `height`
 + `mime`: sorts ascending by field `mime`
 + `tags`: sorts descending by field `tag_count`
-+ `namespaces`: sorts ascending by provided namespaces first and ascending by
++ `namespaces`: sorts ascending by provided namespaces first and descending by
   field `id` second
 + `random`: sorts randomly
 
@@ -765,6 +844,7 @@ __Possible errors:__
 + `MissingPageParameterError`
 + `InvalidPageParameterError`
 + `InvalidTagsParameterError`
++ `InvalidConstraintsParameterError`
 + `InvalidSortParameterError`
 + `InvalidDirectionParameterError`
 + `MissingNamespacesParameterError`
