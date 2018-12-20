@@ -295,6 +295,8 @@ test('database: get files', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
@@ -307,6 +309,8 @@ test('database: get files', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -319,6 +323,8 @@ test('database: get files', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -331,6 +337,8 @@ test('database: get files', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -353,6 +361,8 @@ test('database: get files sorted ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -365,6 +375,8 @@ test('database: get files sorted ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -377,6 +389,8 @@ test('database: get files sorted ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -389,6 +403,8 @@ test('database: get files sorted ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -411,6 +427,8 @@ test('database: get files sorted by size', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
@@ -423,6 +441,8 @@ test('database: get files sorted by size', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -435,6 +455,8 @@ test('database: get files sorted by size', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -447,6 +469,8 @@ test('database: get files sorted by size', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -469,6 +493,8 @@ test('database: get files sorted by size ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -481,6 +507,8 @@ test('database: get files sorted by size ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -493,6 +521,8 @@ test('database: get files sorted by size ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -505,6 +535,8 @@ test('database: get files sorted by size ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -527,6 +559,8 @@ test('database: get files sorted by width', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -539,6 +573,8 @@ test('database: get files sorted by width', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -551,6 +587,8 @@ test('database: get files sorted by width', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -563,6 +601,8 @@ test('database: get files sorted by width', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -585,6 +625,8 @@ test('database: get files sorted by width descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -597,6 +639,8 @@ test('database: get files sorted by width descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -609,6 +653,8 @@ test('database: get files sorted by width descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -621,6 +667,8 @@ test('database: get files sorted by width descending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -643,6 +691,8 @@ test('database: get files sorted by height', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -655,6 +705,8 @@ test('database: get files sorted by height', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -667,6 +719,8 @@ test('database: get files sorted by height', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -679,6 +733,8 @@ test('database: get files sorted by height', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -701,6 +757,8 @@ test('database: get files sorted by height ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -713,6 +771,8 @@ test('database: get files sorted by height ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -725,6 +785,8 @@ test('database: get files sorted by height ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -737,6 +799,8 @@ test('database: get files sorted by height ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -759,6 +823,8 @@ test('database: get files sorted by mime', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -771,6 +837,8 @@ test('database: get files sorted by mime', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -783,6 +851,8 @@ test('database: get files sorted by mime', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -795,6 +865,8 @@ test('database: get files sorted by mime', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -817,6 +889,8 @@ test('database: get files sorted by mime descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -829,6 +903,8 @@ test('database: get files sorted by mime descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -841,6 +917,8 @@ test('database: get files sorted by mime descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -853,6 +931,8 @@ test('database: get files sorted by mime descending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -875,6 +955,8 @@ test('database: get files sorted by tag count', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -887,6 +969,8 @@ test('database: get files sorted by tag count', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -899,6 +983,8 @@ test('database: get files sorted by tag count', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -911,6 +997,8 @@ test('database: get files sorted by tag count', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -933,6 +1021,8 @@ test('database: get files sorted by tag count ascending', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
@@ -945,6 +1035,8 @@ test('database: get files sorted by tag count ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -957,6 +1049,8 @@ test('database: get files sorted by tag count ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -969,6 +1063,8 @@ test('database: get files sorted by tag count ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -991,6 +1087,8 @@ test('database: get files sorted by namespace', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
@@ -1003,6 +1101,8 @@ test('database: get files sorted by namespace', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -1015,6 +1115,8 @@ test('database: get files sorted by namespace', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1027,6 +1129,8 @@ test('database: get files sorted by namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1049,6 +1153,8 @@ test('database: get files sorted by namespace descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1061,6 +1167,8 @@ test('database: get files sorted by namespace descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1073,6 +1181,8 @@ test('database: get files sorted by namespace descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1085,6 +1195,8 @@ test('database: get files sorted by namespace descending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -1107,6 +1219,8 @@ test('database: get files sorted by invalid namespace', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
@@ -1119,6 +1233,8 @@ test('database: get files sorted by invalid namespace', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -1131,6 +1247,8 @@ test('database: get files sorted by invalid namespace', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1143,6 +1261,8 @@ test('database: get files sorted by invalid namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1164,6 +1284,8 @@ test('database: get files by tags', t => {
     {
       files: [{
         id: 1,
+        hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
         mime: 'image/png',
         size: 5012,
         width: 500,
@@ -1185,6 +1307,8 @@ test('database: get files by excluded tags', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
@@ -1197,6 +1321,8 @@ test('database: get files by excluded tags', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
@@ -1209,6 +1335,8 @@ test('database: get files by excluded tags', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1230,6 +1358,8 @@ test('database: get files by tags and excluded tags', t => {
     {
       files: [{
         id: 3,
+        hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
         mime: 'image/png',
         size: 6117,
         width: 500,
@@ -1250,6 +1380,8 @@ test('database: get files by tags sorted ascending', t => {
     {
       files: [{
         id: 1,
+        hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
         mime: 'image/png',
         size: 5012,
         width: 500,
@@ -1271,6 +1403,8 @@ test('database: get files by tags sorted by size', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1283,6 +1417,8 @@ test('database: get files by tags sorted by size', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1295,6 +1431,8 @@ test('database: get files by tags sorted by size', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1317,6 +1455,8 @@ test('database: get files by tags sorted by size ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1329,6 +1469,8 @@ test('database: get files by tags sorted by size ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1341,6 +1483,8 @@ test('database: get files by tags sorted by size ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1363,6 +1507,8 @@ test('database: get files by tags sorted by width', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1375,6 +1521,8 @@ test('database: get files by tags sorted by width', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1387,6 +1535,8 @@ test('database: get files by tags sorted by width', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1409,6 +1559,8 @@ test('database: get files by tags sorted by width ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1421,6 +1573,8 @@ test('database: get files by tags sorted by width ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1433,6 +1587,8 @@ test('database: get files by tags sorted by width ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1455,6 +1611,8 @@ test('database: get files by tags sorted by height', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1467,6 +1625,8 @@ test('database: get files by tags sorted by height', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1479,6 +1639,8 @@ test('database: get files by tags sorted by height', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1501,6 +1663,8 @@ test('database: get files by tags sorted by height descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1513,6 +1677,8 @@ test('database: get files by tags sorted by height descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1525,6 +1691,8 @@ test('database: get files by tags sorted by height descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1547,6 +1715,8 @@ test('database: get files by tags sorted by mime', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1559,6 +1729,8 @@ test('database: get files by tags sorted by mime', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1571,6 +1743,8 @@ test('database: get files by tags sorted by mime', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1593,6 +1767,8 @@ test('database: get files by tags sorted by mime descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1605,6 +1781,8 @@ test('database: get files by tags sorted by mime descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1617,6 +1795,8 @@ test('database: get files by tags sorted by mime descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1639,6 +1819,8 @@ test('database: get files by tags sorted by tag count', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1651,6 +1833,8 @@ test('database: get files by tags sorted by tag count', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1663,6 +1847,8 @@ test('database: get files by tags sorted by tag count', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1685,6 +1871,8 @@ test('database: get files by tags sorted by tag count ascending', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1697,6 +1885,8 @@ test('database: get files by tags sorted by tag count ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1709,6 +1899,8 @@ test('database: get files by tags sorted by tag count ascending', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1733,6 +1925,8 @@ test('database: get files by tags sorted by namespace', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1745,6 +1939,8 @@ test('database: get files by tags sorted by namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1757,6 +1953,8 @@ test('database: get files by tags sorted by namespace', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1781,6 +1979,8 @@ test('database: get files by tags sorted by namespace descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1793,6 +1993,8 @@ test('database: get files by tags sorted by namespace descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1805,6 +2007,8 @@ test('database: get files by tags sorted by namespace descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1829,6 +2033,8 @@ test('database: get files by tags sorted by invalid namespace', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
@@ -1841,6 +2047,8 @@ test('database: get files by tags sorted by invalid namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
@@ -1853,6 +2061,8 @@ test('database: get files by tags sorted by invalid namespace', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
@@ -1873,6 +2083,8 @@ test('database: get file by id', t => {
     files.getById(1),
     {
       id: 1,
+      hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
       mime: 'image/png',
       size: 5012,
       width: 500,

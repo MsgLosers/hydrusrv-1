@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 + Added the ability to sort files by `tag_count`
++ Added the `hash` field to the output of file routes
 
 ### Fixed
 

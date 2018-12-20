@@ -355,8 +355,6 @@ module.exports = {
     file.mediaUrl = this.generateFilePath('original', file.hash)
     file.thumbnailUrl = this.generateFilePath('thumbnail', file.hash)
 
-    delete file.hash
-
     return file
   },
   getCachedCount (hash) {
