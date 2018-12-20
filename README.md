@@ -628,7 +628,7 @@ __Output on success:__
 {
   "tags": [
     {
-      "name": <name of the tag>
+      "name": <name of the tag>,
       "fileCount": <amount of files having the tag>
     }
     // […]
@@ -709,6 +709,7 @@ The available `sort` parameters are:
 + `width`: sorts descending by field `width`
 + `height`: sorts descending by field `height`
 + `mime`: sorts ascending by field `mime`
++ `tags`: sorts descending by field `tag_count`
 + `namespaces`: sorts ascending by provided namespaces first and ascending by
   field `id` second
 + `random`: sorts randomly
@@ -747,6 +748,7 @@ __Output on success:__
       "size": <file size in bytes>,
       "width": <width in pixel>,
       "height": <height in pixel>,
+      "tagCount": <amount of tags>,
       "mediaUrl": <original media URL>,
       "thumbnailUrl": <thumbnail URL>
     }
@@ -788,6 +790,7 @@ __Output on success:__
   "size": <file size in bytes>,
   "width": <width in pixel>,
   "height": <height in pixel>,
+  "tagCount": <amount of tags>,
   "mediaUrl": <original media URL>,
   "thumbnailUrl": <thumbnail URL>,
   "tags": [

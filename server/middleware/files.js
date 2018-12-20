@@ -18,7 +18,16 @@ module.exports = {
         .optional()
         .isString().withMessage('InvalidSortParameterError')
         .isIn(
-          ['id', 'size', 'width', 'height', 'mime', 'namespaces', 'random']
+          [
+            'id',
+            'size',
+            'width',
+            'height',
+            'mime',
+            'tags',
+            'namespaces',
+            'random'
+          ]
         ).withMessage('InvalidSortParameterError'),
       sanitizeQuery('direction').trim(),
       check('direction')

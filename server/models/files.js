@@ -13,7 +13,8 @@ module.exports = {
         mime,
         size,
         width,
-        height
+        height,
+        tag_count as tagCount
       FROM
         files
       WHERE
@@ -38,7 +39,8 @@ module.exports = {
         mime,
         size,
         width,
-        height
+        height,
+        tag_count as tagCount
       FROM
         files
       ORDER BY
@@ -125,7 +127,8 @@ module.exports = {
         files.mime,
         files.size,
         files.width,
-        files.height
+        files.height,
+        files.tag_count as tagCount
       FROM
         files
       WHERE
@@ -206,7 +209,8 @@ module.exports = {
         files.mime,
         files.size,
         files.width,
-        files.height
+        files.height,
+        files.tag_count as tagCount
       FROM
         files
       WHERE
@@ -292,6 +296,8 @@ module.exports = {
         return `files.height ${direction || 'DESC'}`
       case 'mime':
         return `files.mime ${direction || 'ASC'}`
+      case 'tags':
+        return `files.tag_count ${direction || 'DESC'}`
       case 'random':
         return 'files.random ASC'
       default:
