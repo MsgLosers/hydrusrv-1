@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Added the ability to sort files by `tag_count`
 
+### Fixed
+
++ Fixed test `content.db` not being Git-ignored
+
 ## [5.0.0] - 2018-12-09
 
 ### Added
