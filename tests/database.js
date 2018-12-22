@@ -2105,13 +2105,13 @@ test('database: get total file count', t => {
   )
 })
 
-test.after(t => {
+test.after.always(t => {
   db.close()
 
   fse.removeSync(path.resolve(__dirname, `storage/authentication.db`))
   fse.removeSync(path.resolve(__dirname, `storage/authentication.db-shm`))
-  fse.removeSync(path.resolve(__dirname, `storage/authentication.wal`))
+  fse.removeSync(path.resolve(__dirname, `storage/authentication.db-wal`))
   fse.removeSync(path.resolve(__dirname, `storage/content.db`))
   fse.removeSync(path.resolve(__dirname, `storage/content.db-shm`))
-  fse.removeSync(path.resolve(__dirname, `storage/content.wal`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.db-wal`))
 })
