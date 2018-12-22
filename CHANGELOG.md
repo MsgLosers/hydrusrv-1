@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Added the ability to sort files by `tag_count`
 + Added the `hash` field to the output of file routes
 
+### Changed
+
++ Changed checkpointing so the WAL file gets truncated
+
 ### Fixed
 
 + Fixed test `content.db` not being Git-ignored
