@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 + Changed checkpointing so the WAL file gets truncated
++ Updated dependencies
 
 ### Fixed
 
