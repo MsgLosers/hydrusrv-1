@@ -555,6 +555,11 @@ module.exports = {
 
     return data
   },
+  getMimeTypes () {
+    return db.content.prepare(
+      'SELECT id as name FROM mime_types'
+    ).all().map(row => ({ name: config.availableMimeTypes[row.name] }))
+  },
   getTotalCount () {
     return db.content.prepare(
       'SELECT COUNT(*) as count FROM files'

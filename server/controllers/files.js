@@ -1,6 +1,9 @@
 const files = require('../models/files')
 
 module.exports = {
+  getFileById (id) {
+    return files.getById(id)
+  },
   getFiles (query) {
     if (query.tags) {
       return query.constraints
@@ -36,10 +39,10 @@ module.exports = {
         query.namespaces || []
       )
   },
+  getMimeTypes () {
+    return files.getMimeTypes()
+  },
   getTotalFileCount () {
     return files.getTotalCount()
-  },
-  getFileById (id) {
-    return files.getById(id)
   }
 }

@@ -44,6 +44,7 @@ also available.
         + [Deleting tokens](#deleting-tokens)
       + [Info](#info)
       + [Namespaces](#namespaces)
+      + [MIME types](#mime-types)
       + [Tags](#tags)
         + [Listing tags](#listing-tags)
         + [Autocompleting tags](#autocompleting-tags)
@@ -590,6 +591,30 @@ __Output on success:__
   "namespaces": [
     {
       "name": <name of the namespace>
+    }
+    // […]
+  ]
+}
+```
+
+__Possible errors:__
+
++ `MissingTokenError`
++ `InvalidTokenError`
++ `ShuttingDownError`
++ `InternalServerError`
+
+##### MIME types
+
+__Route:__ `GET /api/mime-types`
+
+__Output on success:__
+
+```json5
+{
+  "mimeTypes": [
+    {
+      "name": <name of the MIME type>
     }
     // […]
   ]

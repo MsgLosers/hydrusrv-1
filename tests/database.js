@@ -2098,6 +2098,13 @@ test('database: get file by id', t => {
   )
 })
 
+test('database: get mime types', t => {
+  t.deepEqual(
+    files.getMimeTypes(),
+    [{ name: 'image/png' }]
+  )
+})
+
 test('database: get total file count', t => {
   t.deepEqual(
     files.getTotalCount(),
