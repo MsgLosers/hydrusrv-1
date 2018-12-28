@@ -126,7 +126,7 @@ test('database: get tags sorted by name descending', t => {
   )
 })
 
-test('database: get tags sorted by files', t => {
+test('database: get tags sorted by file count', t => {
   t.deepEqual(
     tags.get(1, 'files'),
     {
@@ -140,7 +140,7 @@ test('database: get tags sorted by files', t => {
   )
 })
 
-test('database: get tags sorted by files ascending', t => {
+test('database: get tags sorted by file count ascending', t => {
   t.deepEqual(
     tags.get(1, 'files', 'asc'),
     {
@@ -202,7 +202,7 @@ test('database: get tags containing sorted by name descending', t => {
   )
 })
 
-test('database: get tags containing sorted by files', t => {
+test('database: get tags containing sorted by file count', t => {
   t.deepEqual(
     tags.getContaining(1, 'lor', 'files'),
     {
@@ -214,7 +214,7 @@ test('database: get tags containing sorted by files', t => {
   )
 })
 
-test('database: get tags containing sorted by files ascending', t => {
+test('database: get tags containing sorted by file count ascending', t => {
   t.deepEqual(
     tags.getContaining(1, 'lor', 'files', 'asc'),
     {
@@ -295,10 +295,13 @@ test('database: get files', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
           height: 500,
+          tagCount: 2,
           mediaUrl: originalBaseUrl +
             '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -306,10 +309,13 @@ test('database: get files', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -317,10 +323,13 @@ test('database: get files', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -328,10 +337,13 @@ test('database: get files', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -349,10 +361,13 @@ test('database: get files sorted ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -360,10 +375,13 @@ test('database: get files sorted ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -371,10 +389,13 @@ test('database: get files sorted ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -382,10 +403,13 @@ test('database: get files sorted ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -403,10 +427,13 @@ test('database: get files sorted by size', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
           height: 500,
+          tagCount: 2,
           mediaUrl: originalBaseUrl +
             '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -414,10 +441,13 @@ test('database: get files sorted by size', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -425,10 +455,13 @@ test('database: get files sorted by size', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -436,10 +469,13 @@ test('database: get files sorted by size', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -457,10 +493,13 @@ test('database: get files sorted by size ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -468,10 +507,13 @@ test('database: get files sorted by size ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -479,10 +521,13 @@ test('database: get files sorted by size ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -490,10 +535,13 @@ test('database: get files sorted by size ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -511,10 +559,13 @@ test('database: get files sorted by width', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -522,10 +573,13 @@ test('database: get files sorted by width', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -533,10 +587,13 @@ test('database: get files sorted by width', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -544,10 +601,13 @@ test('database: get files sorted by width', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -565,10 +625,13 @@ test('database: get files sorted by width descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -576,10 +639,13 @@ test('database: get files sorted by width descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -587,10 +653,13 @@ test('database: get files sorted by width descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -598,10 +667,13 @@ test('database: get files sorted by width descending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -619,10 +691,13 @@ test('database: get files sorted by height', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -630,10 +705,13 @@ test('database: get files sorted by height', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -641,10 +719,13 @@ test('database: get files sorted by height', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -652,10 +733,13 @@ test('database: get files sorted by height', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -673,10 +757,13 @@ test('database: get files sorted by height ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -684,10 +771,13 @@ test('database: get files sorted by height ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -695,10 +785,13 @@ test('database: get files sorted by height ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -706,10 +799,13 @@ test('database: get files sorted by height ascending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -727,10 +823,13 @@ test('database: get files sorted by mime', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -738,10 +837,13 @@ test('database: get files sorted by mime', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -749,10 +851,13 @@ test('database: get files sorted by mime', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -760,10 +865,13 @@ test('database: get files sorted by mime', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -781,10 +889,13 @@ test('database: get files sorted by mime descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -792,10 +903,13 @@ test('database: get files sorted by mime descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -803,10 +917,13 @@ test('database: get files sorted by mime descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -814,14 +931,149 @@ test('database: get files sorted by mime descending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39'
+        }
+      ]
+    }
+  )
+})
+
+test('database: get files sorted by tag count', t => {
+  t.deepEqual(
+    files.get(1, 'tags'),
+    {
+      files: [
+        {
+          id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
+          mime: 'image/png',
+          size: 5012,
+          width: 500,
+          height: 500,
+          tagCount: 6,
+          mediaUrl: originalBaseUrl +
+            '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c'
+        },
+        {
+          id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          mime: 'image/png',
+          size: 5779,
+          width: 500,
+          height: 500,
+          tagCount: 5,
+          mediaUrl: originalBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55'
+        },
+        {
+          id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          mime: 'image/png',
+          size: 6117,
+          width: 500,
+          height: 500,
+          tagCount: 4,
+          mediaUrl: originalBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42'
+        },
+        {
+          id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
+          mime: 'image/png',
+          size: 6665,
+          width: 500,
+          height: 500,
+          tagCount: 3,
+          mediaUrl: originalBaseUrl +
+            '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39'
+        }
+      ]
+    }
+  )
+})
+
+test('database: get files sorted by tag count ascending', t => {
+  t.deepEqual(
+    files.get(1, 'tags', 'asc'),
+    {
+      files: [
+        {
+          id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
+          mime: 'image/png',
+          size: 6672,
+          width: 500,
+          height: 500,
+          tagCount: 2,
+          mediaUrl: originalBaseUrl +
+            '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d'
+        },
+        {
+          id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
+          mime: 'image/png',
+          size: 6665,
+          width: 500,
+          height: 500,
+          tagCount: 3,
+          mediaUrl: originalBaseUrl +
+            '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39'
+        },
+        {
+          id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          mime: 'image/png',
+          size: 6117,
+          width: 500,
+          height: 500,
+          tagCount: 4,
+          mediaUrl: originalBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42'
+        },
+        {
+          id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          mime: 'image/png',
+          size: 5779,
+          width: 500,
+          height: 500,
+          tagCount: 5,
+          mediaUrl: originalBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55'
         }
       ]
     }
@@ -835,10 +1087,13 @@ test('database: get files sorted by namespace', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
           height: 500,
+          tagCount: 2,
           mediaUrl: originalBaseUrl +
             '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -846,10 +1101,13 @@ test('database: get files sorted by namespace', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -857,10 +1115,13 @@ test('database: get files sorted by namespace', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -868,10 +1129,13 @@ test('database: get files sorted by namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -889,10 +1153,13 @@ test('database: get files sorted by namespace descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -900,10 +1167,13 @@ test('database: get files sorted by namespace descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -911,10 +1181,13 @@ test('database: get files sorted by namespace descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -922,10 +1195,13 @@ test('database: get files sorted by namespace descending', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -943,10 +1219,13 @@ test('database: get files sorted by invalid namespace', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
           height: 500,
+          tagCount: 2,
           mediaUrl: originalBaseUrl +
             '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -954,10 +1233,13 @@ test('database: get files sorted by invalid namespace', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -965,10 +1247,13 @@ test('database: get files sorted by invalid namespace', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -976,10 +1261,13 @@ test('database: get files sorted by invalid namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -996,10 +1284,13 @@ test('database: get files by tags', t => {
     {
       files: [{
         id: 1,
+        hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
         mime: 'image/png',
         size: 5012,
         width: 500,
         height: 500,
+        tagCount: 6,
         mediaUrl: originalBaseUrl +
           '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
         thumbnailUrl: thumbnailsBaseUrl +
@@ -1016,10 +1307,13 @@ test('database: get files by excluded tags', t => {
       files: [
         {
           id: 5,
+          hash:
+            'd2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           mime: 'image/png',
           size: 6672,
           width: 500,
           height: 500,
+          tagCount: 2,
           mediaUrl: originalBaseUrl +
             '/d2f5788f623cde1f0fb3dc801396fee235c67ed11d9452bfd765f1331587401d',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1027,10 +1321,13 @@ test('database: get files by excluded tags', t => {
         },
         {
           id: 4,
+          hash:
+            '6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           mime: 'image/png',
           size: 6665,
           width: 500,
           height: 500,
+          tagCount: 3,
           mediaUrl: originalBaseUrl +
             '/6c358705afeeeb6b75ba725cba10145ae366b6c36fe79aa99c983d354926af39',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1038,10 +1335,13 @@ test('database: get files by excluded tags', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1058,10 +1358,13 @@ test('database: get files by tags and excluded tags', t => {
     {
       files: [{
         id: 3,
+        hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
         mime: 'image/png',
         size: 6117,
         width: 500,
         height: 500,
+        tagCount: 4,
         mediaUrl: originalBaseUrl +
           '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
         thumbnailUrl: thumbnailsBaseUrl +
@@ -1077,10 +1380,13 @@ test('database: get files by tags sorted ascending', t => {
     {
       files: [{
         id: 1,
+        hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
         mime: 'image/png',
         size: 5012,
         width: 500,
         height: 500,
+        tagCount: 6,
         mediaUrl: originalBaseUrl +
           '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
         thumbnailUrl: thumbnailsBaseUrl +
@@ -1097,10 +1403,13 @@ test('database: get files by tags sorted by size', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1108,10 +1417,13 @@ test('database: get files by tags sorted by size', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1119,10 +1431,13 @@ test('database: get files by tags sorted by size', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1140,10 +1455,13 @@ test('database: get files by tags sorted by size ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1151,10 +1469,13 @@ test('database: get files by tags sorted by size ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1162,10 +1483,13 @@ test('database: get files by tags sorted by size ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1183,10 +1507,13 @@ test('database: get files by tags sorted by width', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1194,10 +1521,13 @@ test('database: get files by tags sorted by width', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1205,10 +1535,13 @@ test('database: get files by tags sorted by width', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1226,10 +1559,13 @@ test('database: get files by tags sorted by width ascending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1237,10 +1573,13 @@ test('database: get files by tags sorted by width ascending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1248,10 +1587,13 @@ test('database: get files by tags sorted by width ascending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1269,10 +1611,13 @@ test('database: get files by tags sorted by height', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1280,10 +1625,13 @@ test('database: get files by tags sorted by height', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1291,10 +1639,13 @@ test('database: get files by tags sorted by height', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1312,10 +1663,13 @@ test('database: get files by tags sorted by height descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1323,10 +1677,13 @@ test('database: get files by tags sorted by height descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1334,10 +1691,13 @@ test('database: get files by tags sorted by height descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1355,10 +1715,13 @@ test('database: get files by tags sorted by mime', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1366,10 +1729,13 @@ test('database: get files by tags sorted by mime', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1377,10 +1743,13 @@ test('database: get files by tags sorted by mime', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1398,10 +1767,13 @@ test('database: get files by tags sorted by mime descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1409,10 +1781,13 @@ test('database: get files by tags sorted by mime descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1420,14 +1795,121 @@ test('database: get files by tags sorted by mime descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42'
+        }
+      ]
+    }
+  )
+})
+
+test('database: get files by tags sorted by tag count', t => {
+  t.deepEqual(
+    files.getByTags(1, ['lorem', 'ipsum', 'dolor'], 'tags'),
+    {
+      files: [
+        {
+          id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
+          mime: 'image/png',
+          size: 5012,
+          width: 500,
+          height: 500,
+          tagCount: 6,
+          mediaUrl: originalBaseUrl +
+            '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c'
+        },
+        {
+          id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          mime: 'image/png',
+          size: 5779,
+          width: 500,
+          height: 500,
+          tagCount: 5,
+          mediaUrl: originalBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55'
+        },
+        {
+          id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          mime: 'image/png',
+          size: 6117,
+          width: 500,
+          height: 500,
+          tagCount: 4,
+          mediaUrl: originalBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42'
+        }
+      ]
+    }
+  )
+})
+
+test('database: get files by tags sorted by tag count ascending', t => {
+  t.deepEqual(
+    files.getByTags(1, ['lorem', 'ipsum', 'dolor'], 'tags', 'asc'),
+    {
+      files: [
+        {
+          id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          mime: 'image/png',
+          size: 6117,
+          width: 500,
+          height: 500,
+          tagCount: 4,
+          mediaUrl: originalBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42'
+        },
+        {
+          id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          mime: 'image/png',
+          size: 5779,
+          width: 500,
+          height: 500,
+          tagCount: 5,
+          mediaUrl: originalBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55'
+        },
+        {
+          id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
+          mime: 'image/png',
+          size: 5012,
+          width: 500,
+          height: 500,
+          tagCount: 6,
+          mediaUrl: originalBaseUrl +
+            '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
+          thumbnailUrl: thumbnailsBaseUrl +
+            '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c'
         }
       ]
     }
@@ -1443,10 +1925,13 @@ test('database: get files by tags sorted by namespace', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1454,10 +1939,13 @@ test('database: get files by tags sorted by namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1465,10 +1953,13 @@ test('database: get files by tags sorted by namespace', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1488,10 +1979,13 @@ test('database: get files by tags sorted by namespace descending', t => {
       files: [
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1499,10 +1993,13 @@ test('database: get files by tags sorted by namespace descending', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1510,10 +2007,13 @@ test('database: get files by tags sorted by namespace descending', t => {
         },
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1533,10 +2033,13 @@ test('database: get files by tags sorted by invalid namespace', t => {
       files: [
         {
           id: 3,
+          hash:
+            '31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           mime: 'image/png',
           size: 6117,
           width: 500,
           height: 500,
+          tagCount: 4,
           mediaUrl: originalBaseUrl +
             '/31426ccc8101461ad30806840b29432fb88bb84687ef9e002976551c8aa08e42',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1544,10 +2047,13 @@ test('database: get files by tags sorted by invalid namespace', t => {
         },
         {
           id: 2,
+          hash:
+            '5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           mime: 'image/png',
           size: 5779,
           width: 500,
           height: 500,
+          tagCount: 5,
           mediaUrl: originalBaseUrl +
             '/5ef2eac48dd171cf98793df1e123238a61fb8ed766e862042b25467066fabe55',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1555,10 +2061,13 @@ test('database: get files by tags sorted by invalid namespace', t => {
         },
         {
           id: 1,
+          hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           mime: 'image/png',
           size: 5012,
           width: 500,
           height: 500,
+          tagCount: 6,
           mediaUrl: originalBaseUrl +
             '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
           thumbnailUrl: thumbnailsBaseUrl +
@@ -1574,15 +2083,25 @@ test('database: get file by id', t => {
     files.getById(1),
     {
       id: 1,
+      hash:
+            '2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
       mime: 'image/png',
       size: 5012,
       width: 500,
       height: 500,
+      tagCount: 6,
       mediaUrl: originalBaseUrl +
         '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c',
       thumbnailUrl: thumbnailsBaseUrl +
         '/2acedf8e20512a10fc07cceca8d16923e790369b90acebf9efcd926f50dd5c0c'
     }
+  )
+})
+
+test('database: get mime types', t => {
+  t.deepEqual(
+    files.getMimeTypes(),
+    [{ name: 'image/png' }]
   )
 })
 
@@ -1593,13 +2112,13 @@ test('database: get total file count', t => {
   )
 })
 
-test.after(t => {
+test.after.always(t => {
   db.close()
 
   fse.removeSync(path.resolve(__dirname, `storage/authentication.db`))
   fse.removeSync(path.resolve(__dirname, `storage/authentication.db-shm`))
-  fse.removeSync(path.resolve(__dirname, `storage/authentication.wal`))
+  fse.removeSync(path.resolve(__dirname, `storage/authentication.db-wal`))
   fse.removeSync(path.resolve(__dirname, `storage/content.db`))
   fse.removeSync(path.resolve(__dirname, `storage/content.db-shm`))
-  fse.removeSync(path.resolve(__dirname, `storage/content.wal`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.db-wal`))
 })

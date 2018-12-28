@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [6.0.0] - 2018-12-28
+
+### Added
+
++ Added the ability to filter files by hydrus-like _system constraints_
++ Added the ability to sort files by `tag_count`
++ Added the `hash` field to the output of file routes
++ Added a route (`mime-types`) to fetch all available MIME types
+
+### Changed
+
++ Changed checkpointing so the WAL file gets truncated
++ Updated dependencies
+
+### Fixed
+
++ Fixed test `content.db` not being Git-ignored
++ Fixed test files not being cleaned up correctly (especially on error)
+
 ## [5.0.0] - 2018-12-09
 
 ### Added
@@ -627,7 +646,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...develop
+[6.0.0]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/mserajnik/hydrusrv/compare/4.4.0...5.0.0
 [4.4.0]: https://github.com/mserajnik/hydrusrv/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/mserajnik/hydrusrv/compare/4.2.1...4.3.0

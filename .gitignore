@@ -2,7 +2,6 @@
 /.env
 /storage/*.db
 /tests/storage/*.db
-!/tests/storage/content.db
 *.db-journal
 *.db-shm
 *.db-wal

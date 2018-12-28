@@ -3,7 +3,7 @@ const router = require('express').Router()
 const config = require('../config')
 const middleware = require('../middleware')
 const controllers = require('../controllers')
-const media = require('../util/media')
+const mediaHelper = require('../util/media-helper')
 
 router.get('/original/:mediaHash',
   middleware.media.get.inputValidationConfig,
@@ -22,11 +22,11 @@ router.get('/original/:mediaHash',
       }
     }
 
-    if (!media.fileExists('original', req.params.mediaHash)) {
+    if (!mediaHelper.fileExists('original', req.params.mediaHash)) {
       return next()
     }
 
-    const fileData = await media.getFileData(
+    const fileData = await mediaHelper.getFileData(
       'original', req.params.mediaHash
     )
 
@@ -55,11 +55,11 @@ router.get('/thumbnails/:mediaHash',
       }
     }
 
-    if (!media.fileExists('thumbnail', req.params.mediaHash)) {
+    if (!mediaHelper.fileExists('thumbnail', req.params.mediaHash)) {
       return next()
     }
 
-    const fileData = await media.getFileData(
+    const fileData = await mediaHelper.getFileData(
       'thumbnail', req.params.mediaHash
     )
 

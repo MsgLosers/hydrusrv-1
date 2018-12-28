@@ -1,11 +1,33 @@
 const files = require('../models/files')
 
 module.exports = {
+  getFileById (id) {
+    return files.getById(id)
+  },
   getFiles (query) {
-    return query.tags
-      ? files.getByTags(
+    if (query.tags) {
+      return query.constraints
+        ? files.getByTagsAndConstraints(
+          query.page,
+          query.tags,
+          query.constraints,
+          query.sort || 'id',
+          query.direction || null,
+          query.namespaces || []
+        )
+        : files.getByTags(
+          query.page,
+          query.tags,
+          query.sort || 'id',
+          query.direction || null,
+          query.namespaces || []
+        )
+    }
+
+    return query.constraints
+      ? files.getByConstraints(
         query.page,
-        query.tags,
+        query.constraints,
         query.sort || 'id',
         query.direction || null,
         query.namespaces || []
@@ -17,10 +39,10 @@ module.exports = {
         query.namespaces || []
       )
   },
+  getMimeTypes () {
+    return files.getMimeTypes()
+  },
   getTotalFileCount () {
     return files.getTotalCount()
-  },
-  getFileById (id) {
-    return files.getById(id)
   }
 }
