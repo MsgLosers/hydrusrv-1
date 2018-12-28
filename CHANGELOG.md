@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [6.0.0] - 2018-12-28
+
 ### Added
 
 + Added the ability to filter files by hydrus-like _system constraints_
@@ -644,7 +646,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...develop
+[6.0.0]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/mserajnik/hydrusrv/compare/4.4.0...5.0.0
 [4.4.0]: https://github.com/mserajnik/hydrusrv/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/mserajnik/hydrusrv/compare/4.2.1...4.3.0
