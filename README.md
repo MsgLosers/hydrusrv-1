@@ -856,6 +856,7 @@ __Output on success:__
   "files": [
     {
       "id": <file ID>,
+      "hash": <file hash (SHA-256)>,
       "mime": <MIME type>,
       "size": <file size in bytes>,
       "width": <width in pixel>,
@@ -899,6 +900,7 @@ __Output on success:__
 ```json5
 {
   "id": <file ID>,
+  "hash": <file hash (SHA-256)>,
   "mime": <MIME type>,
   "size": <file size in bytes>,
   "width": <width in pixel>,
