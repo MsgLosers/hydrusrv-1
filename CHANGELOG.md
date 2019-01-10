@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
++ Added a route for getting users
+
 ### Fixed
 
 + Added the missing `hash` property to file route API documentation
@@ -18,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Added the ability to filter files by hydrus-like _system constraints_
 + Added the ability to sort files by `tag_count`
 + Added the `hash` field to the output of file routes
-+ Added a route (`mime-types`) to fetch all available MIME types
++ Added a route (`mime-types`) for fetching all available MIME types
 
 ### Changed
 

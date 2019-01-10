@@ -3,6 +3,24 @@ const router = require('express').Router()
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 
+router.get('/',
+  middleware.authentication.validateToken,
+  (req, res, next) => {
+    let user
+
+    try {
+      user = controllers.authentication.getUserById(res.locals.userId)
+    } catch (err) {
+      return next(err)
+    }
+
+    res.send({
+      username: user.username,
+      created: new Date(user.created * 1000)
+    })
+  }
+)
+
 router.post('/',
   middleware.authentication.createUser.inputValidationConfig,
   middleware.authentication.createUser.validateInput,

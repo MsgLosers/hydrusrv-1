@@ -2,14 +2,8 @@ const users = require('../models/users')
 const tokens = require('../models/tokens')
 
 module.exports = {
-  async createUser (username, password) {
-    await users.create(username, password)
-  },
-  async updateUser (userId, data) {
-    await users.update(userId, data)
-  },
-  deleteUser (userId) {
-    users.delete(userId)
+  getUserById (userId) {
+    return users.getById(userId)
   },
   getUserByName (username) {
     return users.getByName(username)
@@ -20,6 +14,15 @@ module.exports = {
     }
 
     return users.getValid(nameOrId, password)
+  },
+  async createUser (username, password) {
+    await users.create(username, password)
+  },
+  async updateUser (userId, data) {
+    await users.update(userId, data)
+  },
+  deleteUser (userId) {
+    users.delete(userId)
   },
   createToken (userId, long) {
     return tokens.create(

@@ -37,6 +37,7 @@ also available.
     + [Routes](#routes)
       + [Base](#base)
       + [Users](#users)
+        + [Getting users](#getting-users)
         + [Creating users](#creating-users)
         + [Updating users](#updating-users)
         + [Deleting users](#deleting-users)
@@ -385,7 +386,7 @@ a request.
 
 ##### Base
 
-__Route:__ `GET /api`
+__Route:__ `GET /<API_BASE>`
 
 __Output on success:__
 
@@ -404,9 +405,29 @@ __Possible errors:__
 
 ##### Users
 
+###### Getting users
+
+__Route:__ `GET /<API_BASE>/users`
+
+__Output on success:__
+
+```json5
+{
+  "username": <username>,
+  "created": <ISO-8601 date representation of when the user was created>
+}
+```
+
+__Possible errors:__
+
++ `MissingTokenError`
++ `InvalidTokenError`
++ `ShuttingDownError`
++ `InternalServerError`
+
 ###### Creating users
 
-__Route:__ `POST /api/users`
+__Route:__ `POST /<API_BASE>/users`
 
 __Input:__
 
@@ -438,7 +459,7 @@ __Possible errors:__
 
 ###### Updating users
 
-__Route:__ `PUT /api/users`
+__Route:__ `PUT /<API_BASE>/users`
 
 __Input:__
 
@@ -476,7 +497,7 @@ __Possible errors:__
 
 ###### Deleting users
 
-__Route:__ `DELETE /api/users`
+__Route:__ `DELETE /<API_BASE>/users`
 
 __Input:__
 
@@ -508,7 +529,7 @@ __Possible errors:__
 
 ###### Creating tokens
 
-__Route:__ `POST /api/tokens`
+__Route:__ `POST /<API_BASE>/tokens`
 
 __Input:__
 
@@ -542,7 +563,7 @@ __Possible errors:__
 
 ###### Deleting tokens
 
-__Route:__ `DELETE /api/tokens`
+__Route:__ `DELETE /<API_BASE>/tokens`
 
 __Input:__
 
@@ -570,7 +591,7 @@ __Possible errors:__
 
 ##### Info
 
-__Route:__ `GET /api/info`
+__Route:__ `GET /<API_BASE>/info`
 
 __Output on success:__
 
@@ -590,7 +611,7 @@ __Possible errors:__
 
 ##### Namespaces
 
-__Route:__ `GET /api/namespaces`
+__Route:__ `GET /<API_BASE>/namespaces`
 
 __Output on success:__
 
@@ -614,7 +635,7 @@ __Possible errors:__
 
 ##### MIME types
 
-__Route:__ `GET /api/mime-types`
+__Route:__ `GET /<API_BASE>/mime-types`
 
 __Output on success:__
 
@@ -640,7 +661,7 @@ __Possible errors:__
 
 ###### Listing tags
 
-__Route:__ `GET /api/tags?page=<page>&contains=<text>&sort=<method>&direction=<sort direction>`
+__Route:__ `GET /<API_BASE>/tags?page=<page>&contains=<text>&sort=<method>&direction=<sort direction>`
 
 The `contains` parameter is optional and limits the results to tags containing
 the provided text.
@@ -689,7 +710,7 @@ __Possible errors:__
 
 ###### Autocompleting tags
 
-__Route:__ `POST /api/autocomplete-tag`
+__Route:__ `POST /<API_BASE>/autocomplete-tag`
 
 __Input:__
 
@@ -726,7 +747,7 @@ __Possible errors:__
 
 ###### Listing files
 
-__Route:__ `GET /api/files?page=<page>&tags[]=<tag>&constraints[]=<field><comparator><value>&sort=<method>&direction=<sort direction>&namespaces[]=<namespace>`
+__Route:__ `GET /<API_BASE>/files?page=<page>&tags[]=<tag>&constraints[]=<field><comparator><value>&sort=<method>&direction=<sort direction>&namespaces[]=<namespace>`
 
 __Info:__
 
@@ -888,7 +909,7 @@ __Possible errors:__
 
 ###### Viewing files
 
-__Route:__ `GET /api/files/<file id>`
+__Route:__ `GET /<API_BASE>/files/<file id>`
 
 __Info:__
 
@@ -932,7 +953,7 @@ __Possible errors:__
 
 ###### Getting media originals
 
-__Route:__ `GET /media/originals/<media hash>?token=<media token>`
+__Route:__ `GET /<MEDIA_BASE>/originals/<media hash>?token=<media token>`
 
 __Info:__
 
@@ -953,7 +974,7 @@ __Possible errors:__
 
 ###### Getting media thumbnails
 
-__Route:__ `GET /media/thumbnails/<media hash>?token=<media token>`
+__Route:__ `GET /<MEDIA_BASE>/thumbnails/<media hash>?token=<media token>`
 
 __Info:__
 
