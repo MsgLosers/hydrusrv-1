@@ -3,7 +3,14 @@ const tokens = require('../models/tokens')
 
 module.exports = {
   getUserById (userId) {
-    return users.getById(userId)
+    const user = users.getById(userId)
+
+    return {
+      id: user.id,
+      username: user.username,
+      createdAt: new Date(user.createdAt * 1000),
+      updatedAt: new Date(user.updatedAt * 1000)
+    }
   },
   getUserByName (username) {
     return users.getByName(username)
@@ -16,21 +23,49 @@ module.exports = {
     return users.getValid(nameOrId, password)
   },
   async createUser (username, password) {
-    await users.create(username, password)
+    const user = await users.create(username, password)
+
+    return {
+      id: user.id,
+      username: user.username,
+      createdAt: new Date(user.createdAt * 1000),
+      updatedAt: new Date(user.updatedAt * 1000)
+    }
   },
   async updateUser (userId, data) {
-    await users.update(userId, data)
+    const user = await users.update(userId, data)
+
+    return {
+      id: user.id,
+      username: user.username,
+      createdAt: new Date(user.createdAt * 1000),
+      updatedAt: new Date(user.updatedAt * 1000)
+    }
   },
   deleteUser (userId) {
     users.delete(userId)
   },
-  createToken (userId, long) {
-    return tokens.create(
-      userId,
-      long
-        ? Math.floor(Date.now() / 1000) + 7776000
-        : Math.floor(Date.now() / 1000) + 86400
-    )
+  getTokens (userId) {
+    return tokens.getValidByUserId(userId).map(token => ({
+      token: token.hash,
+      mediaToken: token.mediaHash,
+      ip: token.ip,
+      userAgent: token.userAgent,
+      createdAt: new Date(token.createdAt * 1000),
+      expiresAt: new Date(token.expiresAt * 1000)
+    }))
+  },
+  async createToken (userId, ip, userAgent, long) {
+    const token = await tokens.create(userId, ip, userAgent, long)
+
+    return {
+      token: token.hash,
+      mediaToken: token.mediaHash,
+      ip: token.ip,
+      userAgent: token.userAgent,
+      createdAt: new Date(token.createdAt * 1000),
+      expiresAt: new Date(token.expiresAt * 1000)
+    }
   },
   deleteTokens (userId, hash, all) {
     if (all) {
@@ -42,27 +77,15 @@ module.exports = {
     tokens.delete(userId, hash)
   },
   validateTokenAndGetUserId (hash) {
-    const token = tokens.getByHash(hash)
+    const token = tokens.getValidByHash(hash)
 
-    if (
-      !token ||
-      (token.expires && token.expires < Math.floor(Date.now() / 1000))
-    ) {
+    if (!token) {
       return false
     }
 
     return users.getById(token.userId).id
   },
   isValidMediaToken (hash) {
-    const token = tokens.getByMediaHash(hash)
-
-    if (
-      !token ||
-      (token.expires && token.expires < Math.floor(Date.now() / 1000))
-    ) {
-      return false
-    }
-
-    return true
+    return tokens.getValidByMediaHash(hash) !== null
   }
 }

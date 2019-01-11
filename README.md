@@ -37,11 +37,12 @@ also available.
     + [Routes](#routes)
       + [Base](#base)
       + [Users](#users)
-        + [Getting users](#getting-users)
+        + [Viewing users](#viewing-users)
         + [Creating users](#creating-users)
         + [Updating users](#updating-users)
         + [Deleting users](#deleting-users)
       + [Tokens](#tokens)
+        + [Listing tokens](#listing-tokens)
         + [Creating tokens](#creating-tokens)
         + [Deleting tokens](#deleting-tokens)
       + [Info](#info)
@@ -386,6 +387,8 @@ a request.
 
 ##### Base
 
+Responds with the version number of the hydrusrv installation.
+
 __Route:__ `GET /<API_BASE>`
 
 __Output on success:__
@@ -405,7 +408,10 @@ __Possible errors:__
 
 ##### Users
 
-###### Getting users
+###### Viewing users
+
+Requires authentication. Responds with information about the user the provided
+token belongs to.
 
 __Route:__ `GET /<API_BASE>/users`
 
@@ -413,8 +419,10 @@ __Output on success:__
 
 ```json5
 {
+  "id": <user id>,
   "username": <username>,
-  "created": <ISO-8601 date representation of when the user was created>
+  "createdAt": <ISO-8601 date representation of when the user was created>,
+  "updatedAt": <ISO-8601 date representation of when the user was last updated>
 }
 ```
 
@@ -426,6 +434,8 @@ __Possible errors:__
 + `InternalServerError`
 
 ###### Creating users
+
+Creates a new user. Responds with information about the created user.
 
 __Route:__ `POST /<API_BASE>/users`
 
@@ -442,7 +452,10 @@ __Output on success:__
 
 ```json5
 {
-  "createdUser": true
+  "id": <user id>,
+  "username": <username>,
+  "createdAt": <ISO-8601 date representation of when the user was created>,
+  "updatedAt": <ISO-8601 date representation of when the user was last updated>
 }
 ```
 
@@ -458,6 +471,9 @@ __Possible errors:__
 + `InternalServerError`
 
 ###### Updating users
+
+Requires authentication. Updates the user the provided token belongs to.
+Responds with information about the updated user.
 
 __Route:__ `PUT /<API_BASE>/users`
 
@@ -475,7 +491,10 @@ __Output on success:__
 
 ```json5
 {
-  "updatedUser": true
+  "id": <user id>,
+  "username": <username>,
+  "createdAt": <ISO-8601 date representation of when the user was created>,
+  "updatedAt": <ISO-8601 date representation of when the user was last updated>
 }
 ```
 
@@ -497,6 +516,8 @@ __Possible errors:__
 
 ###### Deleting users
 
+Requires authentication. Deletes the user the provided token belongs to.
+
 __Route:__ `DELETE /<API_BASE>/users`
 
 __Input:__
@@ -511,7 +532,7 @@ __Output on success:__
 
 ```json5
 {
-  "deletedUser": true
+  "success": true
 }
 ```
 
@@ -527,7 +548,42 @@ __Possible errors:__
 
 ##### Tokens
 
+##### Listing tokens
+
+Requires authentication. Responds with a list of all non-expired tokens of the
+user the provided token belongs to.
+
+__Route:__ `GET /<API_BASE>/tokens`
+
+__Output on success:__
+
+```json5
+{
+  "tokens": [
+    {
+        "token": <token>,
+        "mediaToken": <media token>,
+        "ip": <ip of the client creating the token>,
+        "userAgent": <user agent of the client creating the token>,
+        "createdAt": <ISO-8601 date representation of when the token was created>,
+        "expiresAt": <ISO-8601 date representation of when the token will expire>
+    }
+    // […]
+  ]
+}
+```
+
+__Possible errors:__
+
++ `MissingTokenError`
++ `InvalidTokenError`
++ `ShuttingDownError`
++ `InternalServerError`
+
 ###### Creating tokens
+
+Creates a new token for the provided user. Responds with information about the
+created token.
 
 __Route:__ `POST /<API_BASE>/tokens`
 
@@ -546,7 +602,11 @@ __Output on success:__
 ```json5
 {
   "token": <token>,
-  "mediaToken": <media token>
+  "mediaToken": <media token>,
+  "ip": <ip of the client creating the token>,
+  "userAgent": <user agent of the client creating the token>,
+  "createdAt": <ISO-8601 date representation of when the token was created>,
+  "expiresAt": <ISO-8601 date representation of when the token will expire>
 }
 ```
 
@@ -563,6 +623,9 @@ __Possible errors:__
 
 ###### Deleting tokens
 
+Requires authentication. Deletes either the provided token or all tokens of the
+user the provided token belongs to.
+
 __Route:__ `DELETE /<API_BASE>/tokens`
 
 __Input:__
@@ -577,7 +640,7 @@ __Output on success:__
 
 ```json5
 {
-  "deletedTokens": true
+  "success": true
 }
 ```
 
@@ -590,6 +653,9 @@ __Possible errors:__
 + `InternalServerError`
 
 ##### Info
+
+Requires authentication by default. Responds with the number of tags and files
+available.
 
 __Route:__ `GET /<API_BASE>/info`
 
@@ -610,6 +676,9 @@ __Possible errors:__
 + `InternalServerError`
 
 ##### Namespaces
+
+Requires authentication by default. Responds with a list of all available
+namespaces.
 
 __Route:__ `GET /<API_BASE>/namespaces`
 
@@ -635,6 +704,9 @@ __Possible errors:__
 
 ##### MIME types
 
+Requires authentication by default. Responds with a list of all available MIME
+types.
+
 __Route:__ `GET /<API_BASE>/mime-types`
 
 __Output on success:__
@@ -658,6 +730,8 @@ __Possible errors:__
 + `InternalServerError`
 
 ##### Tags
+
+Requires authentication by default. Responds with a list of tags.
 
 ###### Listing tags
 
@@ -710,6 +784,9 @@ __Possible errors:__
 
 ###### Autocompleting tags
 
+Requires authentication by default. Responds with a list of tags that contain
+the provided partial tag.
+
 __Route:__ `POST /<API_BASE>/autocomplete-tag`
 
 __Input:__
@@ -744,6 +821,8 @@ __Possible errors:__
 + `InternalServerError`
 
 ##### Files
+
+Requires authentication by default. Responds with a list of files.
 
 ###### Listing files
 
@@ -909,12 +988,15 @@ __Possible errors:__
 
 ###### Viewing files
 
+Requires authentication by default. Responds with information about the file
+the provided ID belongs to.
+
 __Route:__ `GET /<API_BASE>/files/<file id>`
 
 __Info:__
 
 This route returns the same data as when [listing files](#listing-files) but
-also includes a files' tags.
+also includes the tags of the file.
 
 __Output on success:__
 
@@ -953,6 +1035,8 @@ __Possible errors:__
 
 ###### Getting media originals
 
+Requires authentication by default. Responds with the requested media original.
+
 __Route:__ `GET /<MEDIA_BASE>/originals/<media hash>?token=<media token>`
 
 __Info:__
@@ -973,6 +1057,9 @@ __Possible errors:__
 + `InternalServerError`
 
 ###### Getting media thumbnails
+
+Requires authentication by default. Responds with the requested media
+thumbnail.
 
 __Route:__ `GET /<MEDIA_BASE>/thumbnails/<media hash>?token=<media token>`
 

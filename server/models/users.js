@@ -11,7 +11,8 @@ module.exports = {
         id,
         username,
         password,
-        created
+        created_at as createdAt,
+        updated_at as updatedAt
       FROM
         users
       WHERE
@@ -24,7 +25,8 @@ module.exports = {
         id,
         username,
         password,
-        created
+        created_at as createdAt,
+        updated_at as updatedAt
       FROM
         users
       WHERE
@@ -47,9 +49,14 @@ module.exports = {
   async create (username, password) {
     const passwordHash = await upash.hash(password)
 
-    db.authentication.prepare(
-      'INSERT INTO users (username, password, created) VALUES (?, ?, ?)'
-    ).run(username, passwordHash, Math.floor(Date.now() / 1000))
+    const now = Math.floor(Date.now() / 1000)
+
+    const newUserId = db.authentication.prepare(
+      `INSERT INTO users (username, password, created_at, updated_at)
+      VALUES (?, ?, ?, ?)`
+    ).run(username, passwordHash, now, now).lastInsertRowid
+
+    return this.getById(newUserId)
   },
   async update (userId, data) {
     const placeholders = []
@@ -65,11 +72,16 @@ module.exports = {
       params.push(await upash.hash(data.password))
     }
 
+    placeholders.push('updated_at = ?')
+
+    params.push(Math.floor(Date.now() / 1000))
     params.push(userId)
 
     db.authentication.prepare(
       `UPDATE users SET ${placeholders.join(',')} WHERE id = ?`
     ).run(...params)
+
+    return this.getById(userId)
   },
   delete (userId) {
     db.authentication.prepare('DELETE FROM users WHERE id = ?').run(userId)

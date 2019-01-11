@@ -6,18 +6,15 @@ const controllers = require('../controllers')
 router.get('/',
   middleware.authentication.validateToken,
   (req, res, next) => {
-    let user
+    let data
 
     try {
-      user = controllers.authentication.getUserById(res.locals.userId)
+      data = controllers.authentication.getUserById(res.locals.userId)
     } catch (err) {
       return next(err)
     }
 
-    res.send({
-      username: user.username,
-      created: new Date(user.created * 1000)
-    })
+    res.send(data)
   }
 )
 
@@ -36,8 +33,10 @@ router.post('/',
       return next(err)
     }
 
+    let data
+
     try {
-      await controllers.authentication.createUser(
+      data = await controllers.authentication.createUser(
         req.body.username, req.body.password
       )
     } catch (err) {
@@ -51,9 +50,7 @@ router.post('/',
       return next(err)
     }
 
-    res.send({
-      createdUser: true
-    })
+    res.send(data)
   }
 )
 
@@ -92,17 +89,17 @@ router.put('/',
       return next(err)
     }
 
+    let data
+
     try {
-      await controllers.authentication.updateUser(
+      data = await controllers.authentication.updateUser(
         res.locals.userId, req.body
       )
     } catch (err) {
       return next(err)
     }
 
-    res.send({
-      updatedUser: true
-    })
+    res.send(data)
   }
 )
 
@@ -137,7 +134,7 @@ router.delete('/',
     }
 
     res.send({
-      deletedUser: true
+      success: true
     })
   }
 )

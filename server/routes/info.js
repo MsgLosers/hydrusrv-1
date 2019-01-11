@@ -13,21 +13,18 @@ router.get('/',
     const data = {}
 
     try {
-      data.tags = controllers.tags.getTotalTagCount()
+      data.tagCount = controllers.tags.getTotalTagCount()
     } catch (err) {
       return next(err)
     }
 
     try {
-      data.files = controllers.files.getTotalFileCount()
+      data.fileCount = controllers.files.getTotalFileCount()
     } catch (err) {
       return next(err)
     }
 
-    res.send({
-      tagCount: data.tags.count,
-      fileCount: data.files.count
-    })
+    res.send(data)
   }
 )
 

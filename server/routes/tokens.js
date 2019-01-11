@@ -3,6 +3,21 @@ const router = require('express').Router()
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 
+router.get('/',
+  middleware.authentication.validateToken,
+  (req, res, next) => {
+    const data = {}
+
+    try {
+      data.tokens = controllers.authentication.getTokens(res.locals.userId)
+    } catch (err) {
+      return next(err)
+    }
+
+    res.send(data)
+  }
+)
+
 router.post('/',
   middleware.authentication.createToken.inputValidationConfig,
   middleware.authentication.createToken.validateInput,
@@ -24,20 +39,17 @@ router.post('/',
       return next(err)
     }
 
-    const data = {}
+    let data
 
     try {
-      data.token = await controllers.authentication.createToken(
-        validUser.id, req.body.long
+      data = await controllers.authentication.createToken(
+        validUser.id, req.ip, req.headers['user-agent'], req.body.long
       )
     } catch (err) {
       return next(err)
     }
 
-    res.send({
-      token: data.token.hash,
-      mediaToken: data.token.mediaHash
-    })
+    res.send(data)
   }
 )
 
@@ -55,7 +67,7 @@ router.delete('/',
     }
 
     res.send({
-      deletedTokens: true
+      success: true
     })
   }
 )

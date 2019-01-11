@@ -53,15 +53,19 @@ test.serial('database: update user', async t => {
 })
 
 test.serial('database: create token', async t => {
-  testToken = await tokens.create(1, Math.floor(Date.now() / 1000) + 86400)
+  testToken = await tokens.create(1, '127.0.0.1', 'test')
 
   t.truthy(testToken.hash.length === 128 && testToken.mediaHash.length === 128)
+})
+
+test.serial('database: get tokens', async t => {
+  t.deepEqual(tokens.getValidByUserId(1), [testToken])
 })
 
 test.serial('database: delete token', t => {
   tokens.delete(1, testToken.hash)
 
-  t.truthy(!tokens.getByHash(testToken.hash))
+  t.truthy(!tokens.getValidByHash(testToken.hash))
 })
 
 test.serial('database: delete user', t => {
@@ -284,7 +288,7 @@ test('database: get namespaces', t => {
 test('database: get total tag count', t => {
   t.deepEqual(
     tags.getTotalCount(),
-    { count: 10 }
+    10
   )
 })
 
@@ -2108,7 +2112,7 @@ test('database: get mime types', t => {
 test('database: get total file count', t => {
   t.deepEqual(
     files.getTotalCount(),
-    { count: 5 }
+    5
   )
 })
 

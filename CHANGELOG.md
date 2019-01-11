@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 + Added a route for getting users
++ Added a route for getting tokens
+
+### Changed
+
++ Added various fields to the `users` and `tokens` tables and adjusted the API
+  responses accordingly
++ Normalized the API responses for creating and updating users
++ Refactored code
 
 ### Fixed
 
-+ Added the missing `hash` property to file route API documentation
++ Added the missing `hash` property to the file routes API documentation
 
 ## [6.0.0] - 2018-12-28
 
