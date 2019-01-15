@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.0.0] - 2018-01-15
+
 ### Added
 
 + Added a route for getting users
@@ -664,7 +666,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/7.0.0...develop
+[7.0.0]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...7.0.0
 [6.0.0]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/mserajnik/hydrusrv/compare/4.4.0...5.0.0
 [4.4.0]: https://github.com/mserajnik/hydrusrv/compare/4.3.0...4.4.0
