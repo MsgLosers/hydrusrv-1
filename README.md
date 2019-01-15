@@ -21,6 +21,7 @@ also available.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 6.x to 7.x](#upgrading-from-6x-to-7x)
     + [Upgrading from 5.x to 6.x](#upgrading-from-5x-to-6x)
     + [Upgrading from 4.x to 5.x](#upgrading-from-4x-to-5x)
     + [Upgrading from 3.x to 4.x](#upgrading-from-3x-to-4x)
@@ -58,7 +59,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrusrv-sync][hydrusrv-sync] (`3.x` for hydrusrv `6.x`)
++ [hydrusrv-sync][hydrusrv-sync] (`3.x` for hydrusrv `7.x`)
 + [Node.js][node-js]
 + [Yarn][yarn]
 
@@ -88,29 +89,35 @@ therefore always safe to simply install via the routine mentioned before.
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
 
+#### Upgrading from 6.x to 7.x
+
+Upgrading from `6.x` to `7.x` can be done via
+`git pull && yarn && yarn migrate` and requires no further manual changes.
+
+If you are using hydrusrvue, you need to upgrade it to `4.x` to maintain
+compatibility with hydrusrv `7.x`.
+
 #### Upgrading from 5.x to 6.x
 
-Upgrading from `5.x` to `6.x` can be done via `git pull && yarn`.
+Upgrading from `5.x` to `6.x` can be done via `git pull && yarn` and requires
+no further manual changes.
 
-If you are using hydrusrv-sync and hydrusrvue, you will need to update those to
+If you are using hydrusrv-sync and hydrusrvue, you need to upgrade those to
 `3.x` to maintain compatibility with hydrusrv `6.x`.
 
 #### Upgrading from 4.x to 5.x
 
 Upgrading from `4.x` to `5.x` can be done via `git pull && yarn` and requires
-only a few setting changes and considerations.
+manual updates/changes in `.env`.
 
-The only major change is the addition of counts when listing files and tags,
-requiring some API changes as well as the addition of two new tables to the
-content database.
-
-If you are using hydrusrv-sync and hydrusrvue, you will need to update those to
+If you are using hydrusrv-sync and hydrusrvue, you need to upgrade those to
 `2.x` to maintain compatibility with hydrusrv `5.x`.
 
 #### Upgrading from 3.x to 4.x
 
-Upgrading from `3.x` to `4.x` can be done via `git pull && yarn`, but requires
-some additional work and considerations.
+Upgrading from `3.x` to `4.x` can be done via `git pull && yarn` and requires
+manual updates/changes in `.env`. You also need to make additional manual
+adjustments as described in the following upgrade guide:
 
 Starting with `4.0.0`, hydrusrv no longer copies the hydrus server data over by
 itself, but relies on a separate application called
@@ -139,47 +146,25 @@ time you want to sync the data from hydrus server or set up a cron job
 Renaming the old `app.db` to `authentication.db` should work so you do not have
 to migrate the users manually.
 
-As a last step, take a look at the changed environment variables and adjust
-accordingly.
-
 #### Upgrading from 2.x to 3.x
 
-Upgrading from `2.x` to `3.x` can be done via `git pull && yarn`, but requires
-some additional work and considerations.
+Upgrading from `2.x` to `3.x` can be done via `git pull && yarn`. You also
+need to make additional manual adjustments as described in the following
+upgrade guide:
 
-First of all, the app database structure has changed, with the table `tokens`
-having a new column `media_hash`. You need to either re-create your database
-from the template or add this column to your existing database manually.
+The app database structure has changed, with the table `tokens` having a new
+column `media_hash`. You need to either re-create your database from the
+template or add this column to your existing database manually.
 
 It is __strongly recommended__ to re-create the database by copying the
 template and running migrations (`yarn migrate`). This will ensure that any
 future changes will just require running migrations instead of making manual
 adjustments or starting over with an empty database.
 
-Second, accessing media files now requires media tokens that are generated
-alongside authentication tokens and expire together with them. Such a media
-token must be provided as a query parameter in the form `?token=<media token>`
-for every media file request.
-
 #### Upgrading from 1.x to 2.x
 
 Upgrading from `1.x` to `2.x` can be done via `git pull && yarn` and requires
-only a few setting changes and considerations.
-
-The main difference between `2.x` and `1.x` is that `2.x` uses a temporary copy
-of the hydrus server data in its own application database instead of directly
-querying the hydrus server database on demand for increased performance and
-better extensibility.
-
-The setting `HYDRUS_RESULTS_PER_PAGE` has therefore been renamed to just
-`RESULTS_PER_PAGE` while a new setting called `DATA_UPDATE_INTERVAL` controls
-how often hydrusrv should sync the temporary data with hydrus server (after the
-initial sync when it starts).
-
-This change now allows for sorting by an arbitrary number of namespaces instead
-of just one while at the same time no longer limiting the result set by the
-provided sort namespaces (which was an unfortunate side effect that was
-unavoidable in `1.x` without killing the performance).
+manual updates/changes in `.env`.
 
 ## Usage
 
