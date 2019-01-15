@@ -151,8 +151,8 @@ module.exports = {
   },
   getTotalCount () {
     return db.content.prepare(
-      'SELECT COUNT(*) as count FROM tags'
-    ).get()
+      'SELECT COUNT(*) FROM tags'
+    ).pluck().get()
   },
   generateOrderBy (sort, direction, contains = null) {
     direction = ['asc', 'desc'].includes(direction) ? direction : null

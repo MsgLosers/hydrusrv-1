@@ -3,6 +3,21 @@ const router = require('express').Router()
 const middleware = require('../middleware')
 const controllers = require('../controllers')
 
+router.get('/',
+  middleware.authentication.validateToken,
+  (req, res, next) => {
+    let data
+
+    try {
+      data = controllers.authentication.getUserById(res.locals.userId)
+    } catch (err) {
+      return next(err)
+    }
+
+    res.send(data)
+  }
+)
+
 router.post('/',
   middleware.authentication.createUser.inputValidationConfig,
   middleware.authentication.createUser.validateInput,
@@ -18,8 +33,10 @@ router.post('/',
       return next(err)
     }
 
+    let data
+
     try {
-      await controllers.authentication.createUser(
+      data = await controllers.authentication.createUser(
         req.body.username, req.body.password
       )
     } catch (err) {
@@ -33,9 +50,7 @@ router.post('/',
       return next(err)
     }
 
-    res.send({
-      createdUser: true
-    })
+    res.send(data)
   }
 )
 
@@ -74,17 +89,17 @@ router.put('/',
       return next(err)
     }
 
+    let data
+
     try {
-      await controllers.authentication.updateUser(
+      data = await controllers.authentication.updateUser(
         res.locals.userId, req.body
       )
     } catch (err) {
       return next(err)
     }
 
-    res.send({
-      updatedUser: true
-    })
+    res.send(data)
   }
 )
 
@@ -119,7 +134,7 @@ router.delete('/',
     }
 
     res.send({
-      deletedUser: true
+      success: true
     })
   }
 )

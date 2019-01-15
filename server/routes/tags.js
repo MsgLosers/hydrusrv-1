@@ -12,7 +12,7 @@ router.get('/',
   middleware.tags.get.inputValidationConfig,
   middleware.tags.get.validateInput,
   (req, res, next) => {
-    let data = {}
+    let data
 
     try {
       data = controllers.tags.getTags(req.query)

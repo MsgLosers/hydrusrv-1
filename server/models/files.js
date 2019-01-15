@@ -15,7 +15,7 @@ module.exports = {
         size,
         width,
         height,
-        tag_count as tagCount
+        tag_count AS tagCount
       FROM
         files
       WHERE
@@ -41,7 +41,7 @@ module.exports = {
         size,
         width,
         height,
-        tag_count as tagCount
+        tag_count AS tagCount
       FROM
         files
       ORDER BY
@@ -130,7 +130,7 @@ module.exports = {
         files.size,
         files.width,
         files.height,
-        files.tag_count as tagCount
+        files.tag_count AS tagCount
       FROM
         files
       WHERE
@@ -213,7 +213,7 @@ module.exports = {
         files.size,
         files.width,
         files.height,
-        files.tag_count as tagCount
+        files.tag_count AS tagCount
       FROM
         files
       WHERE
@@ -300,7 +300,7 @@ module.exports = {
         size,
         width,
         height,
-        tag_count as tagCount
+        tag_count AS tagCount
       FROM
         files
       ${constraintConditions.clauses.join(' ')}
@@ -400,7 +400,7 @@ module.exports = {
         files.size,
         files.width,
         files.height,
-        files.tag_count as tagCount
+        files.tag_count AS tagCount
       FROM
         files
       WHERE
@@ -492,7 +492,7 @@ module.exports = {
         files.size,
         files.width,
         files.height,
-        files.tag_count as tagCount
+        files.tag_count AS tagCount
       FROM
         files
       WHERE (
@@ -557,13 +557,13 @@ module.exports = {
   },
   getMimeTypes () {
     return db.content.prepare(
-      'SELECT id as name FROM mime_types'
+      'SELECT id AS name FROM mime_types'
     ).all().map(row => ({ name: config.availableMimeTypes[row.name] }))
   },
   getTotalCount () {
     return db.content.prepare(
-      'SELECT COUNT(*) as count FROM files'
-    ).get()
+      'SELECT COUNT(*) FROM files'
+    ).pluck().get()
   },
   generateOrderBy (sort, direction, namespaces) {
     direction = ['asc', 'desc'].includes(direction) ? direction : null

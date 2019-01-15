@@ -21,6 +21,7 @@ also available.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 6.x to 7.x](#upgrading-from-6x-to-7x)
     + [Upgrading from 5.x to 6.x](#upgrading-from-5x-to-6x)
     + [Upgrading from 4.x to 5.x](#upgrading-from-4x-to-5x)
     + [Upgrading from 3.x to 4.x](#upgrading-from-3x-to-4x)
@@ -30,31 +31,7 @@ also available.
   + [Configuration](#configuration)
   + [Running the server](#running-the-server)
     + [Running with Docker](#running-with-docker)
-  + [API](#api)
-    + [General](#general)
-    + [Authentication](#authentication)
-    + [Errors](#errors)
-    + [Routes](#routes)
-      + [Base](#base)
-      + [Users](#users)
-        + [Creating users](#creating-users)
-        + [Updating users](#updating-users)
-        + [Deleting users](#deleting-users)
-      + [Tokens](#tokens)
-        + [Creating tokens](#creating-tokens)
-        + [Deleting tokens](#deleting-tokens)
-      + [Info](#info)
-      + [Namespaces](#namespaces)
-      + [MIME types](#mime-types)
-      + [Tags](#tags)
-        + [Listing tags](#listing-tags)
-        + [Autocompleting tags](#autocompleting-tags)
-      + [Files](#files)
-        + [Listing files](#listing-files)
-        + [Viewing files](#viewing-files)
-      + [Media](#files)
-        + [Getting media originals](#getting-media-originals)
-        + [Getting media thumbnails](#getting-media-thumbnails)
++ [API](#api)
 + [Disclaimer](#disclaimer)
 + [Demo](#demo)
 + [Attribution](#attribution)
@@ -82,7 +59,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrusrv-sync][hydrusrv-sync] (`3.x` for hydrusrv `6.x`)
++ [hydrusrv-sync][hydrusrv-sync] (`3.x` for hydrusrv `7.x`)
 + [Node.js][node-js]
 + [Yarn][yarn]
 
@@ -112,29 +89,35 @@ therefore always safe to simply install via the routine mentioned before.
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
 
+#### Upgrading from 6.x to 7.x
+
+Upgrading from `6.x` to `7.x` can be done via
+`git pull && yarn && yarn migrate` and requires no further manual changes.
+
+If you are using hydrusrvue, you need to upgrade it to `4.x` to maintain
+compatibility with hydrusrv `7.x`.
+
 #### Upgrading from 5.x to 6.x
 
-Upgrading from `5.x` to `6.x` can be done via `git pull && yarn`.
+Upgrading from `5.x` to `6.x` can be done via `git pull && yarn` and requires
+no further manual changes.
 
-If you are using hydrusrv-sync and hydrusrvue, you will need to update those to
+If you are using hydrusrv-sync and hydrusrvue, you need to upgrade those to
 `3.x` to maintain compatibility with hydrusrv `6.x`.
 
 #### Upgrading from 4.x to 5.x
 
 Upgrading from `4.x` to `5.x` can be done via `git pull && yarn` and requires
-only a few setting changes and considerations.
+manual updates/changes in `.env`.
 
-The only major change is the addition of counts when listing files and tags,
-requiring some API changes as well as the addition of two new tables to the
-content database.
-
-If you are using hydrusrv-sync and hydrusrvue, you will need to update those to
+If you are using hydrusrv-sync and hydrusrvue, you need to upgrade those to
 `2.x` to maintain compatibility with hydrusrv `5.x`.
 
 #### Upgrading from 3.x to 4.x
 
-Upgrading from `3.x` to `4.x` can be done via `git pull && yarn`, but requires
-some additional work and considerations.
+Upgrading from `3.x` to `4.x` can be done via `git pull && yarn` and requires
+manual updates/changes in `.env`. You also need to make additional manual
+adjustments as described in the following upgrade guide:
 
 Starting with `4.0.0`, hydrusrv no longer copies the hydrus server data over by
 itself, but relies on a separate application called
@@ -163,47 +146,25 @@ time you want to sync the data from hydrus server or set up a cron job
 Renaming the old `app.db` to `authentication.db` should work so you do not have
 to migrate the users manually.
 
-As a last step, take a look at the changed environment variables and adjust
-accordingly.
-
 #### Upgrading from 2.x to 3.x
 
-Upgrading from `2.x` to `3.x` can be done via `git pull && yarn`, but requires
-some additional work and considerations.
+Upgrading from `2.x` to `3.x` can be done via `git pull && yarn`. You also
+need to make additional manual adjustments as described in the following
+upgrade guide:
 
-First of all, the app database structure has changed, with the table `tokens`
-having a new column `media_hash`. You need to either re-create your database
-from the template or add this column to your existing database manually.
+The app database structure has changed, with the table `tokens` having a new
+column `media_hash`. You need to either re-create your database from the
+template or add this column to your existing database manually.
 
 It is __strongly recommended__ to re-create the database by copying the
 template and running migrations (`yarn migrate`). This will ensure that any
 future changes will just require running migrations instead of making manual
 adjustments or starting over with an empty database.
 
-Second, accessing media files now requires media tokens that are generated
-alongside authentication tokens and expire together with them. Such a media
-token must be provided as a query parameter in the form `?token=<media token>`
-for every media file request.
-
 #### Upgrading from 1.x to 2.x
 
 Upgrading from `1.x` to `2.x` can be done via `git pull && yarn` and requires
-only a few setting changes and considerations.
-
-The main difference between `2.x` and `1.x` is that `2.x` uses a temporary copy
-of the hydrus server data in its own application database instead of directly
-querying the hydrus server database on demand for increased performance and
-better extensibility.
-
-The setting `HYDRUS_RESULTS_PER_PAGE` has therefore been renamed to just
-`RESULTS_PER_PAGE` while a new setting called `DATA_UPDATE_INTERVAL` controls
-how often hydrusrv should sync the temporary data with hydrus server (after the
-initial sync when it starts).
-
-This change now allows for sorting by an arbitrary number of namespaces instead
-of just one while at the same time no longer limiting the result set by the
-provided sort namespaces (which was an unfortunate side effect that was
-unavoidable in `1.x` without killing the performance).
+manual updates/changes in `.env`.
 
 ## Usage
 
@@ -328,647 +289,9 @@ If you want to create your own setup, please take a look at the
 [entrypoint file](.docker/docker-entrypoint.sh) to figure out how to configure
 it.
 
-### API
+## API
 
-hydrusrv provides a REST-like API that a client can connect to to request data
-from the server. Such a client could for example be a simple script that
-"syncs" the media of a hydrus server installation with your local machine or an
-application with a GUI that behaves like a booru (like
-[hydrusrvue][hydrusrvue]).
-
-#### General
-
-Request and response bodies are always in JSON format (except when sending the
-actual files). Single resources (e.g., a file or an actual media file) will
-return an error with status code `404` when they do not exist while lists
-(e.g., of tags or files) simply return an empty array when nothing is found.
-
-#### Authentication
-
-By default, all the routes except the base route (`/api`), the ones for
-registering new users and creating tokens and the ones returning the actual
-media files are protected with a token-based authentication. In order to access
-these routes, a valid token must be provided via an
-`Authorization: Bearer <token>` header.
-
-When updating or deleting users and tokens, the provided authentication token
-is also used to identify which user/token(s) are to be modified/deleted.
-
-Media files are protected with media tokens that are created alongside
-authentication tokens. Such a media token must be provided as query parameter
-when trying to access media files and expires alongside the authentication
-token.
-
-The requirement of (media) tokens for all non-authentication-related routes can
-be disabled by setting `AUTHENTICATION_REQUIRED` to `false`.
-
-#### Errors
-
-When a resource is not available or an issue occurs, hydrusrv will return one
-of several possible errors which are always in the same format:
-
-```json5
-{
-  "error": <error name>
-}
-```
-
-hydrusrv responds after the first error occurs so multiple errors might have to
-be dealt with one after another.
-
-#### Routes
-
-__Note:__ The routes in this documentation _do not_ have URL-encoded characters
-for improved readability. Please be aware that, depending on the client you are
-using, you might have to URL-encode certain characters by yourself when sending
-a request.
-
-##### Base
-
-__Route:__ `GET /api`
-
-__Output on success:__
-
-```json5
-{
-  "hydrusrv": {
-    "version": <version number of hydrusrv installation>
-  }
-}
-```
-
-__Possible errors:__
-
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Users
-
-###### Creating users
-
-__Route:__ `POST /api/users`
-
-__Input:__
-
-```json5
-{
-  "username": <desired username>, // minimum length of 1 and maximum length of 1024
-  "password": <desired password> // minimum length of MIN_PASSWORD_LENGTH and maximum length of 1024
-}
-```
-
-__Output on success:__
-
-```json5
-{
-  "createdUser": true
-}
-```
-
-__Possible errors:__
-
-+ `RegistrationDisabledError`
-+ `MissingUsernameFieldError`
-+ `InvalidUsernameFieldError`
-+ `MissingPasswordFieldError`
-+ `InvalidPasswordFieldError`
-+ `UsernameExistsError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-###### Updating users
-
-__Route:__ `PUT /api/users`
-
-__Input:__
-
-```json5
-{
-  "username": <new username>, // optional – at least one of the two required, minimum length of 1 and maximum length of 1024
-  "password": <new password>, // optional – at least one of the two required, minimum length of MIN_PASSWORD_LENGTH and maximum length of 1024
-  "currentPassword": <current password>
-}
-```
-
-__Output on success:__
-
-```json5
-{
-  "updatedUser": true
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `NoUpdateFieldsError`
-+ `MissingUsernameFieldError`
-+ `InvalidUsernameFieldError`
-+ `MissingPasswordFieldError`
-+ `InvalidPasswordFieldError`
-+ `MissingCurrentPasswordFieldError`
-+ `InvalidCurrentPasswordFieldError`
-+ `InvalidUserError`
-+ `UsernameExistsError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-###### Deleting users
-
-__Route:__ `DELETE /api/users`
-
-__Input:__
-
-```json5
-{
-  "password": <current password>
-}
-```
-
-__Output on success:__
-
-```json5
-{
-  "deletedUser": true
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `MissingPasswordFieldError`
-+ `InvalidPasswordFieldError`
-+ `InvalidUserError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Tokens
-
-###### Creating tokens
-
-__Route:__ `POST /api/tokens`
-
-__Input:__
-
-```json5
-{
-  "username": <username>,
-  "password": <password>,
-  "long": true // optional – sets the token expiration time to 90 days instead of the default 1 day
-}
-```
-
-__Output on success:__
-
-```json5
-{
-  "token": <token>,
-  "mediaToken": <media token>
-}
-```
-
-__Possible errors:__
-
-+ `MissingUsernameFieldError`
-+ `InvalidUsernameFieldError`
-+ `MissingPasswordFieldError`
-+ `InvalidPasswordFieldError`
-+ `InvalidLongFieldError`
-+ `InvalidUserError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-###### Deleting tokens
-
-__Route:__ `DELETE /api/tokens`
-
-__Input:__
-
-```json5
-{
-  "all": true // optional – deletes all tokens of the user instead of only the one used for authentication
-}
-```
-
-__Output on success:__
-
-```json5
-{
-  "deletedTokens": true
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `InvalidAllFieldError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Info
-
-__Route:__ `GET /api/info`
-
-__Output on success:__
-
-```json5
-{
-  "tagCount": <total amount of tags in the tag repository>,
-  "fileCount": <total amount of files in the files repository>
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Namespaces
-
-__Route:__ `GET /api/namespaces`
-
-__Output on success:__
-
-```json5
-{
-  "namespaces": [
-    {
-      "name": <name of the namespace>
-    }
-    // […]
-  ]
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### MIME types
-
-__Route:__ `GET /api/mime-types`
-
-__Output on success:__
-
-```json5
-{
-  "mimeTypes": [
-    {
-      "name": <name of the MIME type>
-    }
-    // […]
-  ]
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Tags
-
-###### Listing tags
-
-__Route:__ `GET /api/tags?page=<page>&contains=<text>&sort=<method>&direction=<sort direction>`
-
-The `contains` parameter is optional and limits the results to tags containing
-the provided text.
-
-The `sort` parameter is also optional and is used to sort the results by a
-different field instead of `id` (which is the default sort method).
-
-The available `sort` parameters are:
-
-+ `id` (default, does not have to be provided): sorts descending by field `id`
-+ `name`: sorts ascending by field `name`
-+ `files`: sorts descending by field `file_count`
-+ `contains`: sorts tags starting with the text provided via `contains`
-  parameter and everything else ascending by field `name`
-+ `random`: sorts randomly
-
-The sort direction for most fields (except `random`) can be changed via
-`direction=asc` and `direction=desc`.
-
-__Output on success:__
-
-```json5
-{
-  "tags": [
-    {
-      "name": <name of the tag>,
-      "fileCount": <amount of files having the tag>
-    }
-    // […]
-  ],
-  "tagCount": <amount of tags for given query> // only if COUNTS_ENABLED is set to true
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `MissingPageParameterError`
-+ `InvalidPageParameterError`
-+ `InvalidContainsParameterError`
-+ `InvalidSortParameterError`
-+ `InvalidDirectionParameterError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-###### Autocompleting tags
-
-__Route:__ `POST /api/autocomplete-tag`
-
-__Input:__
-
-```json5
-{
-  "partialTag": <name of the partial tag>
-}
-```
-
-__Output on success:__
-
-```json5
-{
-  "tags": [
-    {
-      "name": <name of the tag>,
-      "fileCount": <amount of files having the tag>
-    }
-    // […]
-  ]
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `MissingPartialTagFieldError`
-+ `InvalidPartialTagFieldError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Files
-
-###### Listing files
-
-__Route:__ `GET /api/files?page=<page>&tags[]=<tag>&constraints[]=<field><comparator><value>&sort=<method>&direction=<sort direction>&namespaces[]=<namespace>`
-
-__Info:__
-
-The `tags[]` parameter is optional and takes an arbitrary amount of tags (a
-single tag per `tags[]`), each one (potentially) limiting the result set
-further. You can also exclude files with certain tags from the results by
-prefixing the tag you want to exclude with `-`, e.g., `-sky`. To prevent
-confusion with tags that (for some reason) start with `-`, escape them with
-`\`, e.g., `\-house` (this is not necessary for `-` that are not located at the
-start of the tag).
-
-The `constraints[]` parameter is also optional and takes an arbitrary amount
-of so-called _constraints_. Constraints are used to filter files by their
-(meta) fields and can be used alone or in combination with tags. Like with
-tags, each constraint (potentially) limits the set further.
-
-If multiple constraints for the same field are provided, those constraints are
-compared in an `OR` fashion unless there are multiple `!=` constraints for the
-field, in which case those are compared with `AND` (to make it possible to
-exclude multiple values for the field while at the same time
-including/comparing against other values).
-
-The syntax is the following for a single constraint:
-
-`constraints[]=<field><comparator><value>`
-
-Where `field` has to be one of the following:
-
-+ `id`: the file ID
-+ `hash`: the SHA-256 hash of the file
-+ `size`: the file size in number of bytes
-+ `width`: the width of the file
-+ `height`: the height of the file
-+ `mime`: the MIME type of the file
-+ `tags`: gets mapped to `tag_count` (the number of tags assigned to the file)
-  internally, it's abbreviated for simplicity's sake
-
-`comparator` can be one of:
-
-+ `=`: compares if the content of the field equals the given value (supported
-  by all fields)
-+ `!=`: compares if the content of the field does not equal the given value
-  (supported by all fields)
-+ `~=`: compares if the content of the field approximately equals the given
-  value (not supported by `hash` and `mime`)
-+ `>`: compares if the content of the field is greater than the given value
-  (not supported by `hash` and `mime`)
-+ `<`: compares if the content of the field is smaller than the given value
-  (not supported by `hash` and `mime`)
-+ `><`: compares if the content of the field is between the two given values
-  (the values are split by `,` and their order does not matter) (not supported
-  by `hash` and `mime`)
-
-And `value` can be:
-
-+ _a positive integer or `0`_: can be used for comparing with `id`, `width`,
-  `height` and `tags` when using the `=`, `!=`, `~=`, `>` or `<` comparator
-+ _two positive integers or `0` split with `,`_: can be used for comparing with
-  `id`, `width`, `height` and `tags` when using the `><` comparator
-+ _a file size_: can be used for comparing with `size` when using the `=`, `!=`,
-  `~=`, `>` or `<` comparator and has to be either a positive integer (for
-  _bytes_) or a positive integer or float (with `.` as decimal point) plus a
-  suffix of either `k`, `m` or `g` (for _kibibytes_, _mebibytes_ and _gibibytes_
-  respectively)
-+ _two file sizes split with `,`_: can be used for comparing with `size` when
-  using the `><` comparator (the same rules as the ones for the single file
-  size apply)
-+ _a SHA-256 digest_: can be used for comparing with `hash`
-+ _a MIME type in the common `<type>/<subtype>` syntax_: can be used for
-  comparing with `mime`
-
-Some examples could be:
-
-+ `constraints[]=id!=42`
-+ `constraints[]=id=84&constraints[]=id=126`
-+ `constraints[]=hash=ed2c48b9f65f76f140b582b33e5415abe2037e43677952074b9158e6b5979ef4`
-+ `constraints[]=size>5m`
-+ `constraints[]=size><500k,2m`
-+ `constraints[]=width>1000`
-+ `constraints[]=height><500,1000`
-+ `constraints[]=mime=image/png`
-+ `constraints[]=tags<5`
-+ `constraints[]=mime=image/png&constraints[]=size<5m&constraints[]=height>1000&constraints[]=tags>15`
-
-Finally, the `sort` parameter is also optional and is used to sort the results
-by a different field instead of `id` (which is the default sort method).
-
-The available `sort` parameters are:
-
-+ `id` (default, does not have to be provided): sorts descending by field `id`
-+ `size`: sorts descending by field `size`
-+ `width`: sorts descending by field `width`
-+ `height`: sorts descending by field `height`
-+ `mime`: sorts ascending by field `mime`
-+ `tags`: sorts descending by field `tag_count`
-+ `namespaces`: sorts ascending by provided namespaces first and descending by
-  field `id` second
-+ `random`: sorts randomly
-
-The sort direction for most fields (except `random`) can be changed via
-`direction=asc` and `direction=desc`.
-
-If `sort=namespaces` is set, at least one namespace must be provided via
-`namespaces[]=<namespace>`. This then sorts the results  by that namespace
-(e.g., files with tag `creator:a` come before `creator:b` if sorted by
-`creator` and the default direction).
-
-Providing multiple namespaces to sort by is possible, the order in which they
-are provided then defines the "sub sorting". E.g.,
-`sort=namespace&namespaces[]=<namespaceA>&namespaces[]=<namespaceB>&namespaces[]=<namespaceC>`
-causes files to be sorted by `namespaceA`, then `namespaceB`, then
-`namespaceC`.
-
-Files not having one or more of the given sort namespaces are _not_ omitted
-from the results but will be sorted descending by `id` to the end of the (sub)
-set.
-
-This route returns the same data for each file as when
-[viewing a file](#viewing-files) but omits the tags to reduce the response size
-when dealing with possible cases where many files that each have many tags are
-displayed on a single page.
-
-__Output on success:__
-
-```json5
-{
-  "files": [
-    {
-      "id": <file ID>,
-      "mime": <MIME type>,
-      "size": <file size in bytes>,
-      "width": <width in pixel>,
-      "height": <height in pixel>,
-      "tagCount": <amount of tags>,
-      "mediaUrl": <original media URL>,
-      "thumbnailUrl": <thumbnail URL>
-    }
-    // […]
-  ],
-  "fileCount": <amount of files for given query> // only if COUNTS_ENABLED is set to true
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `MissingPageParameterError`
-+ `InvalidPageParameterError`
-+ `InvalidTagsParameterError`
-+ `InvalidConstraintsParameterError`
-+ `InvalidSortParameterError`
-+ `InvalidDirectionParameterError`
-+ `MissingNamespacesParameterError`
-+ `InvalidNamespacesParameterError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-###### Viewing files
-
-__Route:__ `GET /api/files/<file id>`
-
-__Info:__
-
-This route returns the same data as when [listing files](#listing-files) but
-also includes a files' tags.
-
-__Output on success:__
-
-```json5
-{
-  "id": <file ID>,
-  "mime": <MIME type>,
-  "size": <file size in bytes>,
-  "width": <width in pixel>,
-  "height": <height in pixel>,
-  "tagCount": <amount of tags>,
-  "mediaUrl": <original media URL>,
-  "thumbnailUrl": <thumbnail URL>,
-  "tags": [
-    {
-      "name": <name of the tag>,
-      "files": <amount of files having the tag>
-    }
-    // […]
-  ]
-}
-```
-
-__Possible errors:__
-
-+ `MissingTokenError`
-+ `InvalidTokenError`
-+ `MissingIdParameterError`
-+ `InvalidIdParameterError`
-+ `NotFoundError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-##### Media
-
-###### Getting media originals
-
-__Route:__ `GET /media/originals/<media hash>?token=<media token>`
-
-__Info:__
-
-The `token` parameter is optional, when `AUTHENTICATION_REQUIRED` is set to
-`false`.
-
-__Output on success:__ The requested media file
-
-__Possible errors:__
-
-+ `MissingMediaTokenError`
-+ `InvalidMediaTokenError`
-+ `MissingMediaHashParameterError`
-+ `InvalidMediaHashParameterError`
-+ `NotFoundError`
-+ `ShuttingDownError`
-+ `InternalServerError`
-
-###### Getting media thumbnails
-
-__Route:__ `GET /media/thumbnails/<media hash>?token=<media token>`
-
-__Info:__
-
-The `token` parameter is optional, when `AUTHENTICATION_REQUIRED` is set to
-`false`.
-
-__Output on success:__ The requested media thumbnail
-
-__Possible errors:__
-
-+ `MissingMediaTokenError`
-+ `InvalidMediaTokenError`
-+ `MissingMediaHashParameterError`
-+ `InvalidMediaHashParameterError`
-+ `NotFoundError`
-+ `ShuttingDownError`
-+ `InternalServerError`
+You can find the API documentation [here](API.md).
 
 ## Disclaimer
 

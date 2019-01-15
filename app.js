@@ -44,6 +44,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use(accessLogger('combined', { stream: accessLogStream }))
 }
 
+app.enable('trust proxy')
+
 app.use(bodyParser.json())
 
 app.shuttingDown = false

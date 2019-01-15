@@ -12,7 +12,7 @@ router.get('/',
   middleware.files.get.inputValidationConfig,
   middleware.files.get.validateInput,
   (req, res, next) => {
-    let data = {}
+    let data
 
     try {
       data = controllers.files.getFiles(req.query)
@@ -32,32 +32,28 @@ router.get('/:id',
   middleware.files.getSingle.inputValidationConfig,
   middleware.files.getSingle.validateInput,
   (req, res, next) => {
-    const data = {}
+    let data
 
     try {
-      data.file = controllers.files.getFileById(req.params.id)
+      data = controllers.files.getFileById(req.params.id)
     } catch (err) {
       return next(err)
     }
 
-    if (!data.file) {
+    if (!data) {
       return next({
         customStatus: 404,
         customName: 'NotFoundError'
       })
     }
 
-    let tags
-
     try {
-      tags = controllers.tags.getTagsOfFile(req.params.id)
+      data.tags = controllers.tags.getTagsOfFile(req.params.id)
     } catch (err) {
       return next(err)
     }
 
-    data.file.tags = tags
-
-    res.send(data.file)
+    res.send(data)
   }
 )
 

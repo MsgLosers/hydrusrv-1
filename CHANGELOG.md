@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.0.0] - 2018-01-15
+
+### Added
+
++ Added a route for getting users
++ Added a route for getting tokens
+
+### Changed
+
++ Added various fields to the `users` and `tokens` tables and adjusted the API
+  responses accordingly
++ Normalized the API responses for creating and updating users
++ Moved API documentation to separate file
++ Refactored code
++ Updated dependencies
+
+### Fixed
+
++ Added the missing `hash` property to the file routes API documentation
+
 ## [6.0.0] - 2018-12-28
 
 ### Added
@@ -14,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Added the ability to filter files by hydrus-like _system constraints_
 + Added the ability to sort files by `tag_count`
 + Added the `hash` field to the output of file routes
-+ Added a route (`mime-types`) to fetch all available MIME types
++ Added a route (`mime-types`) for fetching all available MIME types
 
 ### Changed
 
@@ -646,7 +666,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/7.0.0...develop
+[7.0.0]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...7.0.0
 [6.0.0]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/mserajnik/hydrusrv/compare/4.4.0...5.0.0
 [4.4.0]: https://github.com/mserajnik/hydrusrv/compare/4.3.0...4.4.0
