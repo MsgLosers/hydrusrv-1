@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Normalized the API responses for creating and updating users
 + Moved API documentation to separate file
 + Refactored code
++ Updated dependencies
 
 ### Fixed
 
