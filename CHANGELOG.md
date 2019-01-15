@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + Added various fields to the `users` and `tokens` tables and adjusted the API
   responses accordingly
 + Normalized the API responses for creating and updating users
++ Moved API documentation to separate file
 + Refactored code
 
 ### Fixed
