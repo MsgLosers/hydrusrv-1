@@ -2,6 +2,7 @@ const objectHash = require('object-hash')
 
 const db = require('../db')
 const config = require('../config')
+const queryHelper = require('../util/query-helper')
 
 module.exports = {
   get (page, sort = 'id', direction = null) {
@@ -53,7 +54,7 @@ module.exports = {
   getContaining (page, contains, sort = 'id', direction = null) {
     const data = {}
 
-    contains = contains.split('_').join('^_')
+    contains = queryHelper.escapeSpecialCharacters(contains)
 
     const orderBy = this.generateOrderBy(sort, direction, contains)
 
@@ -124,7 +125,7 @@ module.exports = {
     ).all(fileId).filter(row => row.name && row.fileCount)
   },
   complete (partialTag) {
-    partialTag = partialTag.split('_').join('^_')
+    partialTag = queryHelper.escapeSpecialCharacters(partialTag)
 
     return db.content.prepare(
       `SELECT

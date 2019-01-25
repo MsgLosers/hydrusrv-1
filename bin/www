@@ -27,8 +27,8 @@ const shutDown = signal => {
   const promises = []
   const workerIds = Object.keys(cluster.workers)
 
-  for (const workerId of workerIds) {
-    const worker = cluster.workers[workerId]
+  for (const id of workerIds) {
+    const worker = cluster.workers[id]
 
     promises.push(new Promise(resolve => {
       let resolved = false
