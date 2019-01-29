@@ -21,6 +21,7 @@ also available.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 7.x to 8.x](#upgrading-from-7x-to-8x)
     + [Upgrading from 6.x to 7.x](#upgrading-from-6x-to-7x)
     + [Upgrading from 5.x to 6.x](#upgrading-from-5x-to-6x)
     + [Upgrading from 4.x to 5.x](#upgrading-from-4x-to-5x)
@@ -59,7 +60,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrusrv-sync][hydrusrv-sync] (`3.x` for hydrusrv `7.x`)
++ [hydrusrv-sync][hydrusrv-sync] (`3.x` for hydrusrv `8.x`)
 + [Node.js][node-js]
 + [Yarn][yarn]
 
@@ -88,6 +89,14 @@ therefore always safe to simply install via the routine mentioned before.
 
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
+
+#### Upgrading from 7.x to 8.x
+
+Upgrading from `7.x` to `8.x` can be done via
+`git pull && yarn && yarn migrate` and requires no further manual changes.
+
+If you are using hydrusrvue, you need to upgrade it to `5.x` to maintain
+compatibility with hydrusrv `8.x`.
 
 #### Upgrading from 6.x to 7.x
 
