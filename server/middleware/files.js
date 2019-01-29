@@ -14,7 +14,16 @@ module.exports = {
       check('tags')
         .optional()
         .isArray().withMessage('InvalidTagsParameterError')
-        .isLength({ min: 1 }).withMessage('InvalidTagsParameterError'),
+        .isLength({ min: 1 }).withMessage('InvalidTagsParameterError')
+        .custom(tags => {
+          for (const tag of tags) {
+            if (['*', '**', '-', '-*', '-**'].includes(tag)) {
+              return false
+            }
+          }
+
+          return true
+        }).withMessage('InvalidTagsParameterError'),
       sanitizeQuery('constraints').trim(),
       check('constraints')
         .optional()

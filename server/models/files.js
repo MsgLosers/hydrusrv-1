@@ -3,6 +3,7 @@ const objectHash = require('object-hash')
 const db = require('../db')
 const config = require('../config')
 const tagsModel = require('./tags')
+const queryHelper = require('../util/query-helper')
 const constraintsHelper = require('../util/constraints-helper')
 
 module.exports = {
@@ -59,6 +60,7 @@ module.exports = {
         hash = objectHash({
           tags: [],
           excludeTags: [],
+          wildcardTags: [],
           constraints: []
         })
 
@@ -84,19 +86,19 @@ module.exports = {
   getByTags (page, tags, sort = 'id', direction = null, namespaces = []) {
     const data = {}
 
+    const orderBy = this.generateOrderBy(sort, direction, namespaces)
+
+    if (!orderBy) {
+      return this.getByTags(page, tags)
+    }
+
     tags = [...new Set(tags)]
 
-    let excludeTagsSubQuery = ''
-    let params = [tags, tags.length]
+    let excludeTagConditions
 
-    const excludeTags = tags.filter(
-      tag => tag.startsWith('-')
-    ).map(
-      tag => tag.replace('-', '')
-    )
+    const excludeTags = this.extractExcludeTags(tags)
 
-    tags = tags.filter(tag => !tag.startsWith('-'))
-    tags = tags.map(tag => tag.replace('\\-', '-'))
+    tags = this.removeExcludeTags(tags)
 
     if (excludeTags.length) {
       if (!tags.length) {
@@ -105,22 +107,33 @@ module.exports = {
         )
       }
 
-      excludeTagsSubQuery = `
-        EXCEPT SELECT file_tags_id from mappings
-        WHERE tag_id IN (
-          SELECT id FROM tags
-          WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+      excludeTagConditions = this.generateExcludeTagConditions(excludeTags)
+    }
+
+    let wildcardTagConditions
+
+    let wildcardTags = this.extractWildcardTags(tags)
+
+    tags = this.removeWildcardTags(tags)
+
+    if (wildcardTags.length) {
+      if (!tags.length) {
+        return this.getByWildcardTags(
+          page, wildcardTags, excludeTags, sort, direction, namespaces
         )
-      `
+      }
 
-      params = [tags, tags.length, excludeTags]
+      wildcardTagConditions = this.generateWildcardTagConditions(
+        wildcardTags, excludeTagConditions
+      )
     }
 
-    const orderBy = this.generateOrderBy(sort, direction, namespaces)
-
-    if (!orderBy) {
-      return this.getByTags(page, tags)
-    }
+    const params = [
+      tags,
+      tags.length,
+      ...(excludeTags.length ? excludeTagConditions.params : []),
+      ...(wildcardTags.length ? wildcardTagConditions.params : [])
+    ]
 
     data.files = db.content.prepare(
       `SELECT
@@ -141,8 +154,9 @@ module.exports = {
           )
           GROUP BY file_tags_id
           HAVING COUNT(*) = ?
-          ${excludeTagsSubQuery}
+          ${excludeTagConditions ? excludeTagConditions.clauses.join(' ') : ''}
         )
+        ${wildcardTagConditions ? wildcardTagConditions.clauses.join(' ') : ''}
       ORDER BY
         ${orderBy}
       LIMIT
@@ -157,7 +171,12 @@ module.exports = {
       if (config.countsCachingIsEnabled) {
         hash = objectHash({
           tags: tags.sort(),
-          excludeTags: excludeTags.sort(),
+          excludeTags: excludeTagConditions
+            ? excludeTagConditions.params.sort()
+            : [],
+          wildcardTags: wildcardTagConditions
+            ? wildcardTagConditions.params.sort()
+            : [],
           constraints: []
         })
 
@@ -178,8 +197,9 @@ module.exports = {
               )
               GROUP BY file_tags_id
               HAVING COUNT(*) = ?
-              ${excludeTagsSubQuery}
-            )`
+              ${excludeTagConditions ? excludeTagConditions.clauses.join(' ') : ''}
+            )
+          ${wildcardTagConditions ? wildcardTagConditions.clauses.join(' ') : ''}`
         ).pluck().get(...params)
 
         this.addCachedCount(hash, fileCount)
@@ -205,6 +225,10 @@ module.exports = {
       return this.getByExcludeTags(page, excludeTags)
     }
 
+    const excludeTagConditions = this.generateExcludeTagConditions(
+      excludeTags, false
+    )
+
     data.files = db.content.prepare(
       `SELECT
         files.id,
@@ -218,10 +242,7 @@ module.exports = {
         files
       WHERE
         tags_id NOT IN (
-          SELECT file_tags_id FROM mappings WHERE tag_id IN (
-            SELECT id FROM tags
-            WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
-          )
+          ${excludeTagConditions.clauses.join(' ')}
         )
       OR
         tags_id IS NULL
@@ -231,7 +252,7 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(excludeTags).map(file => this.prepareFile(file))
+    ).all(...excludeTagConditions.params).map(file => this.prepareFile(file))
 
     if (config.countsAreEnabled) {
       let fileCount, hash
@@ -239,7 +260,8 @@ module.exports = {
       if (config.countsCachingIsEnabled) {
         hash = objectHash({
           tags: [],
-          excludeTags: excludeTags.sort(),
+          wildcardTags: [],
+          excludeTags: excludeTagConditions.params.sort(),
           constraints: []
         })
 
@@ -254,14 +276,94 @@ module.exports = {
             files
           WHERE
             tags_id NOT IN (
-              SELECT file_tags_id FROM mappings WHERE tag_id IN (
-                SELECT id FROM tags
-                WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
-              )
+              ${excludeTagConditions.clauses.join(' ')}
             )
           OR
             tags_id IS NULL`
-        ).pluck().get(excludeTags)
+        ).pluck().get(...excludeTagConditions.params)
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
+    }
+
+    return data
+  },
+  getByWildcardTags (
+    page,
+    wildcardTags,
+    excludeTags,
+    sort = 'id',
+    direction = null,
+    namespaces = []
+  ) {
+    const data = {}
+
+    const orderBy = this.generateOrderBy(sort, direction, namespaces)
+
+    if (!orderBy) {
+      return this.getByWildcardTags(page, wildcardTags, excludeTags)
+    }
+
+    let excludeTagConditions
+
+    if (excludeTags.length) {
+      excludeTagConditions = this.generateExcludeTagConditions(excludeTags)
+    }
+
+    const wildcardTagConditions = this.generateWildcardTagConditions(
+      wildcardTags, excludeTagConditions
+    )
+
+    wildcardTagConditions.clauses[0] = wildcardTagConditions.clauses[0].replace(
+      'AND', 'WHERE'
+    )
+
+    data.files = db.content.prepare(
+      `SELECT
+        files.id,
+        files.hash,
+        files.mime,
+        files.size,
+        files.width,
+        files.height,
+        files.tag_count AS tagCount
+      FROM
+        files
+      ${wildcardTagConditions.clauses.join(' ')}
+      ORDER BY
+        ${orderBy}
+      LIMIT
+        ${config.filesPerPage}
+      OFFSET
+        ${(page - 1) * config.filesPerPage}`
+    ).all(...wildcardTagConditions.params).map(file => this.prepareFile(file))
+
+    if (config.countsAreEnabled) {
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: [],
+          wildcardTags: wildcardTagConditions.params.sort(),
+          excludeTags: excludeTagConditions
+            ? excludeTagConditions.params.sort()
+            : [],
+          constraints: []
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files
+          ${wildcardTagConditions.clauses.join(' ')}`
+        ).pluck().get(...wildcardTagConditions.params)
 
         this.addCachedCount(hash, fileCount)
       }
@@ -319,6 +421,7 @@ module.exports = {
         hash = objectHash({
           tags: [],
           excludeTags: [],
+          wildcardTags: [],
           constraints: constraints.sort()
         })
 
@@ -352,19 +455,19 @@ module.exports = {
   ) {
     const data = {}
 
+    const orderBy = this.generateOrderBy(sort, direction, namespaces)
+
+    if (!orderBy) {
+      return this.getByTagsAndConstraints(page, tags, constraints)
+    }
+
     tags = [...new Set(tags)]
 
-    let excludeTagsSubQuery = ''
-    let params = [tags, tags.length]
+    let excludeTagConditions
 
-    const excludeTags = tags.filter(
-      tag => tag.startsWith('-')
-    ).map(
-      tag => tag.replace('-', '')
-    )
+    const excludeTags = this.extractExcludeTags(tags)
 
-    tags = tags.filter(tag => !tag.startsWith('-'))
-    tags = tags.map(tag => tag.replace('\\-', '-'))
+    tags = this.removeExcludeTags(tags)
 
     if (excludeTags.length) {
       if (!tags.length) {
@@ -373,24 +476,42 @@ module.exports = {
         )
       }
 
-      excludeTagsSubQuery = `
-        EXCEPT SELECT file_tags_id from mappings
-        WHERE tag_id IN (
-          SELECT id FROM tags
-          WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
-        )
-      `
-
-      params = [tags, tags.length, excludeTags]
+      excludeTagConditions = this.generateExcludeTagConditions(excludeTags)
     }
 
-    const orderBy = this.generateOrderBy(sort, direction, namespaces)
+    let wildcardTagConditions
 
-    if (!orderBy) {
-      return this.getByTagsAndConstraints(page, tags, constraints)
+    let wildcardTags = this.extractWildcardTags(tags)
+
+    tags = this.removeWildcardTags(tags)
+
+    if (wildcardTags.length) {
+      if (!tags.length) {
+        return this.getByWildcardTagsAndConstraints(
+          page,
+          wildcardTags,
+          excludeTags,
+          constraints,
+          sort,
+          direction,
+          namespaces
+        )
+      }
+
+      wildcardTagConditions = this.generateWildcardTagConditions(
+        wildcardTags, excludeTagConditions
+      )
     }
 
     const constraintConditions = this.generateConstraintConditions(constraints)
+
+    const params = [
+      tags,
+      tags.length,
+      ...(excludeTags.length ? excludeTagConditions.params : []),
+      ...(wildcardTags.length ? wildcardTagConditions.params : []),
+      ...constraintConditions.params
+    ]
 
     data.files = db.content.prepare(
       `SELECT
@@ -411,8 +532,9 @@ module.exports = {
           )
           GROUP BY file_tags_id
           HAVING COUNT(*) = ?
-          ${excludeTagsSubQuery}
+          ${excludeTagConditions ? excludeTagConditions.clauses.join(' ') : ''}
         )
+      ${wildcardTagConditions ? wildcardTagConditions.clauses.join(' ') : ''}
       ${constraintConditions.clauses.join(' ')}
       ORDER BY
         ${orderBy}
@@ -420,7 +542,7 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(...params, ...constraintConditions.params).map(
+    ).all(...params).map(
       file => this.prepareFile(file)
     )
 
@@ -430,7 +552,12 @@ module.exports = {
       if (config.countsCachingIsEnabled) {
         hash = objectHash({
           tags: tags.sort(),
-          excludeTags: excludeTags.sort(),
+          excludeTags: excludeTagConditions
+            ? excludeTagConditions.params.sort()
+            : [],
+          wildcardTags: wildcardTagConditions
+            ? wildcardTagConditions.params.sort()
+            : [],
           constraints: constraints.sort()
         })
 
@@ -451,10 +578,11 @@ module.exports = {
               )
               GROUP BY file_tags_id
               HAVING COUNT(*) = ?
-              ${excludeTagsSubQuery}
+              ${excludeTagConditions ? excludeTagConditions.clauses.join(' ') : ''}
             )
+          ${wildcardTagConditions ? wildcardTagConditions.clauses.join(' ') : ''}
           ${constraintConditions.clauses.join(' ')}`
-        ).pluck().get(...params, ...constraintConditions.params)
+        ).pluck().get(...params)
 
         this.addCachedCount(hash, fileCount)
       }
@@ -482,7 +610,16 @@ module.exports = {
       )
     }
 
+    const excludeTagConditions = this.generateExcludeTagConditions(
+      excludeTags, false
+    )
+
     const constraintConditions = this.generateConstraintConditions(constraints)
+
+    const params = [
+      ...excludeTagConditions.params,
+      ...constraintConditions.params
+    ]
 
     data.files = db.content.prepare(
       `SELECT
@@ -497,10 +634,7 @@ module.exports = {
         files
       WHERE (
         tags_id NOT IN (
-          SELECT file_tags_id FROM mappings WHERE tag_id IN (
-            SELECT id FROM tags
-            WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
-          )
+          ${excludeTagConditions.clauses.join(' ')}
         )
         OR
           tags_id IS NULL
@@ -512,7 +646,7 @@ module.exports = {
         ${config.filesPerPage}
       OFFSET
         ${(page - 1) * config.filesPerPage}`
-    ).all(excludeTags, ...constraintConditions.params).map(
+    ).all(...params).map(
       file => this.prepareFile(file)
     )
 
@@ -522,7 +656,8 @@ module.exports = {
       if (config.countsCachingIsEnabled) {
         hash = objectHash({
           tags: [],
-          excludeTags: excludeTags.sort(),
+          excludeTags: excludeTagConditions.params.sort(),
+          wildcardTags: [],
           constraints: constraints.sort()
         })
 
@@ -535,17 +670,110 @@ module.exports = {
             COUNT(*)
           FROM
             files
-          WHERE
+          WHERE (
             tags_id NOT IN (
-              SELECT file_tags_id FROM mappings WHERE tag_id IN (
-                SELECT id FROM tags
-                WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
-              )
+              ${excludeTagConditions.clauses.join(' ')}
             )
-          OR
-            tags_id IS NULL
+            OR
+              tags_id IS NULL
+          )
           ${constraintConditions.clauses.join(' ')}`
-        ).pluck().get(excludeTags, ...constraintConditions.params)
+        ).pluck().get(...params)
+
+        this.addCachedCount(hash, fileCount)
+      }
+
+      data.fileCount = fileCount
+    }
+
+    return data
+  },
+  getByWildcardTagsAndConstraints (
+    page,
+    wildcardTags,
+    excludeTags,
+    constraints,
+    sort = 'id',
+    direction = null,
+    namespaces = []
+  ) {
+    const data = {}
+
+    const orderBy = this.generateOrderBy(sort, direction, namespaces)
+
+    if (!orderBy) {
+      return this.getByWildcardTagsAndConstraints(
+        page, wildcardTags, excludeTags, constraints
+      )
+    }
+
+    let excludeTagConditions
+
+    if (excludeTags.length) {
+      excludeTagConditions = this.generateExcludeTagConditions(excludeTags)
+    }
+
+    const wildcardTagConditions = this.generateWildcardTagConditions(
+      wildcardTags, excludeTagConditions
+    )
+
+    wildcardTagConditions.clauses[0] = wildcardTagConditions.clauses[0].replace(
+      'AND', 'WHERE'
+    )
+
+    const constraintConditions = this.generateConstraintConditions(constraints)
+
+    const params = [
+      ...wildcardTagConditions.params,
+      ...constraintConditions.params
+    ]
+
+    data.files = db.content.prepare(
+      `SELECT
+        files.id,
+        files.hash,
+        files.mime,
+        files.size,
+        files.width,
+        files.height,
+        files.tag_count AS tagCount
+      FROM
+        files
+      ${wildcardTagConditions.clauses.join(' ')}
+      ${constraintConditions.clauses.join(' ')}
+      ORDER BY
+        ${orderBy}
+      LIMIT
+        ${config.filesPerPage}
+      OFFSET
+        ${(page - 1) * config.filesPerPage}`
+    ).all(...params).map(file => this.prepareFile(file))
+
+    if (config.countsAreEnabled) {
+      let fileCount, hash
+
+      if (config.countsCachingIsEnabled) {
+        hash = objectHash({
+          tags: [],
+          wildcardTags: wildcardTagConditions.params.sort(),
+          excludeTags: excludeTagConditions
+            ? excludeTagConditions.params.sort()
+            : [],
+          constraints: constraints.sort()
+        })
+
+        fileCount = this.getCachedCount(hash)
+      }
+
+      if (!fileCount) {
+        fileCount = db.content.prepare(
+          `SELECT
+            COUNT(*)
+          FROM
+            files
+          ${wildcardTagConditions.clauses.join(' ')}
+          ${constraintConditions.clauses.join(' ')}`
+        ).pluck().get(...params)
 
         this.addCachedCount(hash, fileCount)
       }
@@ -631,6 +859,80 @@ module.exports = {
     }
 
     return namespacesOrderBy
+  },
+  generateExcludeTagConditions (excludeTags, isException = true) {
+    let clauses = []
+    let params = []
+
+    clauses.push(
+      isException
+        ? 'EXCEPT SELECT file_tags_id from mappings'
+        : 'SELECT file_tags_id FROM mappings'
+    )
+
+    const wildcardExcludeTags = this.extractWildcardTags(excludeTags)
+
+    for (const tag of wildcardExcludeTags) {
+      clauses.push(
+        `OR tag_id IN (
+          SELECT id FROM tags
+          WHERE name LIKE ? ESCAPE '^'
+        )`
+      )
+
+      params.push(this.finalizeWildcardTag(tag))
+    }
+
+    excludeTags = this.removeWildcardTags(excludeTags)
+
+    if (excludeTags.length) {
+      clauses = clauses.concat(
+        `OR tag_id IN (
+          SELECT id FROM tags
+          WHERE name IN (${',?'.repeat(excludeTags.length).replace(',', '')})
+        )`
+      )
+
+      params = params.concat(excludeTags)
+    }
+
+    clauses[1] = clauses[1].replace('OR', 'WHERE')
+
+    return {
+      clauses: clauses,
+      params: params
+    }
+  },
+  generateWildcardTagConditions (wildcardTags, excludeTagConditions = null) {
+    const clauses = []
+    const params = []
+
+    for (const tag of wildcardTags) {
+      clauses.push(
+        `AND
+          files.tags_id IN (
+            SELECT file_tags_id FROM mappings WHERE tag_id IN (
+              SELECT id FROM tags
+              WHERE name LIKE ? ESCAPE '^'
+            )
+            ${excludeTagConditions ? excludeTagConditions.clauses.join(' ') : ''}
+          )
+        `
+      )
+
+      params.push(this.finalizeWildcardTag(tag))
+
+      if (excludeTagConditions) {
+        for (const param of excludeTagConditions.params) {
+          params.push(param)
+        }
+      }
+    }
+
+    return {
+      clauses: clauses,
+      params: params
+    }
   },
   generateConstraintConditions (constraints) {
     const orConditions = {
@@ -830,43 +1132,88 @@ module.exports = {
       }
     }
 
-    const constraintClauses = []
-    const constraintParams = []
+    const clauses = []
+    const params = []
 
     for (const key of keys) {
       if (orConditions.hasOwnProperty(key)) {
-        constraintClauses.push('AND (')
+        clauses.push('AND (')
 
         if (andConditions.hasOwnProperty(key)) {
-          constraintClauses.push('(')
-          constraintClauses.push(andConditions[key].clauses.join(' AND '))
-          constraintClauses.push(')')
-          constraintClauses.push(' AND (')
+          clauses.push('(')
+          clauses.push(andConditions[key].clauses.join(' AND '))
+          clauses.push(')')
+          clauses.push(' AND (')
 
-          constraintParams.push(...andConditions[key].params)
+          params.push(...andConditions[key].params)
         }
 
-        constraintClauses.push(orConditions[key].clauses.join(' OR '))
-        constraintClauses.push(')')
+        clauses.push(orConditions[key].clauses.join(' OR '))
+        clauses.push(')')
 
         if (andConditions.hasOwnProperty(key)) {
-          constraintClauses.push(')')
+          clauses.push(')')
         }
 
-        constraintParams.push(...orConditions[key].params)
+        params.push(...orConditions[key].params)
       } else if (andConditions.hasOwnProperty(key)) {
-        constraintClauses.push('AND (')
-        constraintClauses.push(andConditions[key].clauses.join(' AND '))
-        constraintClauses.push(')')
+        clauses.push('AND (')
+        clauses.push(andConditions[key].clauses.join(' AND '))
+        clauses.push(')')
 
-        constraintParams.push(...andConditions[key].params)
+        params.push(...andConditions[key].params)
       }
     }
 
     return {
-      clauses: constraintClauses,
-      params: constraintParams
+      clauses: clauses,
+      params: params
     }
+  },
+  extractExcludeTags (tags) {
+    return tags.filter(
+      tag => tag.startsWith('-')
+    ).map(
+      tag => tag.replace('-', '')
+    )
+  },
+  removeExcludeTags (tags) {
+    return tags.filter(
+      tag => !tag.startsWith('-')
+    ).map(
+      tag => tag.replace('\\-', '-')
+    )
+  },
+  extractWildcardTags (tags) {
+    return [...new Set(
+      tags.filter(
+        tag => tag.startsWith('*') ||
+          (tag.endsWith('*') && !tag.endsWith('\\*'))
+      ).map(
+        tag => tag.replace(
+          /^\\\*/, '###ASTERISK###'
+        ).replace(
+          /\\\*$/, '###ASTERISK###'
+        )
+      ).map(
+        tag => tag.replace(/^\*{2,}/, '*').replace(/\*{2,}$/, '*')
+      )
+    )]
+  },
+  removeWildcardTags (tags) {
+    return tags.filter(
+      tag => !(tag.startsWith('*') ||
+        (tag.endsWith('*') && !tag.endsWith('\\*')))
+    ).map(
+      tag => tag.replace(/^\\\*/, '*').replace(/\\\*$/, '*')
+    )
+  },
+  finalizeWildcardTag (tag) {
+    return queryHelper.escapeSpecialCharacters(tag)
+      .replace(/^\*/, '%')
+      .replace(/\*$/, '%')
+      .split('###ASTERISK###')
+      .join('*')
   },
   generateFilePath (type, hash) {
     if (type === 'thumbnail') {

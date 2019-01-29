@@ -535,10 +535,17 @@ confusion with tags that (for some reason) start with `-`, escape them with
 `\`, e.g., `\-house` (this is not necessary for `-` that are not located at the
 start of the tag).
 
-The `constraints[]` parameter is also optional and takes an arbitrary amount
-of so-called _constraints_. Constraints are used to filter files by their
-(meta) fields and can be used alone or in combination with tags. Like with
-tags, each constraint (potentially) limits the set further.
+Using wildcarded tags is also possible. To do this, add `*` at the beginning
+and/or end of a tag, e.g., `*hair`. Like when excluding tags with `-`, prefix
+`*` with a `\` if you want to use it as an actual character in your search,
+e.g., `\*hai*r\*` (this is not necessary for `*` that are not located at the
+start or end of the tag). Wildcarded tags can be excluded like normal tags (by
+prefixing them with `-`).
+
+The `constraints[]` parameter is optional and takes an arbitrary amount of
+so-called _constraints_. Constraints are used to filter files by their (meta)
+fields and can be used alone or in combination with tags. Like with tags, each
+constraint (potentially) limits the set further.
 
 If multiple constraints for the same field are provided, those constraints are
 compared in an `OR` fashion unless there are multiple `!=` constraints for the
