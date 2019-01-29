@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Added support for searching files with wildcarded tags
 
+### Changed
+
++ Updated dependencies
+
 ## [7.0.0] - 2018-01-15
 
 ### Added
