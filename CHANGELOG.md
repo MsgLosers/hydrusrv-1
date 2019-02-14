@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.1.0] - 2018-02-15
+
 ### Changed
 
 + Updated dependencies
@@ -681,7 +683,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/8.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv/compare/8.1.0...develop
+[8.1.0]: https://github.com/mserajnik/hydrusrv/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/mserajnik/hydrusrv/compare/7.0.0...8.0.0
 [7.0.0]: https://github.com/mserajnik/hydrusrv/compare/6.0.0...7.0.0
 [6.0.0]: https://github.com/mserajnik/hydrusrv/compare/5.0.0...6.0.0
