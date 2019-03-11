@@ -13,7 +13,7 @@ if (contentDbPath.startsWith('.')) {
 }
 
 module.exports = {
-  version: '8.1.0',
+  version: '8.2.0',
   url: process.env.URL,
   port: process.env.PORT || 8000,
   apiBase: process.env.API_BASE || '/api',
