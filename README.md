@@ -3,6 +3,8 @@
 > A small application for serving media managed with
 > [hydrus server][hydrus-server] via API
 
+__Adandoned: hydrusrv is no longer maintained.__
+
 hydrusrv is a small application based on [Express][express] that can serve
 media managed with [hydrus server][hydrus-server] over a REST-like API. A
 separate application called [hydrusrv-sync][hydrusrv-sync] is used to access
