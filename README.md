@@ -1,4 +1,4 @@
-# hydrusrv [![Build status][travis-badge]][travis] [![Docker Hub build][docker-hub-badge]][docker-hub] [![Known vulnerabilities][snyk-badge]][snyk] [![JavaScript Standard Style][standardjs-badge]][standardjs] [![FOSSA status][fossa-badge]][fossa]
+# hydrusrv [![Build status][travis-badge]][travis] [![Docker Hub build][docker-hub-badge]][docker-hub] [![Known vulnerabilities][snyk-badge]][snyk] [![JavaScript Standard Style][standardjs-badge]][standardjs]
 
 > A small application for serving media managed with
 > [hydrus server][hydrus-server] via API
@@ -389,9 +389,6 @@ You are welcome to help out!
 
 [standardjs]: https://standardjs.com
 [standardjs-badge]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
-
-[fossa]: https://app.fossa.io/projects/git%2Bgithub.com%2Fmserajnik%2Fhydrusrv
-[fossa-badge]: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmserajnik%2Fhydrusrv.svg?type=shield
 
 [express]: https://expressjs.com/
 [hydrus-server]: http://hydrusnetwork.github.io/hydrus
