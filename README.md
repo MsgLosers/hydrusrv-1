@@ -33,8 +33,6 @@ also available.
   + [Running the server](#running-the-server)
     + [Running with Docker](#running-with-docker)
 + [API](#api)
-+ [Disclaimer](#disclaimer)
-+ [Demo](#demo)
 + [Attribution](#attribution)
 + [Donate](#donate)
 + [Maintainer](#maintainer)
@@ -302,45 +300,6 @@ it.
 
 You can find the API documentation [here](API.md).
 
-## Disclaimer
-
-In addition to the points described in the [MIT license](LICENSE.md), I,
-[mserajnik][maintainer], creator and maintainer of hydrusrv, hereby explicitly
-state that hydrusrv is currently deployed on the following official
-installations:
-
-+ [https://hydrusrvue.mser.at][hydrusrvue-demo]
-
-No other installations are in any way affiliated with or controlled by me and I
-do not condone the usage of hydrusrv for publishing content that is
-copyrighted and/or considered illegal in any country or place. hydrusrv is open
-source software and it is up to the individual or group using it to make sure
-it is not used for illegal activities. I cannot be held accountable for any
-usage of hydrusrv that is outside of the aforementioned official installations.
-
-## Demo
-
-You can find a demo installation of [hydrusrvue][hydrusrvue] at
-[https://hydrusrvue.mser.at][hydrusrvue-demo]. The hydrusrv API is available
-under [https://hydrusrvue.mser.at/api][hydrusrvue-demo-api].
-
-Please take note that I am running this installation using
-[hydrusrv-docker][hydrusrv-docker] on a small
-[Vultr Cloud Compute][vultr-cloud-compute] instance with limited performance,
-bandwidth and traffic (meaning the demo could go down until the next month if
-the traffic limit gets exceeded).
-
-It contains only safe for work images tagged with `scenery` (take a look at the
-[hydrusrvue screenshots][hydrusrvue-screenshots] for some examples).
-
-Registration is enabled, so feel free to create as many users as you would
-like. __Created users are deleted at 12am every day.__
-
-If you are the creator of one or more of the images used in this demo
-installation and would like to have your content removed, please
-[message me](mailto:hello@mserajnik.at) or [open an issue][issues] and I will
-comply with your request at once.
-
 ## Attribution
 
 Special thanks to the user [FredericaBernkastel][frederica-bernkastel] for
@@ -410,8 +369,6 @@ You are welcome to help out!
 [docker-hub]: https://hub.docker.com/r/mserajnik/hydrusrv/
 [hydrusrv-docker]: https://github.com/mserajnik/hydrusrv-docker
 [docker-compose]: https://docs.docker.com/compose/
-[hydrusrvue-demo]: https://hydrusrvue.mser.at
-[hydrusrvue-demo-api]: https://hydrusrvue.mser.at/api
 [vultr-cloud-compute]: https://www.vultr.com/pricing/
 [hydrusrvue-screenshots]: https://github.com/mserajnik/hydrusrvue#screenshots
 [frederica-bernkastel]: https://github.com/FredericaBernkastel
